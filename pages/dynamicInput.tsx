@@ -29,6 +29,7 @@ export default function Login(){
     }
 
     const initialValues: FormValues = {
+      //names: ["recipy1", "recipy2", "recipy3"],
       names: ["recipy1", "recipy2", "recipy3"],
       meal: 'snack'
     }
@@ -47,11 +48,6 @@ export default function Login(){
         initialValues: initialValues,
         onSubmit
     })
-
-    /**
-     * haleykennedy@gmail.com
-     * admin123
-     */
 
     async function onSubmit(values: FormValues){
       setTimeout(() => {
@@ -97,7 +93,22 @@ export default function Login(){
                 <div>
                   {values.names.map((name, index) => (
                       <div key={index} >
-                        <Field name={`names.${index}`} className={styles.input_group}/>
+                        {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
+                        <Field name={`names.${index}`}>
+                        {({ field, form }) => (
+                          <Select
+                            className="select-wrap"
+                            classNamePrefix="select-box"
+                            instanceId={useId()}
+                            defaultValue={{ value: initialValues.names[index], label: initialValues.names[index] }}
+                            options={mealOptions}
+                            onChange={(selectedOption) =>
+                                form.setFieldValue(
+                                  `names.${index}`,
+                                  selectedOption.value,
+                                  )}
+                          />)}
+                        </Field>
                         <ErrorMessage name={`names.${index}`} />
                         <button
                           type="button"

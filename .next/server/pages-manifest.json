@@ -2,9 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/protected": "pages/protected.js",
-  "/server": "pages/server.js",
-  "/api/examples/protected": "pages/api/examples/protected.js",
+  "/dynamicInput": "pages/dynamicInput.js",
   "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js"
 }
