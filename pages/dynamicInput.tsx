@@ -29,7 +29,6 @@ export default function Login(){
     }
 
     const initialValues: FormValues = {
-      //names: ["recipy1", "recipy2", "recipy3"],
       names: ["recipy1", "recipy2", "recipy3"],
       meal: 'snack'
     }
@@ -86,13 +85,13 @@ export default function Login(){
                 <p className='w-3/4 mx-auto text-gray-400'>Description text goes here.</p>
             </div>
 
-            <Form className='flex flex-col gap-5' onSubmit={handleSubmit}>
+            <Form className='flex gap-5' onSubmit={handleSubmit}>
               <FieldArray
               name="names"
               render={arrayHelpers => (
                 <div>
                   {values.names.map((name, index) => (
-                      <div key={index} >
+                      <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
                         {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
                         <Field name={`names.${index}`}>
                         {({ field, form }) => (
@@ -110,12 +109,15 @@ export default function Login(){
                           />)}
                         </Field>
                         <ErrorMessage name={`names.${index}`} />
-                        <button
-                          type="button"
-                          onClick={() => arrayHelpers.remove(index)} // remove a name from the list
-                        >
-                          -
-                        </button>
+                        <div className="input-button m-2">
+                          <button
+                            type="button"
+                            className={styles.button}
+                            onClick={() => arrayHelpers.remove(index)} // remove a name from the list
+                          >
+                            Remove input
+                          </button>
+                        </div>
                       </div>
                     ))}
                     <button
@@ -133,7 +135,7 @@ export default function Login(){
                 </div>
               )}
               />
-            <Field name="meal">
+            {/*<Field name="meal">
             {({ field, form }) => (
               <Select
                 className="select-wrap"
@@ -150,7 +152,7 @@ export default function Login(){
             </Field>
               {errors.meal && (
                 <span className="error">{errors.meal}</span>
-              )}
+              )}*/}
             </Form>
           </section>
 
