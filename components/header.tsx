@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 import styles from "./header.module.css"
+import { Image } from "cloudinary-react";
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
@@ -48,10 +49,25 @@ export default function Header() {
           {session?.user && (
             <>
               {session.user.image && (
-                <span
-                  style={{ backgroundImage: `url('${session.user.image}')` }}
-                  className={styles.avatar}
-                />
+                <>
+                  {/*<span
+                    style={{ backgroundImage: `url('${session.user.image}')` }}
+                    className={styles.avatar}
+              />*/}
+                  <Image
+                    className={styles.avatar}
+                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                    publicId={session.user.image}
+                    alt={session.user.image}
+                    secure
+                    dpr="auto"
+                    quality="auto"
+                    width={200}
+                    height={200}
+                    crop="fill"
+                    gravity="auto"
+                  />
+                </>
               )}
               <span className={styles.signedInText}>
                 <small>Signed in as</small>
