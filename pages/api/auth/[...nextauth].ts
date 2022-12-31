@@ -6,11 +6,14 @@ import TwitterProvider from "next-auth/providers/twitter"
 import Auth0Provider from "next-auth/providers/auth0"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { Session } from "inspector"
+import connectMongo from '../../../database/connectdb';
+import Users from "../../../models/user"
+import { compare } from "bcryptjs"
 // import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
 
-const prisma: any = {};
-const bcrypt: any = {};
+// const prisma: any = {};
+// const bcrypt: any = {};
 
 
 // For more information on each option (and a full list of options) go to
@@ -27,34 +30,48 @@ export const authOptions: NextAuthOptions = {
       // You can pass any HTML attribute to the <input> tag through the object.
 
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        //username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: {  label: "Password", type: "password" },
+        email: {label: "Email", type: "text"}
       },
 
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
 
-        const user = { id_test: 1, name: "J Smith", email: "jsmith@ex.com", image: "MealPlanner/suqkcwqrvwoag1july5l", info: "testinfo", 
-          userRole: "admin", dietPreference: "Vegan" }
+        connectMongo()
+
+        // check user existance
+        //console.log(credentials)
+        const result = await Users.findOne( { email : credentials.email})
+        if(!result){
+            throw new Error("No user Found with Email Please Sign Up...!")
+        }
+
+        // compare()
+        const checkPassword = await compare(credentials.password, result.password);
+        
+        // incorrect password
+        if(!checkPassword || result.email !== credentials.email){
+            throw new Error("Username or Password doesn't match");
+        }
+        //console.log(result)
+
+        return result;
+
+
+
+        // const user = { id_test: 1, name: "J Smith", email: "jsmith@ex.com", image: "MealPlanner/suqkcwqrvwoag1july5l", info: "testinfo", 
+        //   userRole: "admin", dietPreference: "Vegan" }
 
         
-        if(credentials?.username=="test@gmail.com" && credentials?.password=="hello123"){
-          return user
-          // {
-          //   name: user.name,
-          //   email: user.email,
-          //   id_test: user.id_test,
-          //   info: "test info from...next auth",
-          //   image: user.image,
-          //   id: 1,
-          //   userRole: "admin"
-          // }
-        }
-        else{
-          throw new Error("Username or Password doesn't match");
-          //return null;
-        }
-        return null;
+        // if(credentials?.username=="test@gmail.com" && credentials?.password=="hello123"){
+        //   return user
+        // }
+        // else{
+        //   throw new Error("Username or Password doesn't match");
+        //   //return null;
+        // }
+        // return null;
       }
     }),
     /* EmailProvider({

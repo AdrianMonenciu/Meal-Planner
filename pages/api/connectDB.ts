@@ -5,8 +5,11 @@ import type { NextApiRequest, NextApiResponse } from "next"
 import mongoose from 'mongoose'
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
+import connectMongo from '../../database/connectdb';
 
 mongoose.set('strictQuery', false);
+
+connectMongo();
 
 export default async function handler(
   req: NextApiRequest,

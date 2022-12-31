@@ -47,7 +47,9 @@ export default function Register(){
         await fetch('/api/examples/register', options)
             .then(res => res.json())
             .then((data) => {
-                if(data) router.push('/')
+                console.log(data)
+                alert(data.message)
+                //if(data) router.push('http://localhost:3000')
             })
     }
 

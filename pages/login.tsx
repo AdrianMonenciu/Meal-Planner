@@ -41,7 +41,7 @@ export default function Login(){
     async function onSubmit(values: FormValues){
         const status = await signIn('credentials', {
             redirect: true,
-            username: values.email,
+            email: values.email,
             password: values.password,
             callbackUrl: "http://localhost:3000/"
         })

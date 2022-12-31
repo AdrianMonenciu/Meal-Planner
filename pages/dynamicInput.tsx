@@ -11,6 +11,8 @@ import { useRouter } from 'next/router';
 import Layout from "../components/layout"
 import * as yup from 'yup';
 import Select from 'react-select';
+import { string } from 'yup/lib/locale';
+import { Input } from 'postcss';
 
 
 export default function Login(){
@@ -22,21 +24,29 @@ export default function Login(){
     { value: "dinner", label: "dinner" }
   ];
 
+    interface Inames {
+      qty: number, name: string
+    }
 
     interface FormValues {
-      names: string[];
+      names: Inames[];
       meal: string
     }
 
+    const initialMealOptions = ["recipy1", "recipy2", "recipy3"]
+
     const initialValues: FormValues = {
-      names: ["recipy1", "recipy2", "recipy3"],
+      names: [{name: 'breakfast', qty: 1}, {name: 'breakfast', qty: 2}, {name: 'breakfast', qty: 3}],
       meal: 'snack'
     }
 
     const validationSchema = yup.object().shape({
       names: yup.array().of(
-        yup.string().max(10).required()
-      ),
+        yup.object().shape({
+          name: yup.string().max(10).required(),
+          qty: yup.number().required()
+        })
+      ).required(),
       meal: yup.string().max(10).required()
     });
 
@@ -65,6 +75,7 @@ export default function Login(){
     //     </div>
     //   )
     // }
+    //console.log(initialValues)
 
     return (
       <Formik
@@ -93,22 +104,24 @@ export default function Login(){
                   {values.names.map((name, index) => (
                       <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
                         {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                        <Field name={`names.${index}`}>
+                        <Field name={`names[${index}].name`}>
                         {({ field, form }) => (
                           <Select
                             className="select-wrap"
                             classNamePrefix="select-box"
                             instanceId={useId()}
-                            defaultValue={{ value: initialValues.names[index], label: initialValues.names[index] }}
+                            defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
                             options={mealOptions}
                             onChange={(selectedOption) =>
                                 form.setFieldValue(
-                                  `names.${index}`,
+                                  `names.${index}.name`,
                                   selectedOption.value,
                                   )}
                           />)}
                         </Field>
-                        <ErrorMessage name={`names.${index}`} />
+                        <Field  name={`names.${index}.qty`} className={styles.input_group}/>
+                        <ErrorMessage name={`names.${index}.name`} />
+                        <ErrorMessage name={`names.${index}.qty`} />
                         <div className="input-button m-2">
                           <button
                             type="button"
@@ -122,7 +135,7 @@ export default function Login(){
                     ))}
                     <button
                     type="button"
-                    onClick={() => arrayHelpers.push('')} // insert an empty string at a position
+                    onClick={() => arrayHelpers.push({name: 'recipy1', qty: 1})} // insert an empty string at a position
                   >
                     Add input
                   </button>

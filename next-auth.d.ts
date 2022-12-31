@@ -23,8 +23,6 @@ import NextAuth from "next-auth"
  // }
   declare module "next-auth" {
     export interface User {
-      id_test?: number
-      info?: string
       userRole?: string
       dietPreference?: string
     }
