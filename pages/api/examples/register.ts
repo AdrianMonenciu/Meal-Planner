@@ -22,7 +22,7 @@ export default async function handler(
     if(req.method === 'POST'){
 
         if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-        const { username, email, password, dietPreference } = req.body;
+        const { username, email, password, dietPreference, public_id } = req.body;
         //console.log(req.body)
 
         // check duplicate users
@@ -35,7 +35,7 @@ export default async function handler(
 
         //hash password
         let errors: boolean = false
-        const newUser = new Users({ username, email, password: await hash(password, 12), dietPreference })
+        const newUser = new Users({ username, email, password: await hash(password, 12), dietPreference, image: public_id })
         //await newUser.save()
         let err = await newUser.save().catch(err => {err = err, errors = true});
 

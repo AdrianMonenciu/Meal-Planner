@@ -159,7 +159,7 @@ export default function Register(){
                             <img
                                 src={previewImage}
                                 className="mt-4 object-cover"
-                                style={{ width: "250px", height: `${(9 / 16) * 250}px` }}
+                                style={{ width: "440px", height: `${300}px` }}
                             />
                             : "No Image"
                         }
@@ -186,8 +186,8 @@ export default function Register(){
                         secure
                         dpr="auto"
                         quality="auto"
-                        width={576}
-                        height={Math.floor((9 / 16) * 576)}
+                        //width={576}
+                        //height={Math.floor((9 / 16) * 576)}
                         crop="fill"
                         gravity="auto"
                     />

@@ -1,9 +1,16 @@
 import Layout from "../components/layout"
+import { signIn, signOut, useSession } from "next-auth/react"
 
 export default function ClientPage() {
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
+
   return (
     <Layout>
       <h1>Client Side Rendering</h1>
+      {session && (
+        <div>{JSON.stringify(session)}</div>
+      )}
       <p>
         This page uses the <strong>useSession()</strong> React Hook in the{" "}
         <strong>&lt;Header/&gt;</strong> component.
