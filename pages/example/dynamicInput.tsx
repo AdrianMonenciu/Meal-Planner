@@ -1,14 +1,14 @@
 import Head from 'next/head'
-import Layout_login from '../layout_login/layout_login'
+import Layout_login from '../../layout_login/layout_login'
 import Link from 'next/link'
 import styles from '../styles/Form.module.css';
 import Image from 'next/image'
 import { HiAtSymbol, HiFingerPrint } from "react-icons/hi";
 import { useId, useState } from 'react';
 import { useFormik, Form, Field, FieldArray, Formik, getIn, ErrorMessage } from 'formik';
-import login_validate from '../lib/validate';
+import login_validate from '../../lib/validate';
 import { useRouter } from 'next/router';
-import Layout from "../components/layout"
+import Layout from "../../components/layout"
 import * as yup from 'yup';
 import Select from 'react-select';
 import { string } from 'yup/lib/locale';

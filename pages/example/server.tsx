@@ -1,6 +1,6 @@
 import { unstable_getServerSession } from "next-auth/next"
-import { authOptions } from "./api/auth/[...nextauth]"
-import Layout from "../components/layout"
+import { authOptions } from "../api/auth/[...nextauth]"
+import Layout from "../../components/layout"
 import { useSession } from "next-auth/react"
 
 import type { GetServerSidePropsContext, GetServerSideProps } from "next"

@@ -4,10 +4,9 @@ import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
 import mongoose from 'mongoose'
 import { unstable_getServerSession } from 'next-auth';
-import { authOptions } from './auth/[...nextauth]';
-import connectMongo from '../../database/connectdb';
-import Users from '../../models/user';
-import testModel from "../../_backup/test.model";
+import { authOptions } from '../auth/[...nextauth]';
+import connectMongo from '../../../database/connectdb';
+import Users from '../../../models/user';
 
 mongoose.set('strictQuery', false);
 

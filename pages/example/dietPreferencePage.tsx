@@ -1,5 +1,5 @@
 import { useState } from "react"
-import {dietPreferences} from "../lib/dietPreference"
+import {dietPreferences} from "../../lib/dietPreference"
 
 export default function testPage() {
 

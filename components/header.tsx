@@ -28,7 +28,7 @@ export default function Header() {
               </span>
               <span className="flex justify-end">
                 <a
-                  href={`/login`} ///api/auth/signin
+                  href={`/user/login`} ///api/auth/signin
                   className={styles.buttonPrimary}
                   // onClick={(e) => {
                   //   e.preventDefault()
@@ -38,7 +38,7 @@ export default function Header() {
                   Sign in
                 </a>
                 <a
-                  href={`/register`}
+                  href={`/user/register`}
                   className={styles.buttonPrimary}
                 >
                   Register
@@ -94,22 +94,22 @@ export default function Header() {
             <Link href="/">Home</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/client">Client</Link>
+            <Link href="/example/client">Client</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/server">Server</Link>
+            <Link href="/example/server">Server</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/protected">Protected</Link>
+            <Link href="/example/protected">Protected</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/api-example">API</Link>
+            <Link href="/example/api-example">API</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/admin">Admin</Link>
+            <Link href="/example/admin">Admin</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/me">Me</Link>
+            <Link href="/example/me">Me</Link>
           </li>
         </ul>
       </nav>

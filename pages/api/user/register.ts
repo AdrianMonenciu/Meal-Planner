@@ -2,7 +2,6 @@ import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user'
 import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
-import { stringify } from 'querystring';
 
 export default async function handler(
   req: NextApiRequest,

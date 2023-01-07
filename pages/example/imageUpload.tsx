@@ -4,10 +4,9 @@ import styles from '../styles/Form.module.css';
 import { HiAtSymbol, HiFingerPrint, HiOutlineUser } from "react-icons/hi";
 import { useState } from 'react';
 import { useFormik } from 'formik';
-import { image_validate } from '../lib/validate'
 import { useRouter } from 'next/router';
-import Layout from "../components/layout"
-import {dietPreferences} from "../lib/dietPreference"
+import Layout from "../../components/layout"
+import {dietPreferences} from "../../lib/dietPreference"
 import * as Yup from "yup";
 import { Image } from "cloudinary-react";
 

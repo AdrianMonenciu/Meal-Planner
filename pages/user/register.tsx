@@ -1,15 +1,15 @@
 import Head from 'next/head'
-import Layout_login from '../layout_login/layout_login'
+import Layout_login from '../../layout_login/layout_login'
 import Link from 'next/link'
-import styles from '../styles/Form.module.css';
+import styles from '../../styles/Form.module.css';
 import Image from 'next/image'
 import { HiAtSymbol, HiFingerPrint, HiOutlineUser } from "react-icons/hi";
 import { useState } from 'react';
 import { useFormik } from 'formik';
-import { registerValidate } from '../lib/validate'
+import { registerValidate } from '../../lib/validate'
 import router, { useRouter } from 'next/router';
-import Layout from "../components/layout"
-import {dietPreferences} from "../lib/dietPreference"
+import Layout from "../../components/layout"
+import {dietPreferences} from "../../lib/dietPreference"
 import * as Yup from "yup";
 
 async function uploadImage(
@@ -106,12 +106,12 @@ export default function Register(){
             // console.log(values)
             // console.log(user_api_body)
 
-            await fetch('/api/examples/register', options)
+            await fetch('/api/user/register', options)
             .then(res => res.json())
             .then((data) => {
                 console.log(data)
                 alert(data.message)
-                if(data) router.push('/login')
+                if(data) router.push('/user/login')
             })
         }
     }
