@@ -72,18 +72,26 @@ export default function Header() {
               <span className={styles.signedInText}>
                 <small>Signed in as</small>
                 <br />
-                <strong>{session.user.email ?? session.user.name}</strong>
+                <strong>{session.user.email ?? session.user.username}</strong>
               </span>
-              <a
-                href={`/api/auth/signout`}
-                className={styles.button}
-                onClick={(e) => {
-                  e.preventDefault()
-                  signOut()
-                }}
-              >
-                Sign out
-              </a>
+              <span className="flex justify-end">
+                <a
+                  href={`/api/auth/signout`}
+                  className={styles.button}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    signOut()
+                  }}
+                >
+                  Sign out
+                </a>
+                <a
+                  href={`/user/update`}
+                  className={styles.button}
+                >
+                  Update
+                </a>
+              </span>  
             </>
           )}
         </p>

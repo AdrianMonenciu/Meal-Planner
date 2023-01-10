@@ -1,6 +1,8 @@
 import { SessionProvider } from "next-auth/react"
 //import "./styles.css"
 import "../styles/globals.css"
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 import type { AppProps } from "next/app"
 import type { Session } from "next-auth"
@@ -13,6 +15,7 @@ export default function App({
 }: AppProps<{ session: Session }>) {
   return (
     <SessionProvider session={session}>
+      <ToastContainer />
       <Component {...pageProps} />
     </SessionProvider>
   )

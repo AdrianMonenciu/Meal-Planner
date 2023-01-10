@@ -4,12 +4,14 @@ import { signIn, signOut, useSession } from "next-auth/react"
 export default function ClientPage() {
   const { data: session, status } = useSession()
   const loading = status === "loading"
+  var user = null
+  if (session) { user = session.user }
 
   return (
     <Layout>
       <h1>Client Side Rendering</h1>
       {session && (
-        <div>{JSON.stringify(session)}</div>
+        <pre>{JSON.stringify(user, null, 2)}</pre>
       )}
       <p>
         This page uses the <strong>useSession()</strong> React Hook in the{" "}

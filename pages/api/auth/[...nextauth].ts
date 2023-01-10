@@ -44,7 +44,8 @@ export const authOptions: NextAuthOptions = {
         //console.log(credentials)
         const result = await Users.findOne( { email : credentials.email})
         if(!result){
-            throw new Error("No user Found with Email Please Sign Up...!")
+          //return null
+          throw new Error("No user Found with Email Please Sign Up...!")
         }
 
         // compare()
@@ -52,7 +53,8 @@ export const authOptions: NextAuthOptions = {
         
         // incorrect password
         if(!checkPassword || result.email !== credentials.email){
-            throw new Error("Username or Password doesn't match");
+          //return null
+          throw new Error("Password doesn't match") //JSON.stringify({ errors: "Username or Password doesn't match", status: false }));
         }
         //console.log(result)
 
@@ -169,9 +171,12 @@ export const authOptions: NextAuthOptions = {
       return session
     }
   },
-session: {
-  strategy: 'jwt',
-}
+  session: {
+    strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/user/login',
+  }
 }
 
 export default NextAuth(authOptions)

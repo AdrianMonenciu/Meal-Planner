@@ -10,6 +10,8 @@ import { useFormik } from 'formik';
 import login_validate from '../../lib/validate';
 import { useRouter } from 'next/router';
 import Layout from "../../components/layout"
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Login(){
@@ -40,14 +42,27 @@ export default function Login(){
 
     async function onSubmit(values: FormValues){
         const status = await signIn('credentials', {
-            redirect: true,
+            redirect: false,
             email: values.email,
             password: values.password,
             callbackUrl: "http://localhost:3000/"
+        }).then(({ ok, error }) => {
+            if (ok) {
+                toast.success(`Logged in as ${values.email}`)
+                router.push("/");
+            } else {
+                //console.log(error)
+                toast.error(error);
+            }
         })
 
-        if(status.ok) router.push(status.url)
-        
+        // if(status.error){
+        //     return toast.error(status.error)
+        // }
+
+        // if(status.ok) { 
+        //     router.push(status.url) 
+        // }  
     }
 
     // Google Handler function
@@ -68,6 +83,7 @@ export default function Login(){
             <Head>
                 <title>Login</title>
             </Head>
+            <ToastContainer />
             
             <section className='w-3/4 mx-auto flex flex-col gap-3'>
                 <div className="title">

@@ -22,9 +22,24 @@ import NextAuth from "next-auth"
   //   } & DefaultSession["user"]
  // }
   declare module "next-auth" {
+    interface Session {
+      user: {
+        email?: string
+        username?: string
+        userRole?: string
+        dietPreference?: string
+        password?: string;
+        image?: string;
+      }
+    }
+
     export interface User {
+      email?: string
+      username?: string
       userRole?: string
       dietPreference?: string
+      password?: string;
+      image?: string;
     }
   
   // export interface Session {
