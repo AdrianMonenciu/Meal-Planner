@@ -12,7 +12,7 @@ import router, { useRouter } from 'next/router';
 import Layout from "../../components/layout"
 import {dietPreferences} from "../../lib/dietPreference"
 import * as Yup from "yup";
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { compare } from 'bcryptjs';
 import type { Session } from "next-auth"
 import { unstable_getServerSession } from "next-auth/next"
@@ -82,7 +82,7 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
                     body: JSON.stringify(user_api_body)
                 }
                 // console.log(values)
-                console.log(user_api_body)
+                //console.log(user_api_body)
         
                 await fetch('/api/user/update', options)
                 .then(res => res.json())
@@ -90,7 +90,7 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
                     //console.log(data)
                     //alert(data.message)
                     toast(data.message)
-                    if(data) router.push('/user/login')
+                    if(data.user) signOut()//router.push('/user/login')
                 })
             }
         } else {

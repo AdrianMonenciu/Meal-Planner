@@ -24,12 +24,18 @@ export default async function handler(
         const { username, email, password, dietPreference, public_id } = req.body;
         //console.log(req.body)
 
-        // check duplicate users
-        const checkexisting = await Users.findOne({ email });
-        if(checkexisting) {
+        // check duplicate email
+        const checkExistingEmail = await Users.findOne({ email });
+        if(checkExistingEmail) {
           //console.log(checkexisting)
-          return res.status(422).json({ message: "User Already Exists...!"})
-          //return
+          return res.status(422).json({ message: "Email Already Exists...!"})
+        }
+
+        // check duplicate usersname
+        const checkExistingUsername = await Users.findOne({ username });
+        if(checkExistingUsername) {
+          //console.log(checkexisting)
+          return res.status(422).json({ message: "Username Already Exists...!"})
         }
 
         //hash password

@@ -34,3 +34,18 @@
     color: #6366f1;
     cursor: pointer;
 }
+
+.buttonPrimary {
+    float: right;
+    margin-right: 0.4rem;
+    font-weight: 500;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1.4rem;
+    padding: 0.7rem 0.8rem;
+    position: relative;
+    z-index: 10;
+    background-color: transparent;
+    color: #555;
+  }

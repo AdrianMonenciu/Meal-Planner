@@ -1,7 +1,7 @@
 import { Model, Schema } from "mongoose";
 import createModel from "./createModel";
 
-interface IUser {
+export interface IUser {
   id: number;
   _id: Schema.Types.ObjectId;
   username: string;

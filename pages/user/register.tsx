@@ -11,6 +11,7 @@ import router, { useRouter } from 'next/router';
 import Layout from "../../components/layout"
 import {dietPreferences} from "../../lib/dietPreference"
 import * as Yup from "yup";
+import { toast } from 'react-toastify';
 
 async function uploadImage(
     image: File | string
@@ -110,7 +111,7 @@ export default function Register(){
             .then(res => res.json())
             .then((data) => {
                 console.log(data)
-                alert(data.message)
+                toast(data.message)
                 if(data) router.push('/user/login')
             })
         }
