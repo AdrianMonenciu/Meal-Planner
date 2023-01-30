@@ -2,6 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/user/updateUsers": "pages/user/updateUsers.js",
-  "/api/user/getUsers": "pages/api/user/getUsers.js"
+  "/meal/updatefoodItems": "pages/meal/updatefoodItems.js"
 }

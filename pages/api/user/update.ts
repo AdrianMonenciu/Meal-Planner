@@ -66,7 +66,7 @@ export default async function handler(
           res.status(201).json({ message: `User ${updatedUser.username} updated successfuly!`, status : true, user: updatedUser})
         }
     } else{
-      res.status(500).json({ message: "HTTP method not valid only POST Accepted"})
+      res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
     }
 
 }

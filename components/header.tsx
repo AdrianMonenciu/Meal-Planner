@@ -72,7 +72,7 @@ export default function Header() {
               <span className={styles.signedInText}>
                 <small>Signed in as</small>
                 <br />
-                <strong>{session.user.email ?? session.user.username}</strong>
+                <strong>{`${session.user.email ?? session.user.username}, Role: ${session.user.userRole}` }</strong>
               </span>
               <span className="flex justify-end">
                 <a

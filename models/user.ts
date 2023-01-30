@@ -11,6 +11,9 @@ export interface IUser {
   dietPreference: string;
   userRole?: string
   WeeklyPlan: Schema.Types.ObjectId[];
+  FoodItem: Schema.Types.ObjectId[];
+  Meal: Schema.Types.ObjectId[];
+  ShoppingList: Schema.Types.ObjectId[];
 }
 
 interface IUserMethods {
@@ -29,6 +32,9 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   dietPreference: {type:String, required:true},
   userRole: {type: String, default: 'user', required:true },
   WeeklyPlan: [{ type: Schema.Types.ObjectId, ref: 'WeeklyPlan' }],
+  FoodItem: [{ type: Schema.Types.ObjectId, ref: 'FoodItem' }],
+  Meal: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
+  ShoppingList: [{ type: Schema.Types.ObjectId, ref: 'ShoppingList' }]
 },
 { timestamps: true },);
 

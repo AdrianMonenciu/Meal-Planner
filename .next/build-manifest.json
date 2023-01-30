@@ -25,10 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/user/updateUsers": [
+    "/meal/updatefoodItems": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/user/updateUsers.js"
+      "static/chunks/pages/meal/updatefoodItems.js"
     ]
   },
   "ampFirstPages": []

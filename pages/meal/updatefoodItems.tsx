@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify"
 import Layout from "../../components/layout"
 import { IUser } from '../../models/user'
+import { IFood } from '../../models/FoodItem'
 import * as Yup from "yup";
 import styles from '../../styles/Form.module.css';
+import { useRouter } from "next/router";
 
 interface FormValues {
-  username: string;
+  foodName: string;
 }
 
 interface ServiceInit {
@@ -30,8 +32,8 @@ type Service<T> =
   | ServiceLoaded<T>
   | ServiceError;
 
-interface IUsers {
-  results: IUser[];
+interface IFoodItems {
+  results: IFood[];
 }
 
 interface IupdateRole {
@@ -45,7 +47,9 @@ interface Idelete {
 
 
 export default function ApiExamplePage() {
-  const [users, setUsers] = useState<Service<IUsers>>({status: 'loading'})
+  const [foodItems, setFoodItems] = useState<Service<IFoodItems>>({status: 'loading'})
+
+  const router = useRouter()
 
   function handleUserRole(username: string, userRole: string ) {
     return async (event: React.MouseEvent) => {
@@ -71,7 +75,7 @@ export default function ApiExamplePage() {
       //alert(data.message)
       toast(data.message)
       const updatedUsers: FormValues = {
-        username : formik.values.username,
+        foodName : formik.values.foodName,
       }
       onSubmit(updatedUsers)
     })
@@ -100,7 +104,7 @@ export default function ApiExamplePage() {
       //alert(data.message)
       toast(data.message)
       const updatedUsers: FormValues = {
-        username : formik.values.username,
+        foodName : formik.values.foodName,
       }
       onSubmit(updatedUsers)
     })
@@ -112,7 +116,7 @@ export default function ApiExamplePage() {
       method: "GET",
       headers : { 'Content-Type': 'application/json'},
     }
-    await fetch(`/api/user/getUsers?username=${querryData.username}&limit=20`, options)
+    await fetch(`/api/meal/getFoodItems?foodName=${querryData.foodName}&limit=20`, options)
     .then(async (response) => {
       if (!response.ok) {
         const error = await response.json()
@@ -123,26 +127,27 @@ export default function ApiExamplePage() {
         return response.json()
       }
     })
-    .then(data => setUsers({ status: 'loaded', payload: data }))
-    .catch(err => {setUsers({ status: 'error', error: err.message})});
+    .then(data => setFoodItems({ status: 'loaded', payload: data }))
+    .catch(err => {setFoodItems({ status: 'error', error: err.message})});
   }
 
   useEffect(() => {
-    getInitialData({username: ''}) 
+    getInitialData({foodName: ''}) 
   },[])
 
   async function onSubmit (values: FormValues){
-    getInitialData({username: values.username})
+    getInitialData({foodName: values.foodName})
   }
 
   const initialValues: FormValues = {
-    username : '',
+    foodName : '',
   }
 
   const validationSchemaYup: Yup.SchemaOf<FormValues> = Yup.object().shape({
-    username: Yup.string().required('Username required')
-      .test("Empty space", "Invalid username, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
-  });
+    foodName: Yup.string().required('Food name required').min(2, "The name must have at least 2 characters!")
+    .max(20, "The name must have maximum 20 characters!")
+    .test("Empty space", "Name can not start with SPACE!", function(value) {if (value) return  !(value.charAt(0) === " "); else return true }),
+    });
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -155,13 +160,13 @@ export default function ApiExamplePage() {
     <Layout>
       <h1>User list</h1>
       <form className='flex flex-col' onSubmit={formik.handleSubmit}>
-        <div className={`${styles.input_group} ${formik.errors.username && formik.touched.username ? 'border-rose-600' : ''}`}>
+        <div className={`${styles.input_group} ${formik.errors.foodName && formik.touched.foodName ? 'border-rose-600' : ''}`}>
           <input 
           type="text"
-          name='Username'
-          placeholder='Username'
+          name='foodName'
+          placeholder='foodName'
           className={styles.input_text}
-          {...formik.getFieldProps('username')}
+          {...formik.getFieldProps('foodName')}
           />
         </div>
         <div className="input-button">
@@ -171,25 +176,26 @@ export default function ApiExamplePage() {
         </div>
       </form>
       <div className='flex flex-col'>
-        {users.status === 'loading' && <div>Loading...</div>}
-        {users.status === 'loaded' && 
-          users.payload.results.map((user, index) => (
+        {foodItems.status === 'loading' && <div>Loading...</div>}
+        {foodItems.status === 'loaded' && 
+          foodItems.payload.results.map((food, index) => (
             <div key={index} className={`flex justify-between`}>
               <div className="flex justify-start">
-                <div>Username: {user.username}</div>
-                <div className='mx-4'>User role: {user.userRole}</div>
+                <div>Food name: {food.name}</div>
+                <div className='mx-4'>Measuring unit: {food.foodMeasureUnit}</div>
+                <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div>
               </div>
               <span className="flex justify-end">
-                  <button onClick={handleUserRole(user.username, user.userRole)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
-                    Change role to: {user.userRole == 'user' ? 'ADMIN' : 'USER'}</button>
-                  <button onClick={handleUserDelete(user.username)} className={`bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`}> 
-                    DELETE USER</button>
+                  <button onClick={() => router.push(`/meal/${food._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
+                    EDIT</button>
+                  <button onClick={handleUserDelete(food.name)} className={`bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`}> 
+                    DELETE</button>
                 </span>
             </div>
           ))
         }
-        {users.status === 'error' && (
-          <div>{users.error}</div> //{users.error}
+        {foodItems.status === 'error' && (
+          <div>{foodItems.error}</div> //{users.error}
         )}
       </div>
       
@@ -197,8 +203,7 @@ export default function ApiExamplePage() {
   )
 }
 
-//<pre>{JSON.stringify(user, null, 2)}</pre>
-
+//<pre>{JSON.stringify(food, null, 2)}</pre>
 //<pre>{JSON.stringify(users, null, 2)}</pre>
 
 // {users && service.payload.results.map((user, index) => (

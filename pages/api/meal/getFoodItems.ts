@@ -7,6 +7,7 @@ import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user';
+import FoodItem from '../../../models/FoodItem';
 import { ApiError } from 'next/dist/server/api-utils';
 
 mongoose.set('strictQuery', false);
@@ -33,34 +34,34 @@ export default async function handler(
     if(!req.body) return res.status(404).json({message: "No form data!"});
       
     //const { username } = req.body;
-    const { username, limit } = req.query;
-    const usernameString = username as string
+    const { foodName, limit } = req.query;
+    const foodNameString = foodName as string
     const limitNumber = limit as unknown as number
 
     let mongooseErr
 
-    const result = await Users.find({username: new RegExp(usernameString, 'i')}).sort({ createdAt: 'desc' }).limit(limitNumber).exec()
-    .catch(err => mongooseErr = err);
-    //.catch(err => {throw new Error(err)});
+    // const result = await Users.find({username: new RegExp(foodNameString, 'i')}).sort({ createdAt: 'desc' }).limit(limitNumber).exec()
+    // .catch(err => {throw new Error(err)});
 
-    // let result = await Users.find({username: new RegExp(usernameString, 'i')}).sort({ createdAt: 'desc' })
-    // .limit(limitNumber).populate('FoodItem');
-
-    //.find().sort({ createdAt: 'desc' }).limit(10).exec()    new RegExp(req.query.name, 'i'
+    let foodItemsPopulated = await FoodItem.find({name: new RegExp(foodNameString, 'i')}).sort({ createdAt: 'desc' })
+    .limit(limitNumber).exec().catch(err => mongooseErr = err);
+    // .populate('addedBy')
   //   searchOptions.name = new RegExp(req.query.name, 'i')
   // }
   //await Users.find().where('stars').gt(1000).byName('mongoose');
 
+    if (mongooseErr) {
+      res.status(500).json(`Database Error! - ${JSON.stringify(mongooseErr, null, 2)}`) //"Database Error!"
+    }
 
-
-    if(result === undefined || !result.length){
+    if(foodItemsPopulated === undefined || !foodItemsPopulated.length){
       //throw new (JSON.stringify({ errors: "No user Found!", status: false }))
       //throw new Error("Password doesn't match")
       res.status(500).json("No user Found!")
       //return res.end(JSON.stringify("No user Found"))
     } else {
       //return result;
-      return res.status(201).send({results: result})
+      return res.status(201).send({results: foodItemsPopulated})
     }
   } else{
     res.status(500).json({ message: "HTTP method not valid only POST Accepted"})

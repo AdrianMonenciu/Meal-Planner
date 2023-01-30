@@ -25,48 +25,58 @@ export default async function handler(
 
     // only post method is accepted
     if(req.method === 'PUT'){
+      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+      const { username, userRole } = req.body;
+      //console.log(req.body)
 
-        if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-        const { username, email, password, dietPreference, public_id } = req.body;
-        //console.log(req.body)
+      let errors: boolean = false
+      const filter = { username };
+      const update = { userRole };
 
-        // check duplicate email
-        const checkExistingEmail = await Users.findOne({ email });
-        if(checkExistingEmail && session.user.email != email) {
-          //console.log(checkexisting)
-          return res.status(422).json({ message: "Email Already Exists...!"})
-        }
+      let err = await Users.findOneAndUpdate(filter, update, {
+        new: true
+      }).catch(err => {err = err, errors = true}); 
 
-        // check duplicate usersname
-        const checkExistingUsername = await Users.findOne({ username });
-        if(checkExistingUsername && session.user.username != username) {
-          //console.log(checkexisting)
-          return res.status(422).json({ message: "Username Already Exists...!"})
-        }
+      let updatedUser = await Users.findOne({username})
 
-        //hash password
-        let errors: boolean = false
-        const filter = { email };
-        const update = {username, email, password: await hash(password, 12), dietPreference, image: public_id };
+      if (errors) {
+        console.log(err)
+        return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
+      } else {
+        //console.log(updatedUser)
+        res.status(201).json({ message: `User ${updatedUser.username} updated successfuly to role: ${updatedUser.userRole}!`, status : true, user: updatedUser})
+      }
 
-        let err = await Users.findOneAndUpdate(filter, update, {
-          new: true
-        }).catch(err => {err = err, errors = true}); //, (err, doc) => {errs = err, errors = true});
-        //const newUser = new Users({ username, email, password: await hash(password, 12), dietPreference, image: public_id })
-        //await newUser.save()
-        //let err = await newUser.save().catch(err => {err = err, errors = true});
+    } else if (req.method === 'DELETE') {
 
-        let updatedUser = await Users.findOne({email})
+      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+      const { username} = req.body;
+      //console.log(req.body)
 
-        if (errors) {
+      let errors: boolean = false
+      const filter = { username };
+      let mongooseErr
+
+      //var mongooseErr = await Users.findOneAndDelete((filter)).catch(err => {mongooseErr = err, errors = true});
+
+      const deletedUser = Users.findOneAndDelete((filter), function (err, docs) {
+        if (err){
           console.log(err)
-          return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
-        } else {
-          console.log(updatedUser)
-          res.status(201).json({ message: `User ${updatedUser.username} updated successfuly!`, status : true, user: updatedUser})
+          mongooseErr = err
+          errors = true
+          //ow err
         }
+     })    //.catch(function(err){ console.log(err)});
+
+      if (errors) {
+        console.log(mongooseErr)
+        return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
+      } else {
+        //console.log(updatedUser)
+        res.status(201).json({ message: `User ${username} deleted successfuly!`, status : true,})
+      }
     } else{
-      res.status(500).json({ message: "HTTP method not valid only POST Accepted"})
+      res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
     }
 
 }
