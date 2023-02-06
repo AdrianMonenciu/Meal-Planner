@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Layout_login from '../../layout_login/layout_login'
 import Link from 'next/link'
-import styles from '../styles/Form.module.css';
+import styles from '../../styles/Form.module.css';
 import Image from 'next/image'
 import { HiAtSymbol, HiFingerPrint } from "react-icons/hi";
 import { useId, useState } from 'react';

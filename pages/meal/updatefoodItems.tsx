@@ -42,7 +42,7 @@ interface IupdateRole {
 }
 
 interface Idelete {
-  username: string;
+  name: string;
 }
 
 
@@ -51,43 +51,12 @@ export default function ApiExamplePage() {
 
   const router = useRouter()
 
-  function handleUserRole(username: string, userRole: string ) {
-    return async (event: React.MouseEvent) => {
-    const updatedRole = userRole == "admin" ? "user" : "admin"
-    //toast(`User: ${username} will be updated userRole: ${updatedRole}`)
-
-    const user_api_body: IupdateRole ={
-      username: username,
-      userRole: updatedRole,
-    }
-    const options = {
-        method: "PUT",
-        headers : { 'Content-Type': 'application/json'},
-        body: JSON.stringify(user_api_body)
-    }
-    // console.log(values)
-    //console.log(user_api_body)
-
-    await fetch('/api/user/updateUsers', options)
-    .then(res => res.json())
-    .then((data) => {
-      //console.log(data)
-      //alert(data.message)
-      toast(data.message)
-      const updatedUsers: FormValues = {
-        foodName : formik.values.foodName,
-      }
-      onSubmit(updatedUsers)
-    })
-
-  }}
-
-  function handleUserDelete(username: string) { 
+  function handleUserDelete(name: string) { 
     return async (event: React.MouseEvent) => {
     //toast(`User: ${username} will be deleted!`)
 
     const user_api_body: Idelete ={
-      username: username,
+      name: name,
     }
     const options = {
         method: "DELETE",
@@ -97,16 +66,16 @@ export default function ApiExamplePage() {
     // console.log(values)
     //console.log(user_api_body)
 
-    await fetch('/api/user/updateUsers', options)
+    await fetch('/api/meal/foodItem', options)
     .then(res => res.json())
     .then((data) => {
       //console.log(data)
       //alert(data.message)
       toast(data.message)
-      const updatedUsers: FormValues = {
+      const updatedFoodItems: FormValues = {
         foodName : formik.values.foodName,
       }
-      onSubmit(updatedUsers)
+      onSubmit(updatedFoodItems)
     })
 
   }}
@@ -186,7 +155,7 @@ export default function ApiExamplePage() {
                 <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div>
               </div>
               <span className="flex justify-end">
-                  <button onClick={() => router.push(`/meal/${food._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
+                  <button onClick={() => router.push(`/meal/${food.name}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
                     EDIT</button>
                   <button onClick={handleUserDelete(food.name)} className={`bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`}> 
                     DELETE</button>
@@ -195,7 +164,7 @@ export default function ApiExamplePage() {
           ))
         }
         {foodItems.status === 'error' && (
-          <div>{foodItems.error}</div> //{users.error}
+          <div>{foodItems.error}</div>
         )}
       </div>
       

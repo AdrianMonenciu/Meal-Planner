@@ -57,7 +57,7 @@ export default async function handler(
     if(foodItemsPopulated === undefined || !foodItemsPopulated.length){
       //throw new (JSON.stringify({ errors: "No user Found!", status: false }))
       //throw new Error("Password doesn't match")
-      res.status(500).json("No user Found!")
+      res.status(500).json("No Food Item Found!")
       //return res.end(JSON.stringify("No user Found"))
     } else {
       //return result;

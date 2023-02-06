@@ -7,6 +7,7 @@ import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import FoodItem from '../../../models/FoodItem';
 import mongoose from 'mongoose';
+import { string } from 'yup';
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,13 +19,6 @@ export default async function handler(
     //console.log(session)
 
 
-    // try {
-    //   connectMongo();
-    // } catch (error) {
-    //   console.error(error);
-    //   res.status(500).json({ message: 'Internal server error' });
-    // }
-
     // only post method is accepted
     if(req.method === 'POST'){
 
@@ -33,6 +27,13 @@ export default async function handler(
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
+
+      // check duplicate usersname
+      const checkExistingFood = await FoodItem.findOne({ name });
+      if(checkExistingFood ) { //&& session.user.username != username
+        //console.log(checkexisting)
+        return res.status(422).json({ message: "Food item Already Exists...!"})
+      }
 
       const newFoodItem = new FoodItem({
         //_id: new mongoose.Types.ObjectId(),
@@ -68,7 +69,7 @@ export default async function handler(
         // })
       }
 
-      let userPopulated = await Users.findOne({email: currentUser.email}).populate('FoodItem');
+      // let userPopulated = await Users.findOne({email: currentUser.email}).populate('FoodItem');
       // Users.findOne({email: currentUser.email}).
       //   populate('FoodItem').
       //   exec(function (err, userPopulated1) {
@@ -78,8 +79,8 @@ export default async function handler(
       //     // prints "The author is Ian Fleming"
       //   });
     
-      console.log(newFoodItem)
-      console.log(userPopulated)
+      // console.log(newFoodItem)
+      // console.log(userPopulated)
 
       if (errors) {
         console.log(mongooseErr)
@@ -88,7 +89,83 @@ export default async function handler(
         //console.log(updatedUser)
         res.status(201).json({ message: `Food ${newFoodItem.name} created successfuly!`, status : true, data: newFoodItem})
       }
-    } else{
+
+
+    } else if (req.method === 'PUT'){
+
+      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+      const { name, foodMeasureUnit, diet, id } = req.body;
+      console.log(req.body)
+
+      const currentUser = await Users.findOne({ email: session.user.email });
+
+      // check duplicate usersname
+      const checkExistingFood = await FoodItem.findOne({ name });
+      
+      var mongoose = require('mongoose');
+      var idObj = mongoose.mongo.ObjectId(id);
+
+      // console.log(checkExistingFood)
+      // console.log(idObj)
+
+      if(checkExistingFood && String(checkExistingFood._id) !== String(idObj)) { //&& session.user.username != username
+        return res.status(422).json({ message: "Food name Already Exists...!"})
+      }
+
+      let errors: boolean = false
+      const filter = { _id: id };
+      const update = {name, foodMeasureUnit, diet, addedBy: currentUser._id };
+
+      var err = await FoodItem.findOneAndUpdate(filter, update, {
+        new: true
+      }).catch(err => {err = err, errors = true}); //, (err, doc) => {errs = err, errors = true});
+      
+      let updatedFood = await FoodItem.findOne({_id: id})
+
+      if (!errors) {
+        currentUser.FoodItem.push(updatedFood._id)
+        await currentUser.save().catch(error => {err = error, errors = true});
+      }
+      
+      if (errors) {
+        console.log(err)
+        return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
+      } else {
+        //console.log(updatedFood)
+        res.status(201).json({ message: `Food item ${updatedFood.name} updated successfuly!`, status : true, food: updatedFood})
+      }
+
+
+    } else if (req.method === 'DELETE') {
+
+      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+      const { name } = req.body;
+      //console.log(req.body)
+
+      let errors: boolean = false
+      const filter = { name };
+      let mongooseErr
+
+      //var mongooseErr = await Users.findOneAndDelete((filter)).catch(err => {mongooseErr = err, errors = true});
+
+      const deletedFood = FoodItem.findOneAndDelete((filter), function (err, docs) {
+        if (err){
+          console.log(err)
+          mongooseErr = err
+          errors = true
+          //ow err
+        }
+     })    //.catch(function(err){ console.log(err)});
+
+      if (errors) {
+        console.log(mongooseErr)
+        return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
+      } else {
+        //console.log(updatedUser)
+        res.status(201).json({ message: `Food ${name} deleted successfuly!`, status : true,})
+      }
+
+    }else {
       res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
     }
 

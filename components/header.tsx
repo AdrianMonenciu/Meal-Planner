@@ -119,6 +119,19 @@ export default function Header() {
           <li className={styles.navItem}>
             <Link href="/example/me">Me</Link>
           </li>
+          {session?.user.userRole == 'admin' && (
+            <>
+            <li className={styles.navItem}>
+              <Link href="/user/updateUsers">Update Users</Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/meal/foodItem">Add food</Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/meal/updatefoodItems">Update food</Link>
+            </li>
+            </>
+          )}
         </ul>
       </nav>
     </header>
