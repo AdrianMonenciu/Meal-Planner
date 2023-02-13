@@ -33,7 +33,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   userRole: {type: String, default: 'user', required:true },
   WeeklyPlan: [{ type: Schema.Types.ObjectId, ref: 'WeeklyPlan' }],
   FoodItem: [{ type: Schema.Types.ObjectId, ref: 'FoodItem' }],
-  Meal: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
+  Meal: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   ShoppingList: [{ type: Schema.Types.ObjectId, ref: 'ShoppingList' }]
 },
 { timestamps: true },);

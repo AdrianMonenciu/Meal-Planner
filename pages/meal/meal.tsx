@@ -4,8 +4,8 @@ import Link from 'next/link'
 import styles from '../../styles/Form.module.css';
 import Image from 'next/image'
 import { HiAtSymbol, HiFingerPrint, HiOutlineUser } from "react-icons/hi";
-import { useId, useState } from 'react';
-import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik } from 'formik';
+import { useEffect, useId, useRef, useState } from 'react';
+import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
 import { registerValidate } from '../../lib/validate'
 import router, { useRouter } from 'next/router';
 import Layout from "../../components/layout"
@@ -14,63 +14,81 @@ import {foodMeasureUnit} from "../../lib/foodMeasureUnit"
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
 import Select from 'react-select';
+import { IFood } from '../../models/FoodItem';
 
 export default function Register(){
+    const formik2Ref = useRef<any>();  
+
     const mealOptions = [
         { value: "", label: "" },
-      ];
+    ];
 
-    //   const mealOptions = [
-    //     { value: "breakfast", label: "breakfast" },
-    //     { value: "brunch", label: "brunch" },
-    //     { value: "snack", label: "snack" },
-    //     { value: "lunch", label: "lunch" },
-    //     { value: "dinner", label: "dinner" }
-    //   ];
+    const [availableFoodItems, setavailableFoodItems] = useState(mealOptions)
+    const [currentDietPlan, setCurrentDietPlan] = useState([''])
+    const [currentFoodItemsData, setCurrentFoodItemsData] = useState<IFood[]>() //<IFood[]>
+    
+    interface IfoodItems {
+        qty: number, 
+        name: string,
+        qtyOption: string,
+        id: string
+    }
 
-    const [mealOptionsDynamic, setmealOptionsDynamic] = useState(mealOptions)
+    interface FormValues2 {
+        foodItems: IfoodItems[];
+    }
+
+    const initialValues2: FormValues2 = {
+        foodItems: [{name: '', qty: 0, qtyOption: 'Quantity', id: ''}],
+        //names: [{name: 'breakfast', qty: 1}, {name: 'breakfast', qty: 2}, {name: 'breakfast', qty: 3}]
+    }
     
-        interface Inames {
-          qty: number, name: string
-        }
-    
-        interface FormValues2 {
-          names: Inames[];
-          meal: string
-        }
-    
-        const initialMealOptions = ["recipy1", "recipy2", "recipy3"]
-    
-        const initialValues2: FormValues2 = {
-          names: [{name: '', qty: 0}],
-          //names: [{name: 'breakfast', qty: 1}, {name: 'breakfast', qty: 2}, {name: 'breakfast', qty: 3}]
-          meal: 'snack'
-        }
-    
-        const validationSchema2 = Yup.object().shape({
-          names: Yup.array().of(
-            Yup.object().shape({
-              name: Yup.string().max(10).required(),
-              qty: Yup.number().required()
-            })
-          ).required(),
-          meal: Yup.string().max(10).required()
-        });
-    
-    
-        // formik hook
-        const formik2 = useFormik({
-            initialValues: initialValues2,
-            onSubmit: onSubmit2
+    const validationSchema2 = Yup.object().shape({
+        foodItems: Yup.array().required().max(10, 'Maximum 10 food items are allowed!').of(
+        Yup.object().shape({
+            name: Yup.string().max(10).required(),
+            qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
         })
+        )
+    });
     
-        async function onSubmit2(values: FormValues2){
-            formik2.resetForm()
-          setTimeout(() => {
-            //alert(JSON.stringify(values, null, 2));
-            console.log(values)
-          }, 500)
+    async function onSubmit2(values: FormValues2){
+        console.log(values)
+        console.log(formik.values)
+
+        interface IMeal_api_body {
+            name: string;
+            diet: string[];
+            foodItems: {
+                foodId: string,
+                qty: number
+            }[]
         }
+
+        const meal_api_body: IMeal_api_body = {
+            name: formik.values.name,
+            diet: currentDietPlan,
+            foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
+        }
+
+        console.log(meal_api_body)
+
+        const options = {
+            method: "POST",
+            headers : { 'Content-Type': 'application/json'},
+            body: JSON.stringify(meal_api_body)
+        }
+
+        await fetch('/api/meal/meal', options)
+        .then(res => res.json())
+        .then((data) => {
+            console.log(data)
+            toast(data.message)
+            //if(data) router.push('/')
+        })
+
+    }
+
 
     interface FormValues {
         name: string;
@@ -79,7 +97,7 @@ export default function Register(){
 
     const initialValues: FormValues = {
         name : '',
-        diet: ['Vegan'],
+        diet: [],
     }
 
     const validationSchemaYup: Yup.SchemaOf<FormValues> = Yup.object().shape({
@@ -97,33 +115,64 @@ export default function Register(){
     })
 
     async function onSubmit1(values: FormValues){
-        //formik.resetForm()
-        //formik2.resetForm()
+        await getFoodItems(values.diet)
 
-        setmealOptionsDynamic(values.diet.map((diet, index) => ({value : diet, label : diet})));
+        // const foodNames = foodArray.filter(item => {
+        //     for (let i = 0; i < values.diet.length; i++) {
+        //       if (item.diet.includes(values.diet[i].toLowerCase())) {
+        //         return true;
+        //       }
+        //     }
+        //     return false;
+        // }).map(item => item.foodName);
 
-        ()=>formik2.resetForm()
+        setCurrentDietPlan(values.diet.map((food) => food));
 
-        // const foodItem_api_body: FormValues ={
-        //     name: values.name.charAt(0).toUpperCase() + values.name.slice(1).toLowerCase(),
-        //     diet: values.diet
-        // }
-        // const options = {
-        //     method: "POST",
-        //     headers : { 'Content-Type': 'application/json'},
-        //     body: JSON.stringify(foodItem_api_body)
-        // }
-        //console.log(foodItem_api_body)
-        console.log(values)
-
-        // await fetch('/api/meal/foodItem', options)
-        // .then(res => res.json())
-        // .then((data) => {
-        //     console.log(data)
-        //     toast(data.message)
-        //     //if(data) router.push('/')
-        // })
+        formik2Ref.current.resetForm();
     }
+
+
+    function updateQtyOptionAndId (index, selectedOption, setFieldValue) {
+        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
+        const currentFoodItem = currentFoodItemsData.find(food => food.name === selectedOption)
+        //console.log(currentFoodItem)
+
+        setFieldValue(`foodItems.${index}.qtyOption`, currentFoodItem.foodMeasureUnit)
+        setFieldValue(`foodItems.${index}.id`, currentFoodItem._id)
+    };
+
+    async function getFoodItems(querryData: string[]) {
+        const options = {
+          method: "GET",
+          headers : { 'Content-Type': 'application/json'},
+        }
+        const encodedDiets = encodeURIComponent(querryData.join(',')) // encodeURIComponent(querryData.join(','))
+        const url = `/api/meal/getFoodItemsByDiet?diets=${encodedDiets}`;
+
+        //console.log(url)
+
+        await fetch(url, options)
+        .then(async (response) => {
+          if (!response.ok) {
+            const error = await response.json()
+            //console.log(error)
+            throw new Error(error)
+          } else {
+            return response.json()
+          }
+        }).then(data => {
+        setCurrentFoodItemsData(data)
+        //console.log(currentFoodItemsData)
+        })
+        .catch(err => toast.error(err));
+    }
+
+    useEffect(() => {
+        const foodNames = currentFoodItemsData != undefined ? currentFoodItemsData.map(item => item.name) : [""];
+        setavailableFoodItems(foodNames.map((food) => ({value : food, label : food})));
+        console.log(currentFoodItemsData)
+    },[currentFoodItemsData])
+      
 
     return (
         
@@ -153,7 +202,7 @@ export default function Register(){
                     {formik.errors.name && formik.touched.name ? <span className='text-rose-500'>{formik.errors.name}</span> : <></>}
                     {/* {formik.errors.username && formik.touched.username ? <span className='text-rose-500'>{formik.errors.username}</span> : <></>} */}
                     
-                    <div className='mx-4'>Current Diet: {mealOptionsDynamic.map((diet, index) => `${diet.value} `)}</div>
+                    <div className='mx-4'>Current Diet: {currentDietPlan.map((diet) => `${diet} `)}</div>
                  
                     <div>
                         <div className='text-left' id="checkbox-group">Dietary suitability:</div>
@@ -172,7 +221,7 @@ export default function Register(){
                     {/* login buttons */}
                     <div className="input-button">
                         <button type='submit' className={styles.button}>
-                            Add Food Item
+                            Update diet plan
                         </button>
                     </div>
                 </form>
@@ -180,11 +229,12 @@ export default function Register(){
 
 
             <Formik
+            innerRef={formik2Ref}
             initialValues={initialValues2}
             onSubmit={onSubmit2}
             validationSchema={validationSchema2}
             >
-            {({ values, handleSubmit, handleChange, errors, resetForm }) => (
+            {({ values, handleSubmit, handleChange, errors, resetForm,  setFieldValue}) => (
                 <>
                 <Head>
                     <title>DynamicInput</title>
@@ -198,32 +248,46 @@ export default function Register(){
 
                     <Form className='flex gap-5' onSubmit={handleSubmit}>
                     <FieldArray
-                    name="names"
+                    name="foodItems"
                     render={arrayHelpers => (
                         <div>
-                        {values.names.map((name, index) => (
+                        {values.foodItems.map((name, index) => (
                             <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
                                 {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                                <Field name={`names[${index}].name`}>
+                                <Field name={`foodItems[${index}].name`}>
                                 {({ field, form }) => (
                                 <Select
                                     className="select-wrap"
                                     classNamePrefix="select-box"
                                     instanceId={useId()}
                                     isSearchable={true}
-                                    defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
-                                    options={mealOptionsDynamic}
+                                    value={{ value: values.foodItems[index].name, label: values.foodItems[index].name }}
+                                    //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
+                                    options={
+                                        //availableFoodItems
+                                        availableFoodItems.filter(item => {
+                                            for (let i = 0; i < values.foodItems.length; i++) {
+                                                if (item.value == values.foodItems[i].name) {
+                                                    //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
+                                                    return false;
+                                                }
+                                            }
+                                            return true;
+                                        })
+                                    }
                                     //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
-                                    onChange={(selectedOption) =>
-                                        form.setFieldValue(
-                                        `names.${index}.name`,
-                                        selectedOption.value,
-                                        )}
+                                    onChange={(selectedOption) => { 
+                                        form.setFieldValue(`foodItems.${index}.name`, selectedOption.value,)
+                                        //form.setFieldValue(`names.${index}.qtyOption`, 'Qty')
+                                        updateQtyOptionAndId(index, selectedOption.value, setFieldValue)
+                                        }}
                                 />)}
                                 </Field>
-                                <Field  name={`names.${index}.qty`} className={styles.input_group}/>
-                                <ErrorMessage name={`names.${index}.name`} />
-                                <ErrorMessage name={`names.${index}.qty`} />
+                                <Field  type='number' name={`foodItems.${index}.qty`} className={styles.input_group} 
+                                />
+                                <Field  name={`foodItems.${index}.qtyOption`} className={styles.input_group} readOnly/>
+                                <ErrorMessage name={`foodItems.${index}.name`} />
+                                <ErrorMessage name={`foodItems.${index}.qty`} />
                                 <div className="input-button m-2">
                                 <button
                                     type="button"
@@ -235,9 +299,9 @@ export default function Register(){
                                 </div>
                             </div>
                             ))}
-                            <button
-                            type="button"
-                            onClick={() => arrayHelpers.push({name: 'recipy1', qty: 1})} // insert an empty string at a position
+                        <button
+                        type="button"
+                        onClick={() => arrayHelpers.push({name: '', qty: 0, qtyOption: '', id: ''})} // insert an empty string at a position
                         >
                             Add input
                         </button>
@@ -248,13 +312,7 @@ export default function Register(){
                             </button>
                         </div>
 
-                        <div className="input-button" >
-                        <button type='reset' className={styles.button}>
-                            Reset
-                        </button>
                     </div>
-
-                        </div>
                     )}
                     />
                     
@@ -265,11 +323,8 @@ export default function Register(){
             )}
             </Formik>
 
-
-
-
-
         </Layout>
         
     )
+
 }

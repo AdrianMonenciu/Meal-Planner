@@ -29,6 +29,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/meal/meal.js"
+    ],
+    "/meal/mealEdit/[meal]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/meal/mealEdit/[meal].js"
     ]
   },
   "ampFirstPages": []
