@@ -8,12 +8,12 @@ export interface IUser {
   email: string;
   password: string;
   image: string;
-  dietPreference: string;
+  dietPreference: string[];
   userRole?: string
   WeeklyPlan: Schema.Types.ObjectId[];
   FoodItem: Schema.Types.ObjectId[];
   Meal: Schema.Types.ObjectId[];
-  ShoppingList: Schema.Types.ObjectId[];
+  //ShoppingList: Schema.Types.ObjectId[];
 }
 
 interface IUserMethods {
@@ -29,12 +29,12 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   email: {type: String, required:true },
   password: {type: String, required:true},
   image: {type: String, default: 'MealPlanner/suqkcwqrvwoag1july5l'},
-  dietPreference: {type:String, required:true},
+  dietPreference: [{type:String, required:true}],
   userRole: {type: String, default: 'user', required:true },
   WeeklyPlan: [{ type: Schema.Types.ObjectId, ref: 'WeeklyPlan' }],
   FoodItem: [{ type: Schema.Types.ObjectId, ref: 'FoodItem' }],
   Meal: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
-  ShoppingList: [{ type: Schema.Types.ObjectId, ref: 'ShoppingList' }]
+  //ShoppingList: [{ type: Schema.Types.ObjectId, ref: 'ShoppingList' }]
 },
 { timestamps: true },);
 

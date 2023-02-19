@@ -42,6 +42,7 @@ export default async function handler(
         let errors: boolean = false
         const newUser = new Users({ username, email, password: await hash(password, 12), dietPreference, image: public_id })
         //await newUser.save()
+        //console.log(newUser)
         let err = await newUser.save().catch(err => {err = err, errors = true});
 
         // const data = Users.create({ username: username, email: email, password : await hash(password, 12), dietPreference: dietPreference}, function(err, data){

@@ -8,6 +8,7 @@ import { authOptions } from '../auth/[...nextauth]';
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user';
 import Meal from '../../../models/Meal';
+import FoodItem from '../../../models/FoodItem';
 import { ApiError } from 'next/dist/server/api-utils';
 
 mongoose.set('strictQuery', false);
@@ -24,22 +25,29 @@ export default async function handler(
     if(!req.body) return res.status(404).json({message: "No form data!"});
       
     //const { username } = req.body;
-    const { mealName, limit } = req.query;
-    const mealNameString = mealName as string
-    const limitNumber = limit as unknown as number
-
+    const keys = Object.keys(req.query);
     let mongooseErr
+    let meals
+    //console.log(keys)
 
-    let meals = await Meal.find({name: new RegExp(mealNameString, 'i')}).sort({ createdAt: 'desc' })
-    .limit(limitNumber).populate("foodItems.foodId").exec().catch(err => mongooseErr = err);
-    //console.log(meals)
+    if (keys.includes('mealName')) {
+      const { mealName, limit } = req.query;
+      const mealNameString = mealName as string
+      const limitNumber = limit as unknown as number
+
+      meals = await Meal.find({name: new RegExp(mealNameString, 'i')}).sort({ createdAt: 'desc' })
+      .limit(limitNumber).populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
+      //console.log(meals)
+    } 
 
     if (mongooseErr) {
       res.status(500).json(`Database Error! - ${JSON.stringify(mongooseErr, null, 2)}`) //"Database Error!"
+      return
     }
 
     if(meals === undefined || !meals.length){
       res.status(500).json("No Meals Found!")
+      return
     } else {
       //return result;
       return res.status(201).send({results: meals})

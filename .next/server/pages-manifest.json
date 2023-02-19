@@ -2,7 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/api/meal/meal": "pages/api/meal/meal.js",
-  "/meal/meal": "pages/meal/meal.js",
-  "/meal/mealEdit/[meal]": "pages/meal/mealEdit/[meal].js"
+  "/meal/updatefoodItems": "pages/meal/updatefoodItems.js",
+  "/meal/updateMeals": "pages/meal/updateMeals.js",
+  "/api/meal/getFoodItems": "pages/api/meal/getFoodItems.js",
+  "/api/meal/getMeals": "pages/api/meal/getMeals.js"
 }

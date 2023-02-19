@@ -24,7 +24,7 @@ import 'react-toastify/dist/ReactToastify.css';
 interface FormValues {
     username: string;
     email: string;
-    dietPreference: string;
+    dietPreference: string[];
     oldPassword?: string;
     password: string;
     cpassword?: string;
@@ -122,7 +122,7 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
         username: Yup.string().required('Username required')
         .test("Empty space", "Invalid username, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
         email: Yup.string().email().required('Email required'),
-        dietPreference: Yup.string().required('Diet preference required'),
+        dietPreference: Yup.array(Yup.string()).min(1, 'Select at least 1 diet oprion!'),
         oldPassword: Yup.string().required('Old password required'),
         //.test("Match old password", "Incorrect password!", async function(value) {if (value) return await compare(value, user.password) }),
         password: Yup.string().required('Password required').min(8, 'Password must be min 8 characters')
@@ -194,13 +194,28 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
                     {/* {formik.errors.email && formik.touched.email ? <span className='text-rose-500'>{formik.errors.email}</span> : <></>} */}
                     
 
-                    <div className={`${styles.input_group} ${formik.values.dietPreference == '' && formik.touched.username ? 'border-rose-600' : ''}`}>
+                    { /* <div className={`${styles.input_group} ${formik.values.dietPreference == '' && formik.touched.username ? 'border-rose-600' : ''}`}>
                         <select name="dietPreference" value={formik.values.dietPreference} className={styles.input_text} {...formik.getFieldProps('dietPreference')}>
                             {<option value="" disabled={true}>Please Choose a diet plan</option>}
                             {dietPreferences.map((diet) => <option key={diet} value={diet}>{diet}</option>)}
                         </select>
                     </div>  
-                    {formik.errors.dietPreference && formik.touched.dietPreference ? <span className='text-rose-500'>{formik.errors.dietPreference}</span> : <></>}
+                    {formik.errors.dietPreference && formik.touched.dietPreference ? <span className='text-rose-500'>{formik.errors.dietPreference}</span> : <></>} */ }
+
+                    <div>
+                        <div className='text-left' id="checkbox-group">Dietary suitability:</div>
+                        <div className={styles.input_group} role="group" aria-labelledby="checkbox-group">
+                            {dietPreferences.map((diet) => 
+                            <label className='mr-3' key={diet}>
+                                <input className='mr-1' type="checkbox" name="dietPreference" {...formik.getFieldProps('dietPreference')} value={diet} 
+                                checked={(formik.values.dietPreference.indexOf(diet) > -1) ? true : false}
+                                /> {/* defaultChecked={(formik.values.diet.indexOf(diet) > -1) ? true : false}   */}
+                            {diet} </label>)}
+                        </div>
+
+                        {formik.errors.dietPreference && formik.touched.dietPreference ? <span className='text-rose-500'>{formik.errors.dietPreference}</span> : <></>}
+                    </div>
+
 
                     <div className={`${styles.input_group} ${formik.errors.oldPassword && formik.touched.oldPassword ? 'border-rose-600' : ''}`}>
                         <input 

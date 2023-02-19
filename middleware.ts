@@ -7,7 +7,8 @@ export default withAuth({
       // `/admin` requires admin role
       // console.log("Token from middleware")
       // console.log(token)
-      if (req.nextUrl.pathname === "/example/admin"|| req.nextUrl.pathname === "/user/updateUsers") {
+      if (req.nextUrl.pathname === "/example/admin"|| req.nextUrl.pathname === "/user/updateUsers" ||  req.nextUrl.pathname === "/meal/foodItem"
+      || req.nextUrl.pathname === "/meal/updatefoodItems" || req.nextUrl.pathname === "/meal/meal" || req.nextUrl.pathname === "/meal/updateMeals") {
         //return token?.userRole === "admin"
         return token?.userRole === "admin"
       }
@@ -18,4 +19,5 @@ export default withAuth({
   },
 })
 
-export const config = { matcher: ["/example/admin", "/example/me", "/example/client", "/user/update", "/user/updateUsers",] }
+export const config = { matcher: ["/example/admin", "/example/me", "/example/client", "/user/update", "/user/updateUsers",
+"/meal/foodItem", "/meal/updatefoodItems", "/meal/meal", "/meal/updateMeals"] }

@@ -126,7 +126,7 @@ export default async function handler(
         return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
       } else {
         //console.log(updatedFood)
-        res.status(201).json({ message: `Food item ${updatedMeal.name} updated successfuly!`, status : true, meal: mealPopulated})
+        res.status(201).json({ message: `Meal ${updatedMeal.name} updated successfuly!`, status : true, meal: mealPopulated})
       }
 
 

@@ -130,6 +130,12 @@ export default function Header() {
             <li className={styles.navItem}>
               <Link href="/meal/updatefoodItems">Update food</Link>
             </li>
+            <li className={styles.navItem}>
+              <Link href="/meal/meal">Add Meal</Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/meal/updateMeals">Update Meals</Link>
+            </li>
             </>
           )}
         </ul>
