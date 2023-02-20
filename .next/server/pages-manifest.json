@@ -2,8 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/meal/updatefoodItems": "pages/meal/updatefoodItems.js",
-  "/meal/updateMeals": "pages/meal/updateMeals.js",
-  "/api/meal/getFoodItems": "pages/api/meal/getFoodItems.js",
-  "/api/meal/getMeals": "pages/api/meal/getMeals.js"
+  "/meal/weeklyPlan": "pages/meal/weeklyPlan.js"
 }

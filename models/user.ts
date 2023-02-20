@@ -1,5 +1,8 @@
 import { Model, Schema } from "mongoose";
 import createModel from "./createModel";
+import { IFood, FoodModel, foodSchema } from './FoodItem';
+import { IMeal, MealModel, mealSchema } from './Meal';
+import { IWeeklyPlan, WeeklyPlanModel, weeklyPlanSchema } from './WeeklyPlan';
 
 export interface IUser {
   id: number;
@@ -20,9 +23,9 @@ interface IUserMethods {
   fullName(): string;
 }
 
-type UserModel = Model<IUser, {}, IUserMethods>;
+export type UserModel = Model<IUser, {}, IUserMethods>;
 
-const userSchema = new Schema<IUser, UserModel, IUserMethods>({
+export const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   id: {type: Number },
   _id: {type: Schema.Types.ObjectId, required: true, auto: true },
   username: {type: String, default: 'guest', required:true},
@@ -41,5 +44,9 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 userSchema.method("fullName", function fullName() {
   return this.username + " " + this.email;
 });
+
+createModel<IFood, FoodModel>("FoodItem", foodSchema)
+createModel<IMeal, MealModel>("Meal", mealSchema)
+createModel<IWeeklyPlan, WeeklyPlanModel>("WeeklyPlan", weeklyPlanSchema)
 
 export default createModel<IUser, UserModel>("Users", userSchema);

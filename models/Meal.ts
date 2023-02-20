@@ -1,5 +1,7 @@
 import { Model, Schema } from "mongoose";
 import createModel from "./createModel";
+import { IFood, FoodModel, foodSchema } from './FoodItem';
+import { IUser, UserModel, userSchema } from './user';
 
 export interface IMeal {
   _id: Schema.Types.ObjectId;
@@ -16,9 +18,9 @@ interface IMealMethods {
   fullName(): string;
 }
 
-type MealModel = Model<IMeal, {}, IMealMethods>;
+export type MealModel = Model<IMeal, {}, IMealMethods>;
 
-const mealSchema = new Schema<IMeal, MealModel, IMealMethods>({
+export const mealSchema = new Schema<IMeal, MealModel, IMealMethods>({
   _id: {type: Schema.Types.ObjectId, required: true, auto: true },
   name: {type: String, required:true},
   diet: [{type: String, required:true}],
@@ -33,5 +35,8 @@ const mealSchema = new Schema<IMeal, MealModel, IMealMethods>({
 mealSchema.method("nameReturn", function nameReturn() {
   return this.name;
 });
+
+createModel<IFood, FoodModel>("FoodItem", foodSchema)
+//createModel<IUser, UserModel>("Users", userSchema)
 
 export default createModel<IMeal, MealModel>("Meal", mealSchema);

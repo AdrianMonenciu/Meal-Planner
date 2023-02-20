@@ -25,15 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/meal/updateMeals": [
+    "/meal/weeklyPlan": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/meal/updateMeals.js"
-    ],
-    "/meal/updatefoodItems": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/meal/updatefoodItems.js"
+      "static/chunks/pages/meal/weeklyPlan.js"
     ]
   },
   "ampFirstPages": []

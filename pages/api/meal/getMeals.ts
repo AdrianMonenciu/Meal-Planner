@@ -36,9 +36,19 @@ export default async function handler(
       const limitNumber = limit as unknown as number
 
       meals = await Meal.find({name: new RegExp(mealNameString, 'i')}).sort({ createdAt: 'desc' })
-      .limit(limitNumber).populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
+      .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)
-    } 
+    } else {
+      let queryArray = [];
+      if (req.query.diets) {
+        queryArray = Array.isArray(req.query.diets)
+          ? req.query.diets
+          : req.query.diets.split(',');
+      }
+      meals = await Meal.find({diet: {"$in": queryArray}})
+      .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
+      //console.log(meals)
+    }
 
     if (mongooseErr) {
       res.status(500).json(`Database Error! - ${JSON.stringify(mongooseErr, null, 2)}`) //"Database Error!"
