@@ -44,7 +44,7 @@ export interface IWeeklyPlan {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  shoppingList: { foodItem: string, qty: number, isPurchased: boolean }[]
+  shoppingList: { foodItem: string, qty: number, qtyOption: string, isPurchased: boolean }[]
 }
 
 interface IWeeklyPlanMethods {
@@ -55,8 +55,8 @@ export type WeeklyPlanModel = Model<IWeeklyPlan, {}, IWeeklyPlanMethods>;
 
 export const weeklyPlanSchema = new Schema<IWeeklyPlan, WeeklyPlanModel, IWeeklyPlanMethods>({
   _id: {type: Schema.Types.ObjectId, required: true, auto: true },
-  year: [{type: Number, required:true}],
-  weekNr: [{type: Number, required:true}],
+  year: {type: Number, required:true},
+  weekNr: {type: Number, required:true},
   owner: { type: Schema.Types.ObjectId, ref: 'Users' },
   diet: [{type: String, required:true}],
   mondayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
@@ -94,7 +94,7 @@ export const weeklyPlanSchema = new Schema<IWeeklyPlan, WeeklyPlanModel, IWeekly
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  shoppingList: [{ foodItem: String, qty: Number, isPurchased: Boolean }]
+  shoppingList: [{ foodItem: String, qty: Number, qtyOption: String, isPurchased: Boolean }]
 },
 { timestamps: true },);
 

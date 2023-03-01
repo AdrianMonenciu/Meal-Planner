@@ -66,7 +66,7 @@ export default function Register(){
         }
 
         const meal_api_body: IMeal_api_body = {
-            name: formik.values.name,
+            name: formik.values.name.charAt(0).toUpperCase() + formik.values.name.slice(1).toLowerCase(), //formik.values.name
             diet: currentDietPlan,
             foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
         }

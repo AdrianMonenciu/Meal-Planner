@@ -3,7 +3,6 @@ import Layout_login from '../../layout_login/layout_login'
 import Link from 'next/link'
 import styles from '../../styles/Form.module.css';
 import Image from 'next/image'
-import { HiAtSymbol, HiFingerPrint, HiOutlineUser } from "react-icons/hi";
 import { useEffect, useState, useRef, useId } from 'react';
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
 import router, { useRouter } from 'next/router';
@@ -21,6 +20,9 @@ import Select from 'react-select';
 import { authOptions } from "../api/auth/[...nextauth]"
 import { unstable_getServerSession } from 'next-auth';
 import type { Session } from "next-auth"
+import {DailyInputFieldArray} from './weeklyPlan-SubForm'
+import connectMongo from '../../database/connectdb'
+//import ShoppingList from './weeklyPlan-SubForm'
 
 interface ServiceInit {
     status: 'init';
@@ -90,7 +92,8 @@ interface FormValues {
     saturdaySnaks: IfoodItemsForm[],
     sundayMeals: IMealsForm[],
     sundaySnaks: IfoodItemsForm[],
-    shoppingList: [{ foodItem: string, qty: number, isPurchased: boolean }]
+    shoppingList: [{ foodItem: string, qty: number, qtyOption: string, isPurchased: boolean }],
+    shoppingListIsUpdated: boolean
 }
 
 interface IfoodItemsDataBase {
@@ -120,7 +123,7 @@ interface IweeklyPlan_api_body {
     saturdaySnaks: IfoodItemsDataBase[],
     sundayMeals: IMealsDataBase[],
     sundaySnaks: IfoodItemsDataBase[],
-    shoppingList: [{ foodItem: string, qty: number, isPurchased: boolean }]
+    shoppingList: [{ foodItem: string, qty: number, qtyOption: string, isPurchased: boolean }]
 }
 
 
@@ -129,10 +132,6 @@ export default function UpdateFood(weeklyPlanProps){
     const [mealItems, setMealItems] = useState<Service<IWeklyPlan>>({status: 'loading'})
 
     const formik2Ref = useRef<any>();
-
-    const mealOptions = [
-        { value: "", label: "" }, 
-    ];
 
     //console.log(mealItemProps.response.payload.results[0])
 
@@ -167,7 +166,8 @@ export default function UpdateFood(weeklyPlanProps){
         saturdaySnaks: [{name: '', qty: 0, qtyOption: '', id: ''}],
         sundayMeals: [{name: '', id: ''}],
         sundaySnaks: [{name: '', qty: 0, qtyOption: '', id: ''}],
-        shoppingList: [{ foodItem: '', qty: 0, isPurchased: false }]
+        shoppingList: [{ foodItem: '', qty: 0, qtyOption: '', isPurchased: false }],
+        shoppingListIsUpdated: false
     }
 
     const validationSchema = Yup.object().shape({
@@ -179,76 +179,147 @@ export default function UpdateFood(weeklyPlanProps){
             Yup.object().shape({
                 name: Yup.string().required(),
                 qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
+        })),
+        tuesdayMeals: Yup.array().required().max(5, 'Maximum 5 meals are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required('Name field is required')
+        })),
+        tuesdaySnaks: Yup.array().required().max(10, 'Maximum 10 snacks are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required(),
+                qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
+        })),
+        wednesdayMeals: Yup.array().required().max(5, 'Maximum 5 meals are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required('Name field is required')
+        })),
+        wednesdaySnaks: Yup.array().required().max(10, 'Maximum 10 snacks are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required(),
+                qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
+        })),
+        thursdayMeals: Yup.array().required().max(5, 'Maximum 5 meals are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required('Name field is required')
+        })),
+        thursdaySnaks: Yup.array().required().max(10, 'Maximum 10 snacks are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required(),
+                qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
+        })),
+        fridayMeals: Yup.array().required().max(5, 'Maximum 5 meals are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required('Name field is required')
+        })),
+        fridaySnaks: Yup.array().required().max(10, 'Maximum 10 snacks are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required(),
+                qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
+        })),
+        saturdayMeals: Yup.array().required().max(5, 'Maximum 5 meals are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required('Name field is required')
+        })),
+        saturdaySnaks: Yup.array().required().max(10, 'Maximum 10 snacks are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required(),
+                qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
+        })),
+        sundayMeals: Yup.array().required().max(5, 'Maximum 5 meals are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required('Name field is required')
+        })),
+        sundaySnaks: Yup.array().required().max(10, 'Maximum 10 snacks are allowed!').of(
+            Yup.object().shape({
+                name: Yup.string().required(),
+                qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
         }))
     });
 
 
 
     async function onSubmit(values: FormValues){
-        //formik2Ref.current.resetForm();
-        // formik2Ref.current.setValues(
-        //     {foodItems: [{name: '', qty: 0, qtyOption: 'Quantity', id: ''}]}
-        // )
         console.log(values)
+
+        const valuesAPI = {
+            values: values
+        }
+
+        const options = {
+            method: "POST",
+            headers : { 'Content-Type': 'application/json'},
+            body: JSON.stringify(valuesAPI)
+        }
+
+        await fetch('/api/meal/weeklyPlan', options)
+        .then(res => res.json())
+        .then((data) => {
+            console.log(data)
+            toast(data.message)
+            //if(data) router.push('/')
+        })
     }
 
-    // async function onSubmit2(values: FormValues2){
-    //     //console.log(values)
-    //     //console.log(formik.values)
-
-    //     interface IMeal_api_body {
-    //         //name: string;
-    //         diet: string[];
-    //         foodItems: {
-    //             foodId: string,
-    //             qty: number
-    //         }[];
-    //         id: Schema.Types.ObjectId
-    //     }
-
-    //     const meal_api_body: IMeal_api_body = {
-    //         //name: values.name,
-    //         diet: currentDietPlan,
-    //         foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty})),
-    //         id: mealItemProps.response.payload.results[0]._id
-    //     }
-
-    //     console.log(meal_api_body)
-
-    //     const options = {
-    //         method: "PUT",
-    //         headers : { 'Content-Type': 'application/json'},
-    //         body: JSON.stringify(meal_api_body)
-    //     }
-
-    //     await fetch('/api/meal/meal', options)
-    //     .then(res => res.json())
-    //     .then((data) => {
-    //         console.log(data)
-    //         toast(data.message)
-    //         //if(data) router.push('/')
-    //     })
-    // }
-
-
-
-
-
-    function updateQtyOptionAndId (index, selectedOption, setFieldValue, currentField: string) {
-        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
-        const currentFoodItem = weeklyPlanProps.response.payload.weeklyPlanData.availableFoodItems.find(food => food.name === selectedOption)
-        //console.log(currentFoodItem)
-        setFieldValue(`${currentField}.${index}.qtyOption`, currentFoodItem.foodMeasureUnit)
-        setFieldValue(`${currentField}.${index}.id`, currentFoodItem._id)
-    };
-
-    function updateId (index, selectedOption, setFieldValue, currentField: string) {
-        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
-        const currentMeal = weeklyPlanProps.response.payload.weeklyPlanData.availableMeals.find(food => food.name === selectedOption)
-        //console.log(currentFoodItem)
-        setFieldValue(`${currentField}.${index}.id`, currentMeal._id)
-    };
       
+    function generateShoppingList(weeklyPlanValues, setFieldValue) {  //currentAvailableMeals
+        const shoppingList = [];
+      
+        // Add items from snaks for each day
+        for (const day of Object.keys(weeklyPlanValues)) {
+          if (day.endsWith("Snaks")) {
+            const snaks = weeklyPlanValues[day];
+            for (const snak of snaks) {
+              const existingItem = shoppingList.find((item) => item.foodItem === snak.name);
+              if (existingItem) {
+                existingItem.qty += snak.qty;
+              } else {
+                shoppingList.push({ foodItem: snak.name, qty: snak.qty, qtyOption: snak.qtyOption, isPurchased: false });
+              }
+            }
+          }
+        }
+      
+        // Add items from meals for each day
+        for (const day of Object.keys(weeklyPlanValues)) {
+          if (day.endsWith("Meals")) {
+            const meals = weeklyPlanValues[day];
+            for (const mealName of meals) {
+              const meal = weeklyPlanProps.response.payload.weeklyPlanData.availableMeals.find((m) => m.name === mealName.name);
+              if (meal) {
+                for (const foodItem of meal.foodItems) {
+                  const existingItem = shoppingList.find((item) => item.foodItem === foodItem.foodId.name);
+                  if (existingItem) {
+                    existingItem.qty += foodItem.qty;
+                  } else {
+                    shoppingList.push({ foodItem: foodItem.foodId.name, qty: foodItem.qty, qtyOption: foodItem.foodId.foodMeasureUnit, isPurchased: false });
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // Define the old and new shopping lists
+        let oldShoppingList = weeklyPlanValues.shoppingList;
+        let newShoppingList = shoppingList;
+
+        newShoppingList.forEach(newItem => {
+            let foundItem = oldShoppingList.find(oldItem => oldItem.foodItem === newItem.foodItem);
+            if (foundItem) {
+                if (foundItem.qty === newItem.qty) {
+                    newItem.isPurchased = foundItem.isPurchased;
+                }
+            }
+        })
+      
+        //console.log(shoppingList)
+        console.log(newShoppingList)
+
+        setFieldValue(`shoppingList`, newShoppingList)
+        setFieldValue(`shoppingListIsUpdated`, true)
+      }
+      
+
 
 
     return (
@@ -273,7 +344,7 @@ export default function UpdateFood(weeklyPlanProps){
                     onSubmit={onSubmit}
                     validationSchema={validationSchema}
                     >
-                    {({ values, handleSubmit, handleChange, errors, resetForm,  setFieldValue}) => (
+                    {({ values, handleSubmit, handleChange, errors, resetForm,  setFieldValue, isSubmitting}) => (
                         <>
                         {/*<section className='mx-auto flex flex-col gap-3'>*/}
                             <div className="title">
@@ -292,7 +363,6 @@ export default function UpdateFood(weeklyPlanProps){
                                     value={{ value: values.weekNr, label: values.weekNr }}
                                     //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
                                     options={
-                                        //availableFoodItems
                                         weeklyPlanProps.response.payload.weeklyPlanData.availableWeekNumbers.map((week) => ({value : week, label : week}))
                                     }
                                     //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
@@ -300,132 +370,41 @@ export default function UpdateFood(weeklyPlanProps){
                                         form.setFieldValue(`weekNr`, selectedOption.value,)}
                                     }
                                 />)}
-                                </Field>
-                            <FieldArray name="mondayMeals" 
-                            render={arrayHelpers => (
-                                <div>
-                                    <p className='w-3/4 mx-auto text-gray-400'>Monday Meals</p>
-                                {values.mondayMeals.map((name, index) => (
-                                    <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
-                                        {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                                        <Field name={`mondayMeals[${index}].name`}>
-                                        {({ field, form }) => (
-                                        <Select
-                                            className="select-wrap w-500"
-                                            classNamePrefix="select-box"
-                                            instanceId={useId()}
-                                            isSearchable={true}
-                                            value={{ value: values.mondayMeals[index].name, label: values.mondayMeals[index].name }}
-                                            //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
-                                            options={
-                                                //availableFoodItems
-                                                weeklyPlanProps.response.payload.weeklyPlanData.mealsSelectOptions.filter(item => {
-                                                    for (let i = 0; i < values.mondayMeals.length; i++) {
-                                                        if (item.value == values.mondayMeals[i].name) {
-                                                            //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
-                                                            return false;
-                                                        }
-                                                    }
-                                                    return true;
-                                                })
-                                            }
-                                            //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
-                                            onChange={(selectedOption) => { 
-                                                form.setFieldValue(`mondayMeals.${index}.name`, selectedOption.value,)
-                                                //form.setFieldValue(`names.${index}.qtyOption`, 'Qty')
-                                                updateId(index, selectedOption.value, setFieldValue, 'mondayMeals')
-                                                }}
-                                        />)}
-                                        </Field>
+                            </Field>
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="monday" />
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="tuesday" />
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="wednesday" />
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="thursday" />
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="friday" />
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="saturday" />
+                            <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} setFieldValue={setFieldValue} fieldName="sunday" />
 
-                                        <ErrorMessage name={`mondayMeals.${index}.name`} />
-                                        <div className="input-button m-2">
-                                        <button
-                                            type="button"
-                                            className={styles.button}
-                                            onClick={() => arrayHelpers.remove(index)} // remove a name from the list
-                                        >
-                                            Remove input
-                                        </button>
-                                        </div>
-                                    </div>
-                                    ))}
+                            <div className="input-button m-2">
                                 <button
-                                type="button"
-                                onClick={() => arrayHelpers.push({name: '', id: ''})} // insert an empty string at a position
+                                    type="button"
+                                    className={styles.button}
+                                    onClick={() => generateShoppingList(values, setFieldValue)}
                                 >
-                                    Add input
+                                    Update Shopping List
                                 </button>
-                            </div>
-                            )}
-                            />
+                                </div>
 
-                            <FieldArray
-                            name="mondaySnaks"
-                            render={arrayHelpers => (
-                                <div>
-                                    <p className='w-3/4 mx-auto text-gray-400'>Monday Snacks</p>
-                                {values.mondaySnaks.map((name, index) => (
-                                    <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
-                                        {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                                        <Field name={`mondaySnaks[${index}].name`}>
-                                        {({ field, form }) => (
-                                        <Select
-                                            className="select-wrap w-500"
-                                            classNamePrefix="select-box"
-                                            instanceId={useId()}
-                                            isSearchable={true}
-                                            value={{ value: values.mondaySnaks[index].name, label: values.mondaySnaks[index].name }}
-                                            //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
-                                            options={
-                                                //availableFoodItems
-                                                weeklyPlanProps.response.payload.weeklyPlanData.foodItemsSelectOptions.filter(item => {
-                                                    for (let i = 0; i < values.mondaySnaks.length; i++) {
-                                                        if (item.value == values.mondaySnaks[i].name) {
-                                                            //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
-                                                            return false;
-                                                        }
-                                                    }
-                                                    return true;
-                                                })
-                                            }
-                                            //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
-                                            onChange={(selectedOption) => { 
-                                                form.setFieldValue(`mondaySnaks.${index}.name`, selectedOption.value,)
-                                                //form.setFieldValue(`names.${index}.qtyOption`, 'Qty')
-                                                updateQtyOptionAndId(index, selectedOption.value, setFieldValue, `mondaySnaks`)
-                                                }}
-                                        />)}
-                                        </Field>
-                                        <Field  type='number' name={`mondaySnaks.${index}.qty`} className={styles.input_group} 
-                                        />
-                                        <Field  name={`mondaySnaks.${index}.qtyOption`} className={styles.input_group} readOnly/>
-                                        <ErrorMessage name={`mondaySnaks.${index}.name`} />
-                                        <ErrorMessage name={`mondaySnaks.${index}.qty`} />
-                                        <div className="input-button m-2">
-                                        <button
-                                            type="button"
-                                            className={styles.button}
-                                            onClick={() => arrayHelpers.remove(index)} // remove a name from the list
-                                        >
-                                            Remove input
-                                        </button>
-                                        </div>
-                                    </div>
-                                    ))}
-                                <button
-                                type="button"
-                                onClick={() => arrayHelpers.push({name: '', qty: 0, qtyOption: '', id: ''})} // insert an empty string at a position
-                                >
-                                    Add input
-                                </button>
-                            </div>
-                            )}
-                            />
+                            <p className='w-3/4 mx-auto text-gray-400'>{`Shopping List`}</p>
+                            {values.shoppingList.map((name, index) => ( 
+                                <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
+                                    <Field  name={`shoppingList.${index}.foodItem`} className={styles.input_group} readOnly/>
+                                    <Field  name={`shoppingList.${index}.qty`} className={styles.input_group} readOnly/>
+                                    <Field  name={`shoppingList.${index}.qtyOption`} className={styles.input_group} readOnly/>
+                                    <label> Is puchased: 
+                                        <Field  type="checkbox" name={`shoppingList.${index}.isPurchased`} className={styles.input_group}/>
+                                    </label>
+                                </div>
+                            ))}
 
                             {/* login buttons */}
+                            {!values.shoppingListIsUpdated ? <div>Please update the shopping list before submitting!</div> : <></>}
                             <div className="input-button">
-                                <button type='submit' className={styles.button}>
+                                <button type='submit' className={styles.button} disabled={!values.shoppingListIsUpdated}>
                                     Submit
                                 </button>
                             </div>                          
@@ -532,27 +511,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         .catch(err => responseError = { status: 'error', error: `Error getting the Meals! ${err}`});
     }
 
-    function getWeekNr(date) {
-        const firstDayOfYear: any = new Date(date.getFullYear(), 0, 1);
-        const daysSinceFirstDayOfYear = (date - firstDayOfYear) / 86400000; // 86400000 = number of milliseconds in a day
-        const weekNr = Math.ceil((daysSinceFirstDayOfYear + firstDayOfYear.getDay() + 1) / 7);
-        return weekNr;
+    function getWeekNr() {
+        const now: Date = new Date();
+        const onejan: Date = new Date(now.getFullYear(), 0, 1);
+        const weekNumber: number = Math.ceil((((now.valueOf() - onejan.valueOf()) / 86400000) + onejan.getDay() + 1) / 7) ?? 0;
+ 
+        return weekNumber;
     }
       
-    const currentWeekNr = getWeekNr(new Date());
+    const currentWeekNr = getWeekNr();
+    // console.log(currentWeekNr)
     const weeksToCheck = [currentWeekNr, currentWeekNr + 1, currentWeekNr + 2, currentWeekNr + 3];
     //const nonExistingWeekNumbers = nonExistingWeeks.map(weekNr => weekNr.toString());
 
 
     const sessionObj: Session | null = await unstable_getServerSession(context.req, context.res, authOptions)
     const userDietPreference: string[] = sessionObj?.user.dietPreference
+    const currentYear=  new Date().getFullYear()
+    connectMongo()
+    const existingWeeks = await WeeklyPlan.distinct('weekNr', { owner: String(sessionObj.user._id), year: currentYear,
+        weekNr: { $in: weeksToCheck } });
+    //console.log(existingWeeks)
+    const nonExistingWeeks = weeksToCheck.filter(weekNr => !existingWeeks.includes(weekNr));
 
     if (!userDietPreference) {
         responseError = { status: 'error', error: "Error getting the user's diet preferences!"}
+    }else if (nonExistingWeeks.length == 0) {
+        responseError = { status: 'error', error: "Week plan created for all available weeks!"}
     } else {
-        const existingWeeks = await WeeklyPlan.distinct('weekNr', { _id: String(sessionObj.user._id), year:  new Date().getFullYear(), 
-            weekNr: { $in: weeksToCheck } });
-        const nonExistingWeeks = weeksToCheck.filter(weekNr => !existingWeeks.includes(weekNr));
         responseLoaded.status = 'loaded' 
         responseLoaded.payload.weeklyPlanData.availableWeekNumbers = nonExistingWeeks
         responseLoaded.payload.weeklyPlanData.diet = userDietPreference
