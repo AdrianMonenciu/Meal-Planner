@@ -20,4 +20,4 @@ export default withAuth({
 })
 
 export const config = { matcher: ["/example/admin", "/example/me", "/example/client", "/user/update", "/user/updateUsers",
-"/meal/foodItem", "/meal/updatefoodItems", "/meal/meal", "/meal/updateMeals"] }
+"/meal/foodItem", "/meal/updatefoodItems", "/meal/meal", "/meal/updateMeals", "/meal/updateWeeklyPlan", "/meal/weeklyPlan"] }

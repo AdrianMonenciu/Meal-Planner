@@ -111,25 +111,35 @@ export default async function handler(
       var mongoose = require('mongoose');
       let errors: boolean = false
       const filter = { _id: values.id };
+      let update
 
-      const update = {
-        diet: values.diet,
-        mondayMeals: values.mondayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        mondaySnaks: values.mondaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        tuesdayMeals: values.tuesdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        tuesdaySnaks: values.tuesdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        wednesdayMeals: values.wednesdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        wednesdaySnaks: values.wednesdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        thursdayMeals: values.thursdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        thursdaySnaks: values.thursdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        fridayMeals: values.fridayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        fridaySnaks: values.fridaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        saturdayMeals: values.saturdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        saturdaySnaks: values.saturdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        sundayMeals: values.sundayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
-        sundaySnaks: values.sundaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
-        shoppingList: values.shoppingList,
-       };
+      if (values.mondayMeals != undefined) {
+        console.log('Update full weekly plan')
+        update = {
+          diet: values.diet,
+          mondayMeals: values.mondayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          mondaySnaks: values.mondaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          tuesdayMeals: values.tuesdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          tuesdaySnaks: values.tuesdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          wednesdayMeals: values.wednesdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          wednesdaySnaks: values.wednesdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          thursdayMeals: values.thursdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          thursdaySnaks: values.thursdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          fridayMeals: values.fridayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          fridaySnaks: values.fridaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          saturdayMeals: values.saturdayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          saturdaySnaks: values.saturdaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          sundayMeals: values.sundayMeals.map(({id}) => (mongoose.mongo.ObjectId(id))),
+          sundaySnaks: values.sundaySnaks.map(({id, qty}) => ({foodId: mongoose.mongo.ObjectId(id), qty: qty})),
+          shoppingList: values.shoppingList,
+         };
+      } else {
+        console.log('Update shopping list only')
+        update = {
+          diet: values.diet,
+          shoppingList: values.shoppingList,
+         };
+      }
 
       var err = await WeeklyPlan.findOneAndUpdate(filter, {$set: update}, {
         new: true

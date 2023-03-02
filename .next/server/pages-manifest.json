@@ -2,12 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/meal/updateWeeklyPlan": "pages/meal/updateWeeklyPlan.js",
-  "/meal/weeklyPlan": "pages/meal/weeklyPlan.js",
   "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
-  "/api/meal/getMeals": "pages/api/meal/getMeals.js",
-  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js",
-  "/meal/weeklyPlanEdit/[weeklyPlanId]": "pages/meal/weeklyPlanEdit/[weeklyPlanId].js",
-  "/api/meal/getWeeklyPlan": "pages/api/meal/getWeeklyPlan.js"
+  "/meal/updateWeeklyPlan": "pages/meal/updateWeeklyPlan.js"
 }

@@ -167,4 +167,50 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
     );
 };
 
+export const DailyInputFieldArrayView = ({ values, weeklyPlanProps,  fieldName }) => {
+    const fieldNameUpper = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
+    const fieldNameMeal = fieldName + "Meals"
+    const fieldNameSnaks = fieldName + "Snaks"
+
+    return (
+    <>
+        <FieldArray
+        name={`${fieldNameMeal}`}
+        render={(arrayHelpers) => (
+            <div>
+            <p className="w-3/4 mx-auto text-gray-400">{`${fieldNameUpper} Meals`}</p>
+            {values[fieldNameMeal].map((name, index) => (
+                <div
+                key={index}
+                className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}
+                >
+                    <Field  name={`${fieldNameMeal}[${index}].name`} className={styles.input_group} readOnly/>
+                </div>
+            ))}
+            </div>
+        )}
+        />
+
+        <FieldArray
+        name={`${fieldNameSnaks}`}
+        render={arrayHelpers => (
+            <div>
+                <p className='w-3/4 mx-auto text-gray-400'>{`${fieldNameUpper} Snacks`}</p>
+            {values[fieldNameSnaks].map((name, index) => (
+                <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
+                    {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
+                    <Field name={`${fieldNameSnaks}[${index}].name`} className={styles.input_group} readOnly/>
+                    <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`} className={styles.input_group} readOnly/>
+                    <Field  name={`${fieldNameSnaks}.${index}.qtyOption`} className={styles.input_group} readOnly/>
+                    <div className="input-button m-2">
+                    </div>
+                </div>
+                ))}
+        </div>
+        )}
+        />
+    </>
+    );
+};
+
 //export default DailyInputFieldArray;

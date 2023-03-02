@@ -148,10 +148,10 @@ export default function ApiExamplePage() {
                 <button onClick={() => router.push(`/meal/weeklyPlanEdit/${weeklyPlan._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
                   EDIT
                 </button>
-                <button onClick={() => router.push(`/meal/weeklyPlanEdit/${weeklyPlan._id}`)} className={`bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`}> 
+                <button onClick={() => router.push(`/meal/shoppingListEdit/${weeklyPlan._id}`)} className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2`}> 
                   EDIT SHOPPING LIST
                 </button>
-                <button onClick={() => router.push(`/meal/weeklyPlanEdit/${weeklyPlan._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
+                <button onClick={() => router.push(`/meal/weeklyPlanView/${weeklyPlan._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
                   VIEW
                 </button>
               </span>

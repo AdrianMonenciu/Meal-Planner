@@ -202,7 +202,7 @@ export default function UpdateWeeklyPlan(weeklyPlanProps){
         : [{ foodItem: '', qty: 0, qtyOption: '', isPurchased: false }],
 
         shoppingListIsUpdated: true,
-        id: currentWeeklyPlan._id
+        id: weeklyPlanProps.response.status == 'loaded' ? currentWeeklyPlan._id : ''
     }
     //console.log(initialValues)
 

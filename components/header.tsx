@@ -136,6 +136,12 @@ export default function Header() {
             <li className={styles.navItem}>
               <Link href="/meal/updateMeals">Update Meals</Link>
             </li>
+            <li className={styles.navItem}>
+              <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
+            </li>
             </>
           )}
         </ul>
