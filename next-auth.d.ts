@@ -24,7 +24,7 @@ import NextAuth from "next-auth"
   declare module "next-auth" {
     interface Session {
       user: {
-        _id: Schema.Types.ObjectId;
+        _id?: Schema.Types.ObjectId;
         email?: string
         username?: string
         userRole?: string

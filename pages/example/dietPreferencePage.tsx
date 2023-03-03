@@ -1,7 +1,7 @@
 import { useState } from "react"
 import {dietPreferences} from "../../lib/dietPreference"
 
-export default function testPage() {
+export default function TestPage() {
 
 // Using state to keep track of what the selected fruit is
 let [dietPref, setDietPref] = useState("")

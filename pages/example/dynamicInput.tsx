@@ -16,6 +16,8 @@ import { Input } from 'postcss';
 
 
 export default function Login(){
+  const instanceId = useId();
+
   const mealOptions = [
     { value: "breakfast", label: "breakfast" },
     { value: "brunch", label: "brunch" },
@@ -109,7 +111,7 @@ export default function Login(){
                           <Select
                             className="select-wrap"
                             classNamePrefix="select-box"
-                            instanceId={useId()}
+                            instanceId={instanceId}
                             defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
                             options={mealOptions}
                             onChange={(selectedOption) =>
