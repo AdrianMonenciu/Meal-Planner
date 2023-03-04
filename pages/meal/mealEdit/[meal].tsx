@@ -44,6 +44,8 @@ interface IMeals {
 }
 
 export default function UpdateFood(mealItemProps){
+    const instanceId = useId();
+
     const [mealItems, setMealItems] = useState<Service<IMeals>>({status: 'loading'})
 
     const formik2Ref = useRef<any>();
@@ -306,7 +308,7 @@ export default function UpdateFood(mealItemProps){
                                         <Select
                                             className="select-wrap w-500"
                                             classNamePrefix="select-box"
-                                            instanceId={useId()}
+                                            instanceId={instanceId}
                                             isSearchable={true}
                                             value={{ value: values.foodItems[index].name, label: values.foodItems[index].name }}
                                             //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}

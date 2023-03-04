@@ -17,7 +17,37 @@
       "page": "/",
       "matchers": [
         {
-          "regexp": "^/.*$"
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/example\\/admin(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/example\\/me(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/example\\/client(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/user\\/update(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/user\\/updateUsers(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/meal\\/foodItem(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/meal\\/updatefoodItems(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/meal\\/meal(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/meal\\/updateMeals(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/meal\\/updateWeeklyPlan(.json)?[\\/#\\?]?$"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/meal\\/weeklyPlan(.json)?[\\/#\\?]?$"
         }
       ],
       "wasm": [],

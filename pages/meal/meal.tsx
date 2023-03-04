@@ -17,6 +17,8 @@ import Select from 'react-select';
 import { IFood } from '../../models/FoodItem';
 
 export default function Register(){
+    const instanceId = useId();
+
     const formik2Ref = useRef<any>();  
 
     const mealOptions = [
@@ -259,7 +261,7 @@ export default function Register(){
                                 <Select
                                     className="select-wrap"
                                     classNamePrefix="select-box"
-                                    instanceId={useId()}
+                                    instanceId={instanceId}
                                     isSearchable={true}
                                     value={{ value: values.foodItems[index].name, label: values.foodItems[index].name }}
                                     //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}

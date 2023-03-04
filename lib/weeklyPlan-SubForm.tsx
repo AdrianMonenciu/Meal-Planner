@@ -1,14 +1,16 @@
 
-import styles from '../../styles/Form.module.css';
+import styles from '../styles/Form.module.css';
 import { useEffect, useState, useRef, useId } from 'react';
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
 import Select from 'react-select';
 import React from 'react';
 
 export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  fieldName }) => {
-    const fieldNameUpper = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
-    const fieldNameMeal = fieldName + "Meals"
-    const fieldNameSnaks = fieldName + "Snaks"
+    const fieldNameUpper = fieldName ? fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase() : '';
+    const fieldNameMeal = fieldName ? fieldName + "Meals" : 'MondayMeals';
+    const fieldNameSnaks = fieldName ? fieldName + "Snaks" : 'MondaySnaks';
+    const instanceId = useId();
+    const instanceId2 = useId();
 
     function updateQtyOptionAndId (index, selectedOption, setFieldValue, currentField: string) {
         //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
@@ -32,7 +34,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
         render={(arrayHelpers) => (
             <div>
             <p className="w-3/4 mx-auto text-gray-400">{`${fieldNameUpper} Meals`}</p>
-            {values[fieldNameMeal].map((name, index) => (
+            {values[fieldNameMeal] && values[fieldNameMeal].map((name, index) => (
                 <div
                 key={index}
                 className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}
@@ -42,7 +44,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                     <Select
                         className="select-wrap w-500"
                         classNamePrefix="select-box"
-                        instanceId={useId()}
+                        instanceId={instanceId}
                         isSearchable={true}
                         value={{
                         value: values[fieldNameMeal][index].name,
@@ -103,7 +105,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                     <Select
                         className="select-wrap w-500"
                         classNamePrefix="select-box"
-                        instanceId={useId()}
+                        instanceId={instanceId2}
                         isSearchable={true}
                         value={{ value: values[fieldNameSnaks][index].name, label: values[fieldNameSnaks][index].name }}
                         //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
@@ -213,4 +215,4 @@ export const DailyInputFieldArrayView = ({ values, weeklyPlanProps,  fieldName }
     );
 };
 
-//export default DailyInputFieldArray;
+export default DailyInputFieldArray;

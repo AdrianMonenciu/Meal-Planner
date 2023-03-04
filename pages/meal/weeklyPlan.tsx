@@ -20,7 +20,7 @@ import Select from 'react-select';
 import { authOptions } from "../api/auth/[...nextauth]"
 import { unstable_getServerSession } from 'next-auth';
 import type { Session } from "next-auth"
-import {DailyInputFieldArray} from './weeklyPlan-SubForm'
+import {DailyInputFieldArray} from '../../lib/weeklyPlan-SubForm'
 import connectMongo from '../../database/connectdb'
 //import ShoppingList from './weeklyPlan-SubForm'
 
@@ -130,6 +130,7 @@ interface IweeklyPlan_api_body {
 
 export default function UpdateFood(weeklyPlanProps){
     const [mealItems, setMealItems] = useState<Service<IWeklyPlan>>({status: 'loading'})
+    const instanceId = useId();
 
     const formik2Ref = useRef<any>();
 
@@ -358,7 +359,7 @@ export default function UpdateFood(weeklyPlanProps){
                                 <Select
                                     className="select-wrap w-500"
                                     classNamePrefix="select-box"
-                                    instanceId={useId()}
+                                    instanceId={instanceId}
                                     isSearchable={true}
                                     value={{ value: values.weekNr, label: values.weekNr }}
                                     //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
