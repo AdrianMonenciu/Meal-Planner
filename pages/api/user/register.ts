@@ -7,7 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ){
-    connectMongo()
+    //connectMongo()
     
 
     // try {
@@ -22,7 +22,7 @@ export default async function handler(
 
         if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
         const { username, email, password, dietPreference, public_id } = req.body;
-        //console.log(req.body)
+        console.log(req.body)
 
         // check duplicate email
         const checkExistingEmail = await Users.findOne({ email });
