@@ -17,9 +17,14 @@
 
 // export default connectMongo;
 
-import mongoose from 'mongoose'
+import mongoose, { ConnectOptions } from 'mongoose';
 
 mongoose.set('strictQuery', false);
+
+interface MyConnectOptions extends ConnectOptions {
+  useNewUrlParser?: boolean;
+  useUnifiedTopology?: boolean;
+}
 
 const connectMongo = async () => {
   
@@ -27,7 +32,11 @@ const connectMongo = async () => {
     console.log('Already connected.')
     return 
   } else {
-    const { connection } = await mongoose.connect(process.env.DATABASE_URL);
+    const options: MyConnectOptions = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    };
+    const { connection } = await mongoose.connect(process.env.DATABASE_URL, options);
     
   if(connection.readyState == 1){
     console.log('Connected to mongodb.')
@@ -40,3 +49,21 @@ const connectMongo = async () => {
 }
 
 export default connectMongo;
+
+
+// if(mongoose.connections[0].readyState){
+//   console.log('Already connected.')
+//   return 
+// } else {
+//   const { connection } = await mongoose.connect(process.env.DATABASE_URL, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   });
+  
+// if(connection.readyState == 1){
+//   console.log('Connected to mongodb.')
+//   return 
+// } else {
+//   console.log('NOT Connected to mongodb.')
+//   return 
+// }
