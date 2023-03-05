@@ -119,6 +119,12 @@ export default function Header() {
           <li className={styles.navItem}>
             <Link href="/example/me">Me</Link>
           </li>
+          <li className={styles.navItem}>
+            <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
+          </li>
+          <li className={styles.navItem}>
+            <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
+          </li>
           {session?.user.userRole == 'admin' && (
             <>
             <li className={styles.navItem}>
@@ -135,12 +141,6 @@ export default function Header() {
             </li>
             <li className={styles.navItem}>
               <Link href="/meal/updateMeals">Update Meals</Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
             </li>
             </>
           )}
