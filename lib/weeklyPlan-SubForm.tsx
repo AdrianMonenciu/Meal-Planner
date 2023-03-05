@@ -98,12 +98,12 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
             <div>
                 <p className='w-3/4 mx-auto text-gray-400'>{`${fieldNameUpper} Snacks`}</p>
             {values[fieldNameSnaks].map((name, index) => (
-                <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
+                <div key={index} className={` flex column justify-evenly color to-blue-200 items-center gap-5 sm:w-full md:w-1/2 lg:w-1/3 `}> 
                     {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
                     <Field name={`${fieldNameSnaks}[${index}].name`}>
                     {({ field, form }) => (
                     <Select
-                        className="select-wrap w-500"
+                        className="select-wrap w-24"
                         classNamePrefix="select-box"
                         instanceId={instanceId2}
                         isSearchable={true}
@@ -129,7 +129,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                             }}
                     />)}
                     </Field>
-                    <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`} className={styles.input_group} default={''}
+                    <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`}  className={`${styles.input_field}`} default={''} //className={styles.input_group}
                         onChange={(e) => {
                             const inputValue = e.target.value;
                             let numericValue;
@@ -142,7 +142,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                             setFieldValue(`${fieldNameSnaks}.${index}.qty`, numericValue);
                         }}
                     />
-                    <Field  name={`${fieldNameSnaks}.${index}.qtyOption`} className={styles.input_group} readOnly/>
+                    <Field  name={`${fieldNameSnaks}.${index}.qtyOption`}  className={`${styles.input_field}`} readOnly/>
                     <ErrorMessage name={`${fieldNameSnaks}.${index}.name`} />
                     <ErrorMessage name={`${fieldNameSnaks}.${index}.qty`} />
                     <div className="input-button m-2">

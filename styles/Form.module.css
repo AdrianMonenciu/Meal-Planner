@@ -3,6 +3,11 @@
     position: relative;
 }
 
+.input_field{
+    @apply w-1/4 py-1 px-6 border rounded-xl bg-white;
+    @apply focus:outline-none border-none
+}
+
 .input_text{
     @apply w-full py-2 px-6 border rounded-xl bg-slate-50;
     @apply focus:outline-none border-none

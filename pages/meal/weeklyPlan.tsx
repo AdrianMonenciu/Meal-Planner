@@ -331,7 +331,7 @@ export default function UpdateFood(weeklyPlanProps){
                 <title>Weekly Plan</title>
             </Head>
 
-            <section className='flex flex-col justify-evenly gap-10 m-auto bg-slate-50 rounded-md w-10/12 text-center py-4 px-4'> 
+            <section className='flex flex-col justify-evenly gap-5 m-auto bg-slate-50 rounded-md w-10/12 text-center py-4 px-4'> 
                 <div className="title">
                     <h1 className='text-gray-800 text-4xl font-bold py-4'>Weekly Plan</h1>
                 </div>
