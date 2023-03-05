@@ -33,7 +33,7 @@ export const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   password: {type: String, required:true},
   image: {type: String, default: 'MealPlanner/suqkcwqrvwoag1july5l'},
   dietPreference: [{type:String, required:true}],
-  userRole: {type: String, default: 'admin', required:true },
+  userRole: {type: String, default: 'user', required:true },
   WeeklyPlan: [{ type: Schema.Types.ObjectId, ref: 'WeeklyPlan' }],
   FoodItem: [{ type: Schema.Types.ObjectId, ref: 'FoodItem' }],
   Meal: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
