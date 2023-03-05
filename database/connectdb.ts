@@ -27,6 +27,7 @@ interface MyConnectOptions extends ConnectOptions {
 }
 
 const connectMongo = async () => {
+  let connectionMongo
   
   if(mongoose.connections[0].readyState){
     console.log('Already connected.')
@@ -36,9 +37,14 @@ const connectMongo = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     };
-    const { connection } = await mongoose.connect(process.env.DATABASE_URL, options);
+    try {
+      const { connection } = await mongoose.connect(process.env.DATABASE_URL, options);
+      connectionMongo = connection
+    } catch (error) {
+      console.error(error);
+    }
     
-  if(connection.readyState == 1){
+  if(connectionMongo.readyState == 1){
     console.log('Connected to mongodb.')
     return 
   } else {
