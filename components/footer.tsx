@@ -4,7 +4,7 @@ import packageJSON from "../package.json"
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer className={`${styles.footer} bg-green-100`}>
       <hr />
       <ul className={styles.navItems}>
         <li className={styles.navItem}>

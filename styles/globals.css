@@ -46,3 +46,12 @@ iframe {
   border-radius: 0.5rem;
   filter: invert(1);
 }
+
+.menuItem {
+  padding: 0.5rem 0;
+}
+
+.menuItemTitle {
+  font-weight: bold;
+  padding: 0.5rem 0;
+}
