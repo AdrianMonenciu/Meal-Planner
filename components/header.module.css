@@ -96,7 +96,7 @@
 .navItem {
   //display: inline-block;
   margin-left: 0.5rem;
-  margin-top: 0.5rem;
+  //margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   @apply hover:underline;
 }

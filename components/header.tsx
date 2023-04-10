@@ -77,6 +77,7 @@ export default function Header() {
   
     const toggleMenu = () => {
       setIsOpen(!isOpen);
+      setSelectedButtonSmall("");
     };
 
     const [selectedButtonSmall, setSelectedButtonSmall] = useState("")
@@ -118,13 +119,12 @@ export default function Header() {
         {isOpen && (
           <div className="absolute top-14 left-0 w-full h-screen bg-white z-9999">
             <div className="p-6">
-              <ul>
 
               <div 
               onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
               className={`px-3 border-b-4 border-gray-500 `}>
                 <button
-                  className={`${styles.menu_button} h-14 top-0 `}
+                  className={`${styles.menu_button} py-2`}
                 >
                   Ingredients/Snacks
                 </button>
@@ -134,52 +134,81 @@ export default function Header() {
                   className={`pl-2 pr-2 text-black transition-all duration-300 ease-in-out transform ${selectedButtonSmall === "Ingredients/Snacks" ? "rotate-180" : "rotate-0"}`}
                 />
 
-               
+                <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Ingredients/Snacks" ? "max-h-40" :
+                "max-h-0"} `}
+                  style={{ transformOrigin: "top" }}>
 
-<div className={`text-sm flex w-full overflow-hidden 
-${selectedButtonSmall === "Ingredients/Snacks" ? "max-h-40 transition-all duration-500 ease-in-out" : "max-h-0 transition-all duration-500 ease-in-out"} `}
-    style={{ transformOrigin: "top" }}>
-
-    <ul className={styles.navItems}>
-      <li className={styles.navItem}>
-        <Link href="/meal/foodItem">Add Ingredient/Snack</Link>
-      </li>
-      <li className={styles.navItem}>
-        <Link href="/meal/updatefoodItems">Update Ingredient/Snack</Link>
-      </li>
-    </ul>
-  </div>
-
-                
+                  <ul className={styles.navItems}>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/foodItem">Add Ingredient/Snack</Link>
+                    </li>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/updatefoodItems">Update Ingredient/Snack</Link>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
-                <li className="mt-4 block text-gray-800 menuItemTitle"> Products
-                  <ul className="mt-2">
-                    <li className="block py-2 text-gray-800 hover:text-gray-900 menuItem">
-                      <Link href="/products/item1">Item 1</Link>
+              <div 
+              onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Meals" ? "Meals" : "")}
+              className={`px-3 border-b-4 border-gray-500 `}>
+                <button
+                  className={`${styles.menu_button} py-2`}
+                >
+                  Meals
+                </button>
+
+                <FontAwesomeIcon
+                  icon={faAngleUp}
+                  className={`pl-2 pr-2 text-black transition-all duration-300 ease-in-out transform ${selectedButtonSmall === "Meals" ? "rotate-180" : "rotate-0"}`}
+                />
+
+                <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Meals" ? "max-h-40" :
+                "max-h-0"} `}
+                  style={{ transformOrigin: "top" }}>
+
+                  <ul className={styles.navItems}>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/meal">Add Meal</Link>
                     </li>
-                    <li className="block py-2 text-gray-800 hover:text-gray-900 menuItem">
-                      <Link href="/products/item2">Item 2</Link>
-                    </li>
-                    <li className="block py-2 text-gray-800 hover:text-gray-900 menuItem">
-                      <Link href="/products/item3">Item 3</Link>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/updateMeals">Update Meals</Link>
                     </li>
                   </ul>
-                </li>
-                <li className="mt-4 block text-gray-800 menuItemTitle">About Us
-                  <ul className="mt-2">
-                    <li className="block py-2 text-gray-800 hover:text-gray-900 menuItem">
-                      <Link href="/about/team">Our Team</Link>
+
+                </div> 
+              </div>
+
+              <div 
+              onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Weekly Plan" ? "Weekly Plan" : "")}
+              className={`px-3 border-b-4 border-gray-500 `}>
+                <button
+                  className={`${styles.menu_button} py-2`}
+                >
+                  Weekly Plan
+                </button>
+
+                <FontAwesomeIcon
+                  icon={faAngleUp}
+                  className={`pl-2 pr-2 text-black transition-all duration-300 ease-in-out transform ${selectedButtonSmall === "Weekly Plan" ? "rotate-180" : "rotate-0"}`}
+                />
+
+                <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Weekly Plan" ? "max-h-40" :
+                "max-h-0"} `}
+                  style={{ transformOrigin: "top" }}>
+
+                  <ul className={styles.navItems}>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
                     </li>
-                    <li className="block py-2 text-gray-800 hover:text-gray-900 menuItem">
-                      <Link href="/about/story">Our Story</Link>
-                    </li>
-                    <li className="block py-2 text-gray-800 hover:text-gray-900 menuItem">
-                      <Link href="/about/contact">Contact Us</Link>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
                     </li>
                   </ul>
-                </li>
-              </ul>
+
+                </div> 
+              </div>
+
             </div>
           </div>
         )}
@@ -328,15 +357,15 @@ ${selectedButtonSmall === "Ingredients/Snacks" ? "max-h-40 transition-all durati
                   <div className="flex items-center">
                     <div className={`${styles.image_container} flex items-center`} onMouseLeave={closePopup} onMouseEnter={cancelClosePopup}>
                       <Image
-                        className={styles.avatar}
+                        className={`${styles.avatar} border-4 border-transparent hover:cursor-pointer ${showPopup ? 'border-gray-400' : ''}`}
                         cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
                         publicId={session.user.image}
                         alt={session.user.image}
                         secure
                         dpr="auto"
                         quality="auto"
-                        width={200}
-                        height={200}
+                        width={300}
+                        height={300}
                         crop="fill"
                         gravity="auto"
                         onClick={handleImageClick}

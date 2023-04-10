@@ -6,21 +6,27 @@ export default function Footer() {
   return (
     <footer className={`${styles.footer} bg-green-100`}>
       <hr />
-      <ul className={styles.navItems}>
+      <ul className={`${styles.navItems} flex flex-row flex-wrap items-center justify-around mt-3`}>
         <li className={styles.navItem}>
-          <a href="https://next-auth.js.org">Documentation</a>
+          <a href="https://nextjs.org">Next JS</a>
+        </li>
+        <li className={styles.navItem}>
+          <a href="https://next-auth.js.org">Next Auth</a>
         </li>
         <li className={styles.navItem}>
           <a href="https://www.npmjs.com/package/next-auth">NPM</a>
         </li>
         <li className={styles.navItem}>
-          <a href="https://github.com/nextauthjs/next-auth-example">GitHub</a>
+          <a href="https://github.com/AdrianMonenciu/Meal-Planner-WIP">GitHub</a>
+        </li>
+        <li className={styles.navItem}>
+          <a href="https://www.mongodb.com">Mongo DB</a>
+        </li>
+        <li className={styles.navItem}>
+          <a href="https://tailwindcss.com">Tailwind</a>
         </li>
         <li className={styles.navItem}>
           <Link href="/policy">Policy</Link>
-        </li>
-        <li className={styles.navItem}>
-          <em>next-auth@{packageJSON.dependencies["next-auth"]}</em>
         </li>
       </ul>
     </footer>
