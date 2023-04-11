@@ -5,7 +5,7 @@
   width: 100%;
   @apply border-b border-gray-300;
   position: fixed;
-  z-index: 10;
+  z-index: 100;
   align-items: center;
 }
 
@@ -40,7 +40,7 @@
   overflow: hidden;
   display: inherit;
   z-index: 1;
-  //line-height: 1rem;
+  line-height: 1rem;
   font-size: 1
 }
 

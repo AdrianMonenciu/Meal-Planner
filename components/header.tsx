@@ -262,7 +262,7 @@ export default function Header() {
               <div 
               onMouseEnter={() => setSelectedButton("Ingredients/Snacks")}
               onMouseLeave={() => setSelectedButton("")} 
-              className={`hidden md:block relative px-3 border-b-4 border-transparent ${selectedButton === "Ingredients/Snacks" ? 'border-gray-500' : ''}`}>
+              className={`hidden md:block relative px-3 border-b-4  ${selectedButton === "Ingredients/Snacks" ? 'border-gray-500' : 'border-transparent'}`}>
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
@@ -292,7 +292,7 @@ export default function Header() {
               <div 
               onMouseEnter={() => setSelectedButton("Meals")}
               onMouseLeave={() => setSelectedButton("")} 
-              className={`hidden md:block relative px-4 border-b-4 border-transparent ${selectedButton === "Meals" ? 'border-gray-500' : ''}`}>
+              className={`hidden md:block relative px-4 border-b-4 ${selectedButton === "Meals" ? 'border-gray-500' : 'border-transparent'}`}>
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
@@ -322,7 +322,7 @@ export default function Header() {
               <div 
               onMouseEnter={() => setSelectedButton("Weekly Plan")}
               onMouseLeave={() => setSelectedButton("")} 
-              className={`hidden md:block relative px-3 border-b-4 border-transparent ${selectedButton === "Weekly Plan" ? 'border-gray-500' : ''}`}>
+              className={`hidden md:block relative px-3 border-b-4 ${selectedButton === "Weekly Plan" ? 'border-gray-500' : 'border-transparent'}`}>
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
