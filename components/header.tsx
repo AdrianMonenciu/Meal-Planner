@@ -226,11 +226,11 @@ export default function Header() {
           } bg-green-400`}
         >
           {!session && (
-            <>
+            <div className="h-14 flex justify-between items-center">
               <span className={styles.notSignedInText}>
                 You are not signed in
               </span>
-              <span className="flex justify-end">
+              <span className="">
                 <a
                   href={`/user/login`} ///api/auth/signin
                   className={styles.buttonPrimary}
@@ -248,7 +248,7 @@ export default function Header() {
                   Register
                 </a>
               </span>
-            </>
+            </div>
           )}
           {session?.user && (
             <div className="flex justify-between items-center h-full">

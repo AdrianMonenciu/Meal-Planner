@@ -5,7 +5,7 @@
   width: 100%;
   @apply border-b border-gray-300;
   position: fixed;
-  z-index: 9999;
+  z-index: 10;
   align-items: center;
 }
 
@@ -31,8 +31,8 @@
 
 .signedInText,
 .notSignedInText {
-  position: absolute;
-  padding-top: 0.8rem;
+  //position: absolute;
+  //padding-top: 0.8rem;
   left: 1rem;
   right: 6.5rem;
   white-space: nowrap;
@@ -40,7 +40,7 @@
   overflow: hidden;
   display: inherit;
   z-index: 1;
-  line-height: 1rem;
+  //line-height: 1rem;
   font-size: 1
 }
 
@@ -70,7 +70,7 @@
   line-height: 1rem;
   padding: 0.01rem;
   position: relative;
-  z-index: 10;
+  z-index: 9;
   //background-color: transparent;
   color: #555;
 }

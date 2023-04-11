@@ -10,7 +10,7 @@ import { useFormik } from 'formik';
 import login_validate from '../../lib/validate';
 import { useRouter } from 'next/router';
 import Layout from "../../components/layout"
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer, ToastPosition, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -87,7 +87,7 @@ export default function Login(){
                 <Head>
                     <title>Login</title>
                 </Head>
-                <ToastContainer />
+                <ToastContainer toastClassName="toast-custom-class"/>
                 
                 <section className='w-3/4 mx-auto flex flex-col gap-3'>
                     <div className="title">

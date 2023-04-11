@@ -55,3 +55,7 @@ iframe {
   font-weight: bold;
   padding: 0.5rem 0;
 }
+
+.toast-custom-class {
+  z-index: 9999;
+}
