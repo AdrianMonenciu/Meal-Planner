@@ -37,11 +37,6 @@ export default function Login(){
         onSubmit
     })
 
-    /**
-     * haleykennedy@gmail.com
-     * admin123
-     */
-
     async function onSubmit(values: FormValues){
         const status = await signIn('credentials', {
             redirect: false,
@@ -53,110 +48,85 @@ export default function Login(){
                 toast.success(`Logged in as ${values.email}`)
                 router.push("/");
             } else {
-                //console.log(error)
                 toast.error(error);
             }
         })
-
-        // if(status.error){
-        //     return toast.error(status.error)
-        // }
-
-        // if(status.ok) { 
-        //     router.push(status.url) 
-        // }  
     }
 
-    // Google Handler function
-    async function handleGoogleSignin(){
-        signIn('google', { callbackUrl : "http://localhost:3000"})
-    }
-
-    // Github Login 
-    async function handleGithubSignin(){
-        signIn('github', { callbackUrl : "http://localhost:3000"})
-    }
 
     return (
+        <div>
         <Layout>
 
             {data ? (<div> Already signed in as: {JSON.stringify(data.user.username, null, 2)} </div>) :
 
-                <Layout_login>
+                <div>
 
-                <Head>
-                    <title>Login</title>
-                </Head>
-                <ToastContainer toastClassName="toast-custom-class"/>
-                
-                <section className='w-3/4 mx-auto flex flex-col gap-3'>
-                    <div className="title">
-                        <h1 className='text-gray-800 text-4xl font-bold py-4'>Explore</h1>
-                        <p className='w-3/4 mx-auto text-gray-400'>Description text goes here.</p>
-                    </div>
-
-                    {/* form */}
-                    <form className='flex flex-col gap-5' onSubmit={formik.handleSubmit}>
-                        <div className={`${styles.input_group} ${formik.errors.email && formik.touched.email ? 'border-rose-600' : ''}`}>
-                            <input 
-                            type="email"
-                            name='email'
-                            placeholder='Email'
-                            className={styles.input_text}
-                            {...formik.getFieldProps('email')}
-                            />
-                            <span className='icon flex items-center px-4'>
-                                <HiAtSymbol size={25} />
-                            </span>
-                        </div>
-                        {/* {formik.errors.email && formik.touched.email ? <span className='text-rose-500'>{formik.errors.email}</span> : <></>} */}
+                    <Head>
+                        <title>Login</title>
+                    </Head>
+                    <ToastContainer toastClassName="toast-custom-class"/>
                     
-                        {formik.errors.email && formik.touched.email ? <span className='text-rose-500 text-sm py-0'>{formik.errors.email}</span> : <></>}
+                    <section className='min-w-[250px] max-w-[320px] md:max-w-[400px] items-center mx-auto flex flex-col gap-3 mt-4 md:mt-8'>
+                        <div className="flex justify-start">
+                            <p className='font-bold md:text-xl'>Login with your email and password: </p>
+                        </div>
 
-                        <div className={`${styles.input_group} ${formik.errors.password && formik.touched.password ? 'border-rose-600' : ''}`}>
-                            <input 
-                            type={`${show ? "text" : "password"}`}
-                            name='password'
-                            placeholder='password'
-                            className={styles.input_text}
-                            {...formik.getFieldProps('password')}
-                            />
-                            <span className='icon flex items-center px-4' onClick={() => setShow(!show)}>
-                                <HiFingerPrint size={25} />
-                            </span>
+                        {/* form */}
+                        <form className='flex flex-col gap-5' onSubmit={formik.handleSubmit}>
+                            <div className={`${styles.input_group} ${formik.errors.email && formik.touched.email ? 'border-rose-600' : ''}`}>
+                                <input 
+                                type="email"
+                                name='email'
+                                placeholder='Email'
+                                className={`${styles.input_text}`}
+                                {...formik.getFieldProps('email')}
+                                />
+                                <span className='icon flex items-center px-4'>
+                                    <HiAtSymbol size={25} />
+                                </span>
+                            </div>
+                            {/* {formik.errors.email && formik.touched.email ? <span className='text-rose-500'>{formik.errors.email}</span> : <></>} */}
                         
-                        </div>
+                            {formik.errors.email && formik.touched.email ? <span className='text-rose-500 text-sm py-0'>{formik.errors.email}</span> : <></>}
 
-                        {formik.errors.password && formik.touched.password ? <span className='text-rose-500 text-sm py-0'>{formik.errors.password}</span> : <></>}
+                            <div className={`${styles.input_group} ${formik.errors.password && formik.touched.password ? 'border-rose-600' : ''}`}>
+                                <input 
+                                type={`${show ? "text" : "password"}`}
+                                name='password'
+                                placeholder='password'
+                                className={styles.input_text}
+                                {...formik.getFieldProps('password')}
+                                />
+                                <span className='icon flex items-center px-4' onClick={() => setShow(!show)}>
+                                    <HiFingerPrint size={25} />
+                                </span>
+                            
+                            </div>
 
-                        {/* {formik.errors.password && formik.touched.password ? <span className='text-rose-500'>{formik.errors.password}</span> : <></>} */}
+                            {formik.errors.password && formik.touched.password ? <span className='text-rose-500 text-sm py-0'>{formik.errors.password}</span> : <></>}
+
+                            {/* {formik.errors.password && formik.touched.password ? <span className='text-rose-500'>{formik.errors.password}</span> : <></>} */}
+                        </form>
+
                         {/* login buttons */}
-                        <div className="input-button">
-                            <button type='submit' className={styles.button}>
-                                Login
-                            </button>
-                        </div>
-                        <div className="input-button">
-                            <button type='button' onClick={handleGoogleSignin} className={styles.button_custom}>
-                                Sign In with Google <Image src={'/assets/google.svg'} width="20" height={20} alt={''} ></Image>
-                            </button>
-                        </div>
-                        <div className="input-button">
-                            <button type='button' onClick={handleGithubSignin} className={styles.button_custom}>
-                                Sign In with Github <Image src={'/assets/github.svg'} width={25} height={25} alt={''}></Image>
-                            </button>
-                        </div>
-                    </form>
+                        <div className="min-w-[120px] max-w-[150px]">
+                                <button type='submit' className={styles.button}>
+                                    Login
+                                </button>
+                            </div>
 
-                    {/* bottom */}
-                    <p className='text-center text-gray-400 '>
-                        don&apos;t have an account yet? <Link href={'/register'} className='text-blue-700'>Sign Up</Link>
-                    </p>
-                </section>
+                        {/* bottom */}
+                        <p className='text-center text-gray-400 '>
+                            don&apos;t have an account yet? <Link href={'/register'} className='text-green-500'>Sign Up</Link>
+                        </p>
+                    </section>
 
-                </Layout_login>
+                </div>
             }
 
         </Layout>
+
+        </div>
     )
 }
