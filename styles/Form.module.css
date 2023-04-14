@@ -14,7 +14,7 @@
 }
 
 .button{
-    @apply w-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-md;
+    @apply w-full bg-gradient-to-r from-green-400 to-green-500 rounded-md;
     @apply py-2 text-gray-50 text-lg
 }
 
@@ -28,16 +28,16 @@
 }
 
 .input_text + *{
-    color: #6366f1;
+    @apply text-gray-400;
 }
 
 .input_text:focus + *{
-    color: #d4ffe2;
+    @apply text-green-300 ;
 }
 /* #d4ffe2; #6366f1 */
 
 .input_text:not([type=email]) ~ span:hover *{
-    color: #d4ffe2; 
+    @apply text-green-600;
     cursor: pointer;
 }
 
