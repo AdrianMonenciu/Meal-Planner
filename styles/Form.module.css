@@ -41,6 +41,10 @@
     cursor: pointer;
 }
 
+.formikError {
+    @apply text-rose-500 ml-4 mt-1 text-sm md:text-base;
+}
+
 .buttonPrimary {
     float: right;
     margin-right: 0.4rem;
@@ -65,8 +69,4 @@
     background-size: cover;
     background-repeat: no-repeat;
     object-fit: cover;
-  }
-
-  .green_checkbox {
-    background-color: green;
   }
