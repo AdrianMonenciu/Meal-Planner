@@ -21,7 +21,7 @@ export default async function handler(
     if(req.method === 'POST'){
 
         if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-        const { username, email, password, dietPreference, public_id } = req.body;
+        const { username, email, password, noDiet, dietPreference, public_id } = req.body;
         //console.log(req.body)
 
         // check duplicate email
@@ -40,8 +40,8 @@ export default async function handler(
 
         //hash password
         let errors: boolean = false
-        const newUser = new Users({ username, email, password: await hash(password, 12), dietPreference, image: public_id })
-        //await newUser.save()
+        const newUser = new Users({ username, email, password: await hash(password, 12), noDiet, dietPreference, image: public_id })
+ 
         //console.log(newUser)
         let err = await newUser.save().catch(err => {err = err, errors = true});
 
@@ -55,10 +55,10 @@ export default async function handler(
         //   // res.status(201).json({ message: `User ${data.username} created successfuly!`, status : true, user: data})
         // })
         if (errors) {
-          console.log(err)
+          //console.log(err)
           return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
         } else {
-          console.log(newUser)
+          //console.log(newUser)
           res.status(201).json({ message: `User ${newUser.username} created successfuly!`, status : true, user: newUser})
         }
     } else{

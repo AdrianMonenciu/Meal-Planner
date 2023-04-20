@@ -37,6 +37,7 @@ export default function Register(){
     interface FormValues {
         username: string;
         email: string;
+        noDiet: boolean;
         dietPreference: string[];
         password: string;
         cpassword?: string;
@@ -50,6 +51,7 @@ export default function Register(){
     const initialValues: FormValues = {
         username : '',
         email: '',
+        noDiet: false,
         dietPreference: [],
         password: '',
         cpassword: '',
@@ -62,7 +64,14 @@ export default function Register(){
         username: Yup.string().required('Username required')
           .test("Empty space", "Invalid username, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
         email: Yup.string().email().required('Email required'),
-        dietPreference: Yup.array(Yup.string()).min(1, 'Select at least 1 diet oprion!'),
+        noDiet: Yup.bool().required(),
+        dietPreference:Yup.array(Yup.string())
+        .when('noDiet', {
+          is: false,
+          then: Yup.array(Yup.string()).min(1, 'Select at least 1 diet option!'),
+          otherwise: Yup.array().notRequired()
+        }),
+        //Yup.array(Yup.string()).min(1, 'Select at least 1 diet option!'),
         password: Yup.string().required('Password required').min(8, 'Password must be min 8 characters')
         .max(20, 'Password must be max 20 characters')
         .test("Empty space", "Invalid password, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
@@ -75,7 +84,7 @@ export default function Register(){
            (value) =>
           !value || (value && SUPPORTED_FORMATS.includes(value?.type))
            )
-      });
+    });
 
     const [show, setShow] = useState({ password: false, cpassword: false })
     const formik = useFormik({
@@ -86,6 +95,7 @@ export default function Register(){
     })
 
     async function onSubmit(values: FormValues){
+        //console.log(values)
 
         const response = await uploadImage(values.image)
 
@@ -95,6 +105,7 @@ export default function Register(){
             const user_api_body: IApiBody ={
                 username: values.username,
                 email: values.email,
+                noDiet: values.noDiet,
                 dietPreference: values.dietPreference,
                 password: values.password,
                 public_id: response.public_id as string
@@ -110,7 +121,7 @@ export default function Register(){
             await fetch('/api/user/register', options)
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
+                //console.log(data)
                 toast(data.message)
                 if(data) router.push('/user/login')
             })
@@ -125,14 +136,13 @@ export default function Register(){
                 <title>Register</title>
             </Head>
 
-            <section className='flex flex-col justify-evenly gap-10 m-auto bg-slate-50 rounded-md w-3/5 text-center py-4 px-4'> 
-                <div className="title">
-                    <h1 className='text-gray-800 text-4xl font-bold py-4'>Register</h1>
-                    <p className='w-3/4 mx-auto text-gray-400'>Description text goes here.</p>
+            <section className='min-w-[250px] max-w-[320px] md:max-w-[500px] items-center mx-auto flex flex-col gap-3 mt-4 md:mt-8'> 
+                <div className="flex justify-start">
+                    <p className='font-bold md:text-xl'>Register form: </p>
                 </div>
 
                 {/* form */}
-                <form className='flex flex-col gap-5' onSubmit={formik.handleSubmit}>
+                <form className='flex flex-col gap-5 items-center' onSubmit={formik.handleSubmit}>
                     <div className={`${styles.input_group} ${formik.errors.username && formik.touched.username ? 'border-rose-600' : ''}`}>
                         <input 
                         type="text"
@@ -173,19 +183,44 @@ export default function Register(){
                     </div>  
                     {formik.errors.dietPreference && formik.touched.dietPreference ? <span className='text-rose-500'>{formik.errors.dietPreference}</span> : <></>}  */}
 
+                    
 
-                    <div>
-                        <div className='text-left' id="checkbox-group">Dietary suitability:</div>
-                        <div className={styles.input_group} role="group" aria-labelledby="checkbox-group">
+                    <div className={`${styles.input_group} flex-col bg-green-100`}>
+                        <div className={`mt-2 ml-1 mb-2 w-full ${formik.errors.email && formik.touched.email ? 'border-rose-600' : ''}`}>
+                            <label className='mr-3 font-medium text-sm md:text-base'>
+                                <input 
+                                type="checkbox" 
+                                name="noDiet" 
+                                className={`mr-1`}
+                                {...formik.getFieldProps('noDiet')} 
+                                checked={formik.values.noDiet} 
+                                onChange={(e) => {
+                                    formik.setFieldValue('noDiet', e.target.checked);
+                                    if (e.target.checked) {
+                                    formik.setFieldValue('dietPreference', []);
+                                    formik.setFieldTouched('dietPreference', false);
+                                    } else {
+                                    formik.setFieldValue('dietPreference', []);
+                                    }
+                                }}
+                                />
+                            No dietary restrictions
+                            </label>
+                        </div>
+
+                        <div className='text-left ml-1 font-medium text-sm md:text-base' id="checkbox-group">Dietary restrictions:</div>
+                        <div className={`flex flex-col mb-1`} role="group" aria-labelledby="checkbox-group">
                             {dietPreferences.map((diet) => 
-                            <label className='mr-3' key={diet}>
-                                <input className='mr-1' type="checkbox" name="dietPreference" {...formik.getFieldProps('dietPreference')} value={diet} 
+                            <label className={`mr-3 ml-3 text-sm md:text-base ${formik.values.noDiet ? 'text-gray-500' : ''}`} key={diet}>
+                                <input className={`mr-1`}
+                                type="checkbox" name="dietPreference" {...formik.getFieldProps('dietPreference')} value={diet} 
                                 checked={(formik.values.dietPreference.indexOf(diet) > -1) ? true : false}
+                                disabled={formik.values.noDiet}
                                 /> {/* defaultChecked={(formik.values.diet.indexOf(diet) > -1) ? true : false}   */}
                             {diet} </label>)}
                         </div>
 
-                        {formik.errors.dietPreference && formik.touched.dietPreference ? <span className='text-rose-500'>{formik.errors.dietPreference}</span> : <></>}
+                        {formik.errors.dietPreference && formik.touched.dietPreference && !formik.values.noDiet ? <span className='text-rose-500 mb-1 ml-1'>{formik.errors.dietPreference}</span> : <></>}
                     </div>
 
 
@@ -193,7 +228,7 @@ export default function Register(){
                         <input 
                         type={`${show.password ? "text" : "password"}`}
                         name='password'
-                        placeholder='password'
+                        placeholder='Password'
                         className={styles.input_text}
                         {...formik.getFieldProps('password')}
                         />
@@ -220,44 +255,49 @@ export default function Register(){
                     {/* {formik.errors.cpassword && formik.touched.cpassword ? <span className='text-rose-500'>{formik.errors.cpassword}</span> : <></>} */}
 
 
-                    <div className='flex justify-start'>
-                    <input
-                      name='image' //NAME field not required in this case as image is set through onChange
-                      type='file'
-                      onChange={(event) => {
-                        formik.setFieldValue(
-                          'image',
-                          event.target.files[0]
-                        );
-                        if (event?.target?.files?.[0]) {
-                            const file = event.target.files[0];
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setPreviewImage(reader.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                      }}
-                      className={''}
-                    ></input>
+                    <div className='flex'>
+                        <label htmlFor="image" className={`${styles.button} min-w-[150px] max-w-[200px] text-center`}>
+                            Choose File
+                        </label>
+                        <input
+                        name='image' //NAME field not required in this case as image is set through onChange
+                        type='file'
+                        id="image"
+                        onChange={(event) => {
+                            formik.setFieldValue(
+                            'image',
+                            event.target.files[0]
+                            );
+                            if (event?.target?.files?.[0]) {
+                                const file = event.target.files[0];
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                setPreviewImage(reader.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        }}
+                        className={'hidden'}
+                        ></input>
                     </div>
 
                     {formik.errors.image && formik.touched.image ? <span className='text-rose-500'>{formik.errors.image}</span> : <></>}
 
                     <div>
                         {formik.values.image ?
-                            <img
+                            <>  
+                                <img
                                 src={previewImage}
-                                className="mt-4 object-cover"
-                                style={{ width: "440px", height: `${300}px` }}
-                            />
+                                className={`${styles.avatar} `}
+                                />
+                            </>
                             : "No Image"
                         }
                     </div>
 
 
                     {/* login buttons */}
-                    <div className="input-button">
+                    <div className="mt-3 min-w-[150px] max-w-[200px]">
                         <button type='submit' className={styles.button}>
                             Sign Up
                         </button>
@@ -266,7 +306,7 @@ export default function Register(){
 
                 {/* bottom */}
                 <p className='text-center text-gray-400 '>
-                    Have an account? <Link href={'/login'} className='text-blue-700'>Sign In</Link>
+                    Have an account? <Link href={'/login'} className='text-green-500'>Sign In</Link>
                 </p>
             </section>
 

@@ -357,15 +357,15 @@ export default function Header() {
                   <div className="flex items-center">
                     <div className={`${styles.image_container} flex items-center`} onMouseLeave={closePopup} onMouseEnter={cancelClosePopup}>
                       <Image
-                        className={`${styles.avatar} border-4 border-transparent hover:cursor-pointer ${showPopup ? 'border-gray-400' : ''}`}
+                        className={`${styles.avatar} border-2 hover:cursor-pointer ${showPopup ? 'border-black' : 'border-green-400'}`}
                         cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
                         publicId={session.user.image}
                         alt={session.user.image}
                         secure
                         dpr="auto"
                         quality="auto"
-                        width={300}
-                        height={300}
+                        width={350}
+                        height={350}
                         crop="fill"
                         gravity="auto"
                         onClick={handleImageClick}

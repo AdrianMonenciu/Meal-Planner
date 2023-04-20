@@ -28,6 +28,7 @@ import NextAuth from "next-auth"
         email?: string
         username?: string
         userRole?: string
+        noDiet?: boolean
         dietPreference?: string[]
         password?: string;
         image?: string;
@@ -39,6 +40,7 @@ import NextAuth from "next-auth"
       email?: string
       username?: string
       userRole?: string
+      noDiet?: boolean
       dietPreference?: string[]
       password?: string;
       image?: string;

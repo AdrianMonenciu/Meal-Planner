@@ -11,6 +11,7 @@ export interface IUser {
   email: string;
   password: string;
   image: string;
+  noDiet: boolean;
   dietPreference: string[];
   userRole?: string
   WeeklyPlan: Schema.Types.ObjectId[];
@@ -32,6 +33,7 @@ export const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   email: {type: String, required:true },
   password: {type: String, required:true},
   image: {type: String, default: 'MealPlanner/suqkcwqrvwoag1july5l'},
+  noDiet: {type: Boolean, default: false, required: true},
   dietPreference: [{type:String, required:true}],
   userRole: {type: String, default: 'user', required:true },
   WeeklyPlan: [{ type: Schema.Types.ObjectId, ref: 'WeeklyPlan' }],
