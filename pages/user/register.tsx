@@ -65,13 +65,7 @@ export default function Register(){
           .test("Empty space", "Invalid username, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
         email: Yup.string().email().required('Email required'),
         noDiet: Yup.bool().required(),
-        dietPreference:Yup.array(Yup.string())
-        .when('noDiet', {
-          is: false,
-          then: Yup.array(Yup.string()).min(1, 'Select at least 1 diet option!'),
-          otherwise: Yup.array().notRequired()
-        }),
-        //Yup.array(Yup.string()).min(1, 'Select at least 1 diet option!'),
+        dietPreference: Yup.array(Yup.string()).min(1, 'Select at least 1 diet requirement!'),
         password: Yup.string().required('Password required').min(8, 'Password must be min 8 characters')
         .max(20, 'Password must be max 20 characters')
         .test("Empty space", "Invalid password, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
@@ -186,11 +180,11 @@ export default function Register(){
                         </select>
                     </div>  
                     {formik.errors.dietPreference && formik.touched.dietPreference ? <span className='text-rose-500'>{formik.errors.dietPreference}</span> : <></>}  */}
-
                     
 
-                    <div className={`${styles.input_group} flex-col bg-green-100`}>
-                        <div className={`mt-2 ml-1 mb-2 w-full ${formik.errors.email && formik.touched.email ? 'border-rose-600' : ''}`}>
+                    <div className={`${styles.input_group} flex-col bg-green-100 
+                    ${(formik.errors.dietPreference && formik.touched.dietPreference && !formik.values.noDiet) ? 'border-rose-600' : ''}`}>
+                        <div className={`mt-2 ml-1 mb-2 w-full `}>
                             <label className='mr-3 font-medium text-sm md:text-base'>
                                 <input 
                                 type="checkbox" 
@@ -202,10 +196,8 @@ export default function Register(){
                                     formik.setFieldValue('noDiet', e.target.checked);
                                     if (e.target.checked) {
                                     formik.setFieldValue('dietPreference', []);
-                                    formik.setFieldTouched('dietPreference', false);
-                                    } else {
-                                    formik.setFieldValue('dietPreference', []);
-                                    }
+                                    //formik.setFieldTouched('dietPreference', false);
+                                    } 
                                 }}
                                 />
                             No dietary restrictions
@@ -215,7 +207,7 @@ export default function Register(){
                         <div className='text-left ml-1 font-medium text-sm md:text-base' id="checkbox-group">Dietary restrictions:</div>
                         <div className={`flex flex-col mb-1`} role="group" aria-labelledby="checkbox-group">
                             {dietPreferences.map((diet) => 
-                            <label className={`mr-3 ml-3 text-sm md:text-base ${formik.values.noDiet ? 'text-gray-500' : ''}`} key={diet}>
+                            <label className={`mr-3 ml-3 mt-1 text-sm md:text-base ${formik.values.noDiet ? 'text-gray-500' : ''}`} key={diet}>
                                 <input className={`mr-1`}
                                 type="checkbox" name="dietPreference" {...formik.getFieldProps('dietPreference')} value={diet} 
                                 checked={(formik.values.dietPreference.indexOf(diet) > -1) ? true : false}
@@ -224,7 +216,7 @@ export default function Register(){
                             {diet} </label>)}
                         </div>
 
-                        {formik.errors.dietPreference && formik.touched.dietPreference && !formik.values.noDiet ? 
+                        {(formik.errors.dietPreference && formik.touched.dietPreference && !formik.values.noDiet) ?
                         <span className='text-rose-500 mb-1 ml-1 text-sm md:text-base'>{formik.errors.dietPreference}</span> : <></>}
                     </div>
 
@@ -318,7 +310,7 @@ export default function Register(){
 
                 {/* bottom */}
                 <p className='text-center text-gray-400 '>
-                    Have an account? <Link href={'/login'} className='text-green-500'>Sign In</Link>
+                    Have an account? <Link href={'/user/login'} className='text-green-500'>Sign In</Link>
                 </p>
             </section>
 

@@ -21,7 +21,7 @@ export default function Header() {
   function closePopup() {
     timeoutRef.current = setTimeout(() => {
       setShowPopup(false);
-    }, 1000);
+    }, 500);
   }
 
   function cancelClosePopup() {
@@ -39,7 +39,7 @@ export default function Header() {
 
   function Popup() {
     return (
-      <div className={styles.popup_content} onMouseLeave={closePopup} onMouseEnter={cancelClosePopup}>
+      <div className={styles.popup_content}>
         <a
           href={`/api/auth/signout`}
           className={`${styles.buttonPrimary} mb-1 mt-2 bg-red-400`}
@@ -52,13 +52,19 @@ export default function Header() {
         </a>
         <br></br>
         <a
+          href={`/user/view`}
+          className={`${styles.buttonPrimary} bg-teal-400 mb-1`}
+        >
+          View Profile
+        </a>
+        <br></br>
+        <a
           href={`/user/update`}
           className={`${styles.buttonPrimary} bg-sky-300 mb-1`}
         >
-          Update
+          Update Profile
         </a>
-        <br></br>
-        
+        <br></br> 
         <a
           href={`/user/updateUsers`}
           className={`${styles.buttonPrimary} bg-cyan-300`}
