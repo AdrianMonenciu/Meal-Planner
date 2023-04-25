@@ -152,7 +152,9 @@ export default function ApiExamplePage() {
               <div className="flex justify-start">
                 <div>Food name: {food.name}</div>
                 <div className='mx-4'>Measuring unit: {food.foodMeasureUnit}</div>
-                <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div>
+                <div className='mx-4'>Private: {food.privateBool ? "true" : "false"}</div>
+                <div className='mx-4'>Image: {food.image}</div>
+                {/* <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div> */}
               </div>
               <span className="flex justify-end">
                   <button onClick={() => router.push(`/meal/${food.name}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 

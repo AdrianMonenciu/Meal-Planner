@@ -1,5 +1,10 @@
 .input_group{
-    @apply flex border rounded-xl min-w-[300px] max-w-[350px] md:min-w-[350px] md:max-w-[500px];
+    @apply flex border rounded-xl min-w-[300px] max-w-[350px] md:min-w-[350px] md:max-w-[450px];
+    position: relative;
+}
+
+.input_group_large{
+    @apply flex border rounded-xl min-w-[300px] max-w-[350px] md:min-w-[600px] md:max-w-[8000px];
     position: relative;
 }
 

@@ -64,13 +64,17 @@ export default function Header() {
         >
           Update Profile
         </a>
-        <br></br> 
-        <a
-          href={`/user/updateUsers`}
-          className={`${styles.buttonPrimary} bg-cyan-300`}
-        >
-          Update Users
-        </a>
+        {session?.user.userRole == 'admin' && (
+          <>
+            <br></br> 
+            <a
+              href={`/user/updateUsers`}
+              className={`${styles.buttonPrimary} bg-cyan-300`}
+            >
+              Update Users
+            </a>
+          </>
+        )}
 
       </div>
     );
@@ -280,8 +284,8 @@ export default function Header() {
                   className={`pl-2 pr-2 text-black transition-all duration-500 ease-in-out transform ${selectedButton === "Ingredients/Snacks" ? "rotate-180" : "rotate-0"}`}
                 />
 
-                <div className={`text-sm translate-y-1 flex w-full bg-green-200  absolute top-full left-0 z-2 transition-all duration-300 ease-in-out
-                transform ${selectedButton === "Ingredients/Snacks" ? "opacity-100" : "opacity-0"}`} 
+                <div className={`text-sm translate-y-1 flex w-full bg-green-300  absolute top-full left-0 z-2 overflow-hidden transition-all duration-300 ease-in-out
+                transform ${selectedButton === "Ingredients/Snacks" ? "max-h-40" : "max-h-0"}`} 
                 >
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
@@ -310,8 +314,8 @@ export default function Header() {
                   className={`pl-2 pr-2 text-black transition-all duration-500 ease-in-out transform ${selectedButton === "Meals" ? "rotate-180" : "rotate-0"}`}
                 />
 
-                <div className={`text-sm translate-y-1 flex w-full bg-green-200  absolute top-full left-0 z-2 transition-all duration-300 ease-in-out
-                transform ${selectedButton === "Meals" ? "opacity-100" : "opacity-0"}`} 
+                <div className={`text-sm translate-y-1 flex w-full bg-green-300  absolute top-full left-0 z-2 overflow-hidden transition-all duration-300 ease-in-out
+                transform ${selectedButton === "Meals" ? "max-h-40" : "max-h-0"}`} 
                 >
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
@@ -340,8 +344,8 @@ export default function Header() {
                   className={`pl-2 pr-2 text-black transition-all duration-500 ease-in-out transform ${selectedButton === "Weekly Plan" ? "rotate-180" : "rotate-0"}`}
                 />
 
-                <div className={`text-sm translate-y-1 flex w-full bg-green-200  absolute top-full left-0 z-2 transition-all duration-300 ease-in-out
-                transform ${selectedButton === "Weekly Plan" ? "opacity-100" : "opacity-0"}`} 
+                <div className={`text-sm translate-y-1 flex w-full bg-green-300  absolute top-full left-0 z-2 overflow-hidden transition-all duration-300 ease-in-out
+                transform ${selectedButton === "Weekly Plan" ? "max-h-40" : "max-h-0"}`} 
                 >
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>

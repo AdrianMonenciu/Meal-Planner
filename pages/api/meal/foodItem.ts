@@ -23,12 +23,12 @@ export default async function handler(
     if(req.method === 'POST'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodMeasureUnit, diet } = req.body;
+      const { name, privateBool, foodMeasureUnit, diet, image } = req.body;
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
 
-      // check duplicate usersname
+      // check duplicate food name
       const checkExistingFood = await FoodItem.findOne({ name });
       if(checkExistingFood ) { //&& session.user.username != username
         //console.log(checkexisting)
@@ -38,8 +38,10 @@ export default async function handler(
       const newFoodItem = new FoodItem({
         //_id: new mongoose.Types.ObjectId(),
         name: name,
+        privateBool: privateBool,
         foodMeasureUnit: foodMeasureUnit,
         diet: diet,
+        image: image,
         addedBy: currentUser._id    // assign the _id from the person
       });
 
@@ -86,7 +88,7 @@ export default async function handler(
         console.log(mongooseErr)
         return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
       } else {
-        //console.log(updatedUser)
+        console.log(newFoodItem)
         res.status(201).json({ message: `Food ${newFoodItem.name} created successfuly!`, status : true, data: newFoodItem})
       }
 
