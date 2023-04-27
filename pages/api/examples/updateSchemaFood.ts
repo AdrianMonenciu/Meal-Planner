@@ -41,7 +41,7 @@ export default async function handler(
         let updatedFoodItems, errorsComp
         let errors: boolean = false 
 
-        FoodItem.updateMany({}, { $set: { privateBool: false, image: 'MealPlanner/suqkcwqrvwoag1july5l' } }, (err, res) => {
+        FoodItem.updateMany({}, { $set: { privateBool: false, snack: false, image: 'MealPlanner/suqkcwqrvwoag1july5l' } }, (err, res) => {
           if (err) {
             errors = true;
             errorsComp = err;

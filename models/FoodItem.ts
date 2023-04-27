@@ -10,6 +10,7 @@ export interface IFood {
   privateBool: boolean;
   foodMeasureUnit: string;
   diet: string[];
+  snack: boolean;
   image: string;
   addedBy: Schema.Types.ObjectId;
 }
@@ -27,6 +28,7 @@ export const foodSchema = new Schema<IFood, FoodModel, IFoodMethods>({
   privateBool: {type: Boolean, default: false, required: true},
   foodMeasureUnit: {type:String, required:true},
   diet: [{type: String, required:true}],
+  snack: {type: Boolean, default: false, required: true},
   image: {type: String, default: 'MealPlanner/suqkcwqrvwoag1july5l'},
   addedBy: { type: Schema.Types.ObjectId, ref: 'Users' },
 },

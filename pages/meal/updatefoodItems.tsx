@@ -153,6 +153,7 @@ export default function ApiExamplePage() {
                 <div>Food name: {food.name}</div>
                 <div className='mx-4'>Measuring unit: {food.foodMeasureUnit}</div>
                 <div className='mx-4'>Private: {food.privateBool ? "true" : "false"}</div>
+                <div className='mx-4'>ID: {food._id as unknown as string}</div>
                 <div className='mx-4'>Image: {food.image}</div>
                 {/* <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div> */}
               </div>

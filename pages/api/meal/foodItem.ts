@@ -23,7 +23,7 @@ export default async function handler(
     if(req.method === 'POST'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, privateBool, foodMeasureUnit, diet, image } = req.body;
+      const { name, privateBool, foodMeasureUnit, diet, snack, image } = req.body;
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
@@ -41,6 +41,7 @@ export default async function handler(
         privateBool: privateBool,
         foodMeasureUnit: foodMeasureUnit,
         diet: diet,
+        snack: snack,
         image: image,
         addedBy: currentUser._id    // assign the _id from the person
       });
@@ -88,7 +89,7 @@ export default async function handler(
         console.log(mongooseErr)
         return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
       } else {
-        console.log(newFoodItem)
+        //console.log(newFoodItem)
         res.status(201).json({ message: `Food ${newFoodItem.name} created successfuly!`, status : true, data: newFoodItem})
       }
 
@@ -96,12 +97,12 @@ export default async function handler(
     } else if (req.method === 'PUT'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodMeasureUnit, diet, id } = req.body;
-      console.log(req.body)
+      const { name, privateBool, foodMeasureUnit, diet, snack, image, id } = req.body;
+      //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
 
-      // check duplicate usersname
+      // check duplicate food items
       const checkExistingFood = await FoodItem.findOne({ name });
       
       var mongoose = require('mongoose');
@@ -116,7 +117,7 @@ export default async function handler(
 
       let errors: boolean = false
       const filter = { _id: id };
-      const update = {name, foodMeasureUnit, diet, addedBy: currentUser._id };
+      const update = {name, privateBool, foodMeasureUnit, diet, snack, image, addedBy: currentUser._id };
 
       var err = await FoodItem.findOneAndUpdate(filter, update, {
         new: true
@@ -124,9 +125,16 @@ export default async function handler(
       
       let updatedFood = await FoodItem.findOne({_id: id})
 
+      //console.log(currentUser.FoodItem)
+
       if (!errors) {
-        currentUser.FoodItem.push(updatedFood._id)
-        await currentUser.save().catch(error => {err = error, errors = true});
+        if (!currentUser.FoodItem.find(item => String(item) == String(idObj))) {
+          currentUser.FoodItem.push(updatedFood._id)
+          await currentUser.save().catch(error => {err = error, errors = true});
+        } else {
+          console.log(`Food id: ${updatedFood._id} already existi for this user.`)
+        }
+        
       }
       
       if (errors) {
