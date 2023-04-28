@@ -25,20 +25,20 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/meal/[foodItem]": [
+    "/meal/updateMeals": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/meal/[foodItem].js"
-    ],
-    "/meal/foodItem": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/meal/foodItem.js"
+      "static/chunks/pages/meal/updateMeals.js"
     ],
     "/meal/updatefoodItems": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/meal/updatefoodItems.js"
+    ],
+    "/user/login": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/user/login.js"
     ]
   },
   "ampFirstPages": []

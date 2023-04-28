@@ -2,8 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/meal/[foodItem]": "pages/meal/[foodItem].js",
-  "/api/meal/getFoodItems": "pages/api/meal/getFoodItems.js",
-  "/meal/foodItem": "pages/meal/foodItem.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
   "/meal/updatefoodItems": "pages/meal/updatefoodItems.js"
 }
