@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify"
@@ -7,6 +8,11 @@ import { IFood } from '../../models/FoodItem'
 import * as Yup from "yup";
 import styles from '../../styles/Form.module.css';
 import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { Image } from "cloudinary-react";
 
 interface FormValues {
   foodName: string;
@@ -127,49 +133,95 @@ export default function ApiExamplePage() {
 
   return (
     <Layout>
-      <h1>User list</h1>
-      <form className='flex flex-col' onSubmit={formik.handleSubmit}>
-        <div className={`${styles.input_group} ${formik.errors.foodName && formik.touched.foodName ? 'border-rose-600' : ''}`}>
-          <input 
-          type="text"
-          name='foodName'
-          placeholder='foodName'
-          className={styles.input_text}
-          {...formik.getFieldProps('foodName')}
-          />
+
+      <Head>
+        <title>Upate Food Item</title>
+      </Head>
+      
+      <section className='min-w-[250px] max-w-[320px] md:max-w-[900px] items-center mx-auto flex flex-col gap-3 mt-4 md:mt-8'> 
+        <div className="flex justify-start">
+            <p className='font-bold md:text-xl'>Update Food Items</p>
         </div>
-        <div className="input-button">
-          <button type='submit' className={styles.button}>
-              Search
-          </button>
-        </div>
-      </form>
-      <div className='flex flex-col'>
-        {foodItems.status === 'loading' && <div>Loading...</div>}
-        {foodItems.status === 'loaded' && 
-          foodItems.payload.results.map((food, index) => (
-            <div key={index} className={`flex justify-between`}>
-              <div className="flex justify-start">
-                <div>Food name: {food.name}</div>
-                <div className='mx-4'>Measuring unit: {food.foodMeasureUnit}</div>
-                <div className='mx-4'>Private: {food.privateBool ? "true" : "false"}</div>
-                <div className='mx-4'>ID: {food._id as unknown as string}</div>
-                <div className='mx-4'>Image: {food.image}</div>
-                {/* <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div> */}
-              </div>
-              <span className="flex justify-end">
-                  <button onClick={() => router.push(`/meal/${food.name}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
-                    EDIT</button>
-                  <button onClick={handleUserDelete(food.name)} className={`bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`}> 
-                    DELETE</button>
+
+        <form className='flex flex-row items-center gap-3 md:gap-5' onSubmit={formik.handleSubmit}>
+          <div className={`${styles.input_group} ${formik.errors.foodName && formik.touched.foodName ? 'border-rose-600' : ''}`}>
+            <input 
+            type="text"
+            name='foodName'
+            placeholder='foodName'
+            className={styles.input_text}
+            {...formik.getFieldProps('foodName')}
+            />
+          </div>
+          <div className="min-w-[20px] ">
+            <button type='submit' className={`${styles.button} `}>
+              <span className="hidden md:inline ml-4 mr-4">Search</span>
+              <FontAwesomeIcon icon={faSearch} className="w-5 h-5  ml-2 mr-2 pt-1 md:hidden" aria-hidden="true" />
+            </button>
+          </div>
+        </form>
+
+        <div className='flex flex-col'>
+          {foodItems.status === 'loading' && <div>Loading...</div>}
+          {foodItems.status === 'loaded' && 
+            foodItems.payload.results.map((food, index) => (
+              <div key={index} className={`flex justify-between items-center gap-3 py-1`}>
+                <div className='flex items-center gap-3'>
+                  <Image
+                    className={`avatar_small_global border-2 flex justify-start`}
+                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                    publicId={food.image}
+                    alt={food.image}
+                    secure
+                    dpr="auto"
+                    quality="auto"
+                    width={350}
+                    height={350}
+                    crop="fill"
+                    gravity="auto"
+                  />
+
+                  <div className={` text-sm md:text-lg max-w-[200px] md:max-w-[300px]`}>{food.name}</div>
+                  {/*  <div className='mx-4'>Measuring unit: {food.foodMeasureUnit}</div>
+                  <div className='mx-4'>Private: {food.privateBool ? "true" : "false"}</div>
+                  <div className='mx-4'>ID: {food._id as unknown as string}</div>
+                  <div className='mx-4'>Image: {food.image}</div>
+                  <div className='mx-4'>Diet: {food.diet.map((diet, index) => `${diet} `)}</div> */}
+                </div>
+
+                <span className="h-[24px] md:h-full flex justify-end">
+                  <div className="px-1 md:px-2">
+                    <button onClick={() => router.push(`/meal/foodItemNewFrom/${food.name}`)}
+                    className={`${styles.button_no_bg} whitespace-nowrap bg-gradient-to-r from-cyan-400 to-cyan-500 `}>
+                      <span className="ml-2 md:ml-4 mr-2 md:mr-4">New</span>
+                    </button>
+                  </div>
+
+                  <div className="min-w-[20px] h-full px-1 md:px-2">
+                    <button onClick={() => router.push(`/meal/${food.name}`)}
+                    className={`${styles.button_no_bg} bg-gradient-to-r from-blue-500 to-blue-600`}>
+                      <span className="hidden md:inline ml-4 mr-4">Edit</span>
+                      <FontAwesomeIcon icon={faEdit} className="w-3 h-full  ml-1 mr-1 pb-[2px] md:hidden" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div className="min-w-[20px] px-1 md:px-2">
+                    <button onClick={handleUserDelete(food.name)}
+                    className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
+                      <span className="hidden md:inline ml-4 mr-4">Delete</span>
+                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3  ml-1 mr-1 md:hidden" aria-hidden="true" />
+                    </button>
+                  </div>
                 </span>
-            </div>
-          ))
-        }
-        {foodItems.status === 'error' && (
-          <div>{foodItems.error}</div>
-        )}
-      </div>
+              </div>
+            ))
+          }
+          {foodItems.status === 'error' && (
+            <div>{foodItems.error}</div>
+          )}
+        </div>
+
+      </section>
       
     </Layout>
   )

@@ -59,7 +59,7 @@ export default function AddFood(){
 
     const validationSchemaYup: Yup.SchemaOf<FormValues> = Yup.object().shape({
         name: Yup.string().required('Item name required').min(2, "The name must have at least 2 characters!")
-        .max(20, "The name must have maximum 20 characters!")
+        .max(30, "The name must have maximum 30 characters!")
         .test("Empty space", "Name can not start with SPACE!", function(value) {if (value) return  !(value.charAt(0) === " "); else return true }),
         privateBool: Yup.bool().required(),
         foodMeasureUnit: Yup.string().required('Food measuring unit required'),
@@ -174,7 +174,7 @@ export default function AddFood(){
 
 
                         <div className='flex flex-col items-center gap-5'>
-                            <div className={`${styles.input_group} flex-col bg-green-100`}>
+                            <div className={`${styles.input_group} flex-col w-full bg-green-100`}>
                                 <label className='mr-3 ml-3 mt-1 text-sm md:text-base'>
                                     <input type="radio" name="privateBool" className='mr-1' checked={formik.values.privateBool === true}
                                     disabled={session ? (session.user.userRole == "admin" ? false : true) : true}

@@ -59,3 +59,17 @@ iframe {
 .toast-custom-class {
   z-index: 9999;
 }
+
+.avatar_small_global {
+  @apply w-9 md:w-12 h-9 md:h-12 bg-white rounded-full float-left bg-cover bg-no-repeat;
+}
+
+.avatar_x_small_global {
+  border-radius: 1.25rem;
+  float: left;
+  height: 2.5rem;
+  width: 2.5rem;
+  background-color: white;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

@@ -1,5 +1,5 @@
 .input_group{
-    @apply flex border rounded-xl min-w-[300px] max-w-[350px] md:min-w-[350px] md:max-w-[450px];
+    @apply flex border rounded-xl min-w-[270px] max-w-[350px] md:min-w-[350px] md:max-w-[350px];
     position: relative;
 }
 
@@ -19,13 +19,23 @@
 }
 
 .button{
-    @apply w-full bg-gradient-to-r from-green-400 to-green-500 rounded-md;
-    @apply py-2 text-gray-50 text-lg
+    @apply w-full bg-gradient-to-r from-green-400 to-green-500 rounded-md border border-transparent;
+    @apply py-1 text-gray-50 text-sm md:text-lg
 }
 
 .button:hover{
     @apply bg-gradient-to-r from-gray-50 to-gray-100 border-blue-500;
-    @apply text-gray-700 border;
+    @apply text-gray-700 ;
+}
+
+.button_no_bg{
+    @apply w-full rounded-md border border-transparent;
+    @apply md:py-1 text-gray-50 text-sm md:text-lg
+}
+
+.button_no_bg:hover{
+    @apply bg-gradient-to-r from-gray-50 to-gray-100 border border-blue-500;
+    @apply text-gray-700 ;
 }
 
 .button_custom{
@@ -74,4 +84,18 @@
     background-size: cover;
     background-repeat: no-repeat;
     object-fit: cover;
+  }
+
+  .avatar_small {
+  border-radius: 2rem;
+  float: left;
+  height: 3rem;
+  width: 3rem;
+  background-color: white;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.avatar_medium {
+    @apply w-16 h-16 border-2 bg-white rounded-full float-left bg-cover bg-no-repeat;
   }
