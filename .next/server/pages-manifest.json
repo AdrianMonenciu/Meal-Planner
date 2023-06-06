@@ -4,6 +4,7 @@
   "/_document": "pages/_document.js",
   "/meal/updateMeals": "pages/meal/updateMeals.js",
   "/meal/updatefoodItems": "pages/meal/updatefoodItems.js",
-  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
-  "/api/meal/getFoodItems": "pages/api/meal/getFoodItems.js"
+  "/meal/meal": "pages/meal/meal.js",
+  "/api/meal/getFoodItems": "pages/api/meal/getFoodItems.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js"
 }
