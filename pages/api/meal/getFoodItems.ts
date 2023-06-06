@@ -32,18 +32,43 @@ export default async function handler(
   if(req.method === 'GET'){
 
     if(!req.body) return res.status(404).json({message: "No form data!"});
+
+    const session = await unstable_getServerSession(req, res, authOptions)
+    const currentUser = await Users.findOne({ email: session.user.email })
       
     //const { username } = req.body;
     const { foodName, limit } = req.query;
     const foodNameString = foodName as string
     const limitNumber = limit as unknown as number
 
-    let mongooseErr
+    let mongooseErr,searchCondition
 
     // const result = await Users.find({username: new RegExp(foodNameString, 'i')}).sort({ createdAt: 'desc' }).limit(limitNumber).exec()
     // .catch(err => {throw new Error(err)});
 
-    let foodItemsPopulated = await FoodItem.find({name: new RegExp(foodNameString, 'i')}).sort({ createdAt: 'desc' })
+    if (currentUser.userRole == "admin") {
+      searchCondition = {
+        $or: [
+          {
+            privateBool: false,
+            name: new RegExp(foodNameString, 'i')
+          },
+          {
+            privateBool: true,
+            addedBy: currentUser._id,
+            name: new RegExp(foodNameString, 'i')
+          }
+        ]
+      }
+    } else {
+      searchCondition = {
+        privateBool: true,
+        addedBy: currentUser._id,
+        name: new RegExp(foodNameString, 'i')
+      }
+    }
+
+    let foodItemsPopulated = await FoodItem.find(searchCondition).sort({ createdAt: 'desc' })
     .limit(limitNumber).exec().catch(err => mongooseErr = err);
     // .populate('addedBy')
   //   searchOptions.name = new RegExp(req.query.name, 'i')

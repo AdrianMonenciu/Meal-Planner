@@ -19,6 +19,24 @@ import {useSession } from "next-auth/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
+async function uploadImage(
+    image: File | string
+    ) {
+    const url = 'https://api.cloudinary.com/v1_1/' + process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload';
+
+    const formData = new FormData();
+    formData.append('file', image);
+    formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
+
+    const response = await fetch(url, {
+        method: 'post',
+        body: formData,
+        mode: 'cors'
+    }).then(r => r.json());
+
+    return response;
+}
+
 export default function Register(){
     const instanceId = useId();
 
@@ -36,6 +54,7 @@ export default function Register(){
     const [dietPlanUpdated, setdietPlanUpdated] = useState<boolean>(true)
     const [previewImage, setPreviewImage] = useState<string>()
     
+    
     interface IfoodItems {
         qty: number, 
         name: string,
@@ -46,28 +65,19 @@ export default function Register(){
 
     interface FormValues2 {
         foodItems: IfoodItems[];
-        foodSelect: IfoodItems;
     }
 
     const initialValues2: FormValues2 = {
         //foodItems: [{name: '', qty: 0, qtyOption: 'Quantity', id: '', image: null}],
-        foodItems: [],
-        foodSelect: {name: '', qty: 0, qtyOption: 'Quantity', id: '', image: null},
-        //names: [{name: 'breakfast', qty: 1}, {name: 'breakfast', qty: 2}, {name: 'breakfast', qty: 3}]
+        foodItems: []
     }
     
     const validationSchema2 = Yup.object().shape({
         foodItems: Yup.array().required().min(2, 'Min 2 food items required!').max(10, 'Maximum 10 food items are allowed!').of(
         Yup.object().shape({
-            name: Yup.string().max(10).required(),
+            name: Yup.string().required(),
             qty: Yup.number().required().min(0.1, 'Min qty is 0.1')
-        })),
-        foodSelect: Yup.object().shape({
-            name: Yup.string()
-                .required('Select a Food Item!')
-                .test('notEmpty', 'Select a Food Item!', (value) => value !== ''),
-            qty: Yup.number().required().min(0.1, 'Min qty is 0.1!')
-        })
+        }))
     });
     
     async function onSubmit2(values: FormValues2){
@@ -85,29 +95,35 @@ export default function Register(){
             }[]
         }
 
-        const meal_api_body: IMeal_api_body = {
-            name: formik.values.name.charAt(0).toUpperCase() + formik.values.name.slice(1).toLowerCase(), //formik.values.name
-            diet: currentDietPlan,
-            privateBool: formik.values.privateBool,
-            image: formik.values.image,
-            foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
+        const response = await uploadImage(formik.values.image)
+
+        if (response.public_id) {
+            const meal_api_body: IMeal_api_body = {
+                name: formik.values.name.charAt(0).toUpperCase() + formik.values.name.slice(1).toLowerCase(), //formik.values.name
+                diet: currentDietPlan,
+                privateBool: privateMeal, 
+                image: response.public_id as string,
+                foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
+            }
+
+            console.log(meal_api_body)
+
+            const options = {
+                method: "POST",
+                headers : { 'Content-Type': 'application/json'},
+                body: JSON.stringify(meal_api_body)
+            }
+
+            await fetch('/api/meal/meal', options)
+            .then(res => res.json())
+            .then((data) => {
+                console.log(data)
+                toast(data.message)
+                //if(data) router.push('/')
+            })
+        } else {
+            toast('Image could not be uploaded.')
         }
-
-        console.log(meal_api_body)
-
-        const options = {
-            method: "POST",
-            headers : { 'Content-Type': 'application/json'},
-            body: JSON.stringify(meal_api_body)
-        }
-
-        await fetch('/api/meal/meal', options)
-        .then(res => res.json())
-        .then((data) => {
-            console.log(data)
-            toast(data.message)
-            //if(data) router.push('/')
-        })
 
     }
 
@@ -116,6 +132,7 @@ export default function Register(){
         name: string;
         diet: string[];
         privateBool: boolean;
+        allPrivateFoodItems: boolean;
         image?: File | string;
     }
 
@@ -123,8 +140,13 @@ export default function Register(){
         name : '',
         diet: [],
         privateBool: session ? (session.user.userRole == "admin" ? false : true) : true,
+        allPrivateFoodItems: false,
         image: null
     }
+
+    const [privateMeal, setPrivateMeal] = useState<boolean>(initialValues.privateBool)
+    const [allPrivateFoodItems, setAllPrivateFoodItems] = useState<boolean>(false)
+    //const [resetAvailableFood, setResetAvailableFood] = useState<boolean>(false)
 
     const SUPPORTED_FORMATS: string[] = ['image/jpg', 'image/png', 'image/jpeg', 'image/gif'];
 
@@ -134,6 +156,7 @@ export default function Register(){
         .test("Empty space", "Name can not start with SPACE!", function(value) {if (value) return  !(value.charAt(0) === " "); else return true }),
         diet: Yup.array(Yup.string()).min(1, 'Select at least 1 diet oprion!'),
         privateBool: Yup.bool().required(),
+        allPrivateFoodItems: Yup.bool().required(),
         image: Yup.mixed().nullable().required('Image is required!').test('size', 'File size is too big',
         (value) => value && value.size <= 1024 * 1024 // 5MB
            ).test('type','Invalid file format selection',
@@ -202,7 +225,7 @@ export default function Register(){
         };
 
         return (
-            <div className={`flex items-center flex-col w-full min-h-[72px] bg-green-100 border rounded-xl`}>
+            <div className={`flex flex-col w-full min-h-[72px] bg-green-100 border rounded-xl`}>
                 <div className='flex flex-row justify-between w-full mt-2 mb-2 items-center '>
                     <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
                         {image ?
@@ -309,7 +332,16 @@ export default function Register(){
         //console.log(formik.values.diet);
         const idietArraysEqual = JSON.stringify(formik.values.diet) === JSON.stringify(currentDietPlan);
         setdietPlanUpdated(idietArraysEqual);
-      }, [formik.values.diet, currentDietPlan]);
+    }, [formik.values.diet, currentDietPlan]);
+
+    useEffect(() => {
+        //console.log(`formik.values.privateBool:${formik.values.privateBool}, privateMeal:${privateMeal}, formik.values.allPrivateFoodItems:${formik.values.allPrivateFoodItems}, allPrivateFoodItems:${allPrivateFoodItems}`)
+        if(formik.values.privateBool != privateMeal || formik.values.allPrivateFoodItems != allPrivateFoodItems) {
+            setdietPlanUpdated(false)
+        } else {
+            setdietPlanUpdated(true)
+        }
+    }, [formik.values.privateBool, privateMeal, formik.values.allPrivateFoodItems, allPrivateFoodItems]);
 
     async function onSubmit1(values: FormValues){
         await getFoodItems(values.diet)
@@ -324,30 +356,11 @@ export default function Register(){
         // }).map(item => item.foodName);
 
         setCurrentDietPlan(values.diet.map((food) => food));
+        setPrivateMeal(values.privateBool)
+        setAllPrivateFoodItems(values.allPrivateFoodItems)
 
         formik2Ref.current.resetForm();
     }
-
-
-    function updateQtyOptionAndId (index, selectedOption, setFieldValue) {
-        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
-        const currentFoodItem = currentFoodItemsData.find(food => food.name === selectedOption)
-        //console.log(currentFoodItem)
-
-        setFieldValue(`foodItems.${index}.qtyOption`, currentFoodItem.foodMeasureUnit)
-        setFieldValue(`foodItems.${index}.id`, currentFoodItem._id)
-        setFieldValue(`foodItems.${index}.image`, currentFoodItem.image)
-    };
-
-    function updateQtyOptionAndIdSelect (selectedOption, setFieldValue) {
-        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
-        const currentFoodItem = currentFoodItemsData.find(food => food.name === selectedOption)
-        //console.log(currentFoodItem)
-
-        setFieldValue(`qtyOption`, currentFoodItem.foodMeasureUnit)
-        setFieldValue(`id`, currentFoodItem._id)
-        setFieldValue(`image`, currentFoodItem.image)
-    };
 
     async function getFoodItems(querryData: string[]) {
         const options = {
@@ -355,7 +368,7 @@ export default function Register(){
           headers : { 'Content-Type': 'application/json'},
         }
         const encodedDiets = encodeURIComponent(querryData.join(',')) // encodeURIComponent(querryData.join(','))
-        const url = `/api/meal/getFoodItemsByDiet?diets=${encodedDiets}`;
+        const url = `/api/meal/getFoodItemsByDiet?diets=${encodedDiets}&isPrivate=${formik.values.privateBool}&privateAll=${formik.values.allPrivateFoodItems}`;
 
         //console.log(url)
 
@@ -381,6 +394,13 @@ export default function Register(){
         console.log(currentFoodItemsData)
     },[currentFoodItemsData])
       
+    const ErrorDisplay = ({ error }) => {
+        if (typeof error === 'string') {
+          return <div>{error}</div>;
+        }
+      
+        return null;
+    };
 
 
     return (
@@ -414,40 +434,16 @@ export default function Register(){
                             {/* {formik.errors.username && formik.touched.username ? <span className='text-rose-500'>{formik.errors.username}</span> : <></>} */}
                         </div>
 
-                        <div className={`${styles.input_group} flex-col w-full bg-green-100`}>
-                            <label className='mr-3 ml-3 mt-1 text-sm md:text-base'>
-                                <input type="radio" name="privateBool" className='mr-1' checked={formik.values.privateBool === true}
-                                disabled={session ? (session.user.userRole == "admin" ? false : true) : true}
-                                onChange={() => formik.setFieldValue("privateBool", true)}
-                                />
-                                Private Food Item
-                            </label>
-                            <label className='mr-3 ml-3 mt-1 mb-1 text-sm md:text-base'>
-                                <input type="radio" name="privateBool" className='mr-1' checked={formik.values.privateBool === false}
-                                disabled={session ? (session.user.userRole == "admin" ? false : true) : true}
-                                onChange={() => formik.setFieldValue("privateBool", false)}
-                                />
-                                Public Food Item
-                            </label>
-                            {/* <div>{`Private: ${formik.values.private}`}</div> */}
-                        </div>
-                    </div>
-
-
-                    <div className='flex flex-col gap-5 md:col-start-2 md:row-start-1'>
-                        <div className={`${styles.input_group} flex-col bg-green-100`}>
+                        <div className={`${styles.input_group} flex-col bg-green-100 
+                        ${formik.errors.diet && formik.touched.diet ? 'border-rose-600' : ''}`}>
                             <div className={`text-left ml-3 mt-1 font-medium text-sm md:text-base ${currentDietPlan.length == 0 ? 'mb-1' : ''} font-bold`}> Current Diet: </div>
                             <div className='flex flex-col mb-1'>
                                 {currentDietPlan.map((diet) => <span key={diet} className='mr-3 ml-3 text-sm md:text-base'> {diet} </span>)}
                             </div>
-                        </div>
-                    
-                        <div className={`${styles.input_group} flex-col bg-green-100 
-                        ${formik.errors.diet && formik.touched.diet ? 'border-rose-600' : ''}`}>
-                            <div className='text-left ml-3 mt-1 mb-1 font-medium text-sm md:text-base' id="checkbox-group">Dietary suitability:</div>
+                            <div className='text-left ml-3 mt-2 mb-1 font-medium text-sm md:text-base' id="checkbox-group">Select Dietary suitability:</div>
                             <div className={`flex flex-col mb-1`} role="group" aria-labelledby="checkbox-group">
                                 {dietPreferencesFood.map((diet) => 
-                                <label className='mr-3 ml-3 mt-1 text-sm md:text-base' key={diet}>
+                                <label className={`mr-3 ml-3 mt-1 ${(!currentDietPlan.includes(diet) && (formik.values.diet.indexOf(diet) > -1)) ? 'text-rose-500' : ''} text-sm md:text-base`} key={diet}>
                                     <input className='mr-1' type="checkbox" name="diet" {...formik.getFieldProps('diet')} value={diet} 
                                     checked={(formik.values.diet.indexOf(diet) > -1) ? true : false}
                                     /> {/* defaultChecked={(formik.values.diet.indexOf(diet) > -1) ? true : false}   */}
@@ -461,55 +457,107 @@ export default function Register(){
                                 className={`${styles.button_no_bg} py-1 bg-gradient-to-r
                                 ${ dietPlanUpdated ? 'from-green-400 to-green-500' : ' from-red-500 to-red-600'}`}>
                                     <span className="px-1 md:px-2">
-                                    {dietPlanUpdated ? 'Diet Plan is Updated' : 'Reset Diet Plan'}</span>
+                                    {dietPlanUpdated ? 'Food items Updated' : 'Reset Food Items'}</span>
                                 </button>
                             </div>
                         </div>
-                    </div>                   
-                    
 
-                    <div className='flex items-center flex-col gap-5 md:col-start-1 md:row-start-1 md:mt-40'>
-                        <div className='flex flex-col'>
-                            <label htmlFor="image" className={`${styles.button} w-full min-w-[120px] max-w-[200px] text-center`}>
-                                <span className={`px-1 md:px-2`}>Choose Image File</span>
-                            </label>
-                            <input
-                            name='image' //NAME field not required in this case as image is set through onChange
-                            type='file'
-                            id="image"
-                            onChange={(event) => {
-                                formik.setFieldValue(
-                                'image',
-                                event.target.files[0]
-                                );
-                                if (event?.target?.files?.[0]) {
-                                    const file = event.target.files[0];
-                                    const reader = new FileReader();
-                                    reader.onloadend = () => {
-                                    setPreviewImage(reader.result as string);
-                                    };
-                                    reader.readAsDataURL(file);
-                                }
-                            }}
-                            className={'hidden'}
-                            ></input>
-                            {formik.errors.image && formik.touched.image ? 
-                            <span className='text-rose-500 mt-1 ml-3 text-sm md:text-base'>{formik.errors.image}</span> : <></>}
-                        </div>
-
-                        <div>
-                            {formik.values.image ?
-                                <>  
-                                    <img
-                                    src={previewImage}
-                                    className={`${styles.avatar} `}
-                                    />
-                                </>
-                                : "No Image"
-                            }
-                        </div>
                     </div>
 
+
+                    <div className='flex flex-col gap-5 md:col-start-2 md:row-start-1'> 
+                        <div className={`${styles.input_group} flex-col w-full bg-green-100`}>
+                            <div className={`text-left ml-3 mt-1 text-sm md:text-base mb-1 font-medium`}>{`${!privateMeal ? "Public Meal" : 
+                            (allPrivateFoodItems ? "Private Meal - Include all private Food Items" : "Private Meal - Include diet match Food Items")}`}</div>
+                            <label className={`mr-3 ml-3 mt-1 text-sm md:text-base 
+                            ${(formik.values.privateBool == true && formik.values.privateBool != privateMeal) ? 'text-rose-500' : ''}`}>
+                                <input type="radio" name="privateBool" className='mr-1' checked={formik.values.privateBool === true}
+                                disabled={session ? (session.user.userRole == "admin" ? false : true) : true}
+                                onChange={() => formik.setFieldValue("privateBool", true)}
+                                />
+                                Private Meal
+                            </label>
+                            <label className={`mr-3 ml-3 mt-1 mb-1 text-sm md:text-base
+                            ${(formik.values.privateBool == false && formik.values.privateBool != privateMeal) ? 'text-rose-500' : ''}`}>
+                                <input type="radio" name="privateBool" className='mr-1' checked={formik.values.privateBool === false}
+                                disabled={session ? (session.user.userRole == "admin" ? false : true) : true}
+                                onChange={() => formik.setFieldValue("privateBool", false)}
+                                />
+                                Public Meal
+                            </label>
+                            <label className={`mr-3 ml-3 mt-3 text-sm md:text-base
+                            ${(formik.values.privateBool && formik.values.allPrivateFoodItems == true && formik.values.allPrivateFoodItems != allPrivateFoodItems) ? 'text-rose-500' : ''}`}>
+                                <input type="radio" name="allPrivateFoodItems" className='mr-1' 
+                                checked={formik.values.privateBool ? formik.values.allPrivateFoodItems === true : false}
+                                disabled={!formik.values.privateBool}
+                                onChange={() => formik.setFieldValue("allPrivateFoodItems", true)}
+                                />
+                                Include all private Food Items
+                            </label>
+                            <label className={`mr-3 ml-3 mt-1 mb-1 text-sm md:text-base
+                            ${(formik.values.privateBool && formik.values.allPrivateFoodItems == false && formik.values.allPrivateFoodItems != allPrivateFoodItems) ? 'text-rose-500' : ''}`}>
+                                <input type="radio" name="allPrivateFoodItems" className='mr-1' 
+                                checked={formik.values.privateBool ?  formik.values.allPrivateFoodItems === false : false}
+                                disabled={!formik.values.privateBool}
+                                onChange={() => formik.setFieldValue("allPrivateFoodItems", false)}
+                                />
+                                Include private Food Items matching diet
+                            </label>
+                            <div className=" mt-1 min-w-[120px] max-w-[200px] mx-auto mb-1">
+                                <button type='submit' disabled={dietPlanUpdated}
+                                className={`${styles.button_no_bg} py-1 bg-gradient-to-r
+                                ${ dietPlanUpdated ? 'from-green-400 to-green-500' : ' from-red-500 to-red-600'}`}>
+                                    <span className="px-1 md:px-2">
+                                    {dietPlanUpdated ? 'Food items Updated' : 'Reset Food Items'}</span>
+                                </button>
+                            </div>
+                            {/* <div>{`Private: ${formik.values.private}`}</div> */}
+                        </div>
+
+                        <div className='flex items-center flex-col gap-5'>
+                            <div className='flex flex-col'>
+                                <label htmlFor="image" className={`${styles.button} w-full min-w-[120px] max-w-[200px] text-center`}>
+                                    <span className={`px-1 md:px-2`}>Choose Image File</span>
+                                </label>
+                                <input
+                                name='image' //NAME field not required in this case as image is set through onChange
+                                type='file'
+                                id="image"
+                                onChange={(event) => {
+                                    formik.setFieldValue(
+                                    'image',
+                                    event.target.files[0]
+                                    );
+                                    if (event?.target?.files?.[0]) {
+                                        const file = event.target.files[0];
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => {
+                                        setPreviewImage(reader.result as string);
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                }}
+                                className={'hidden'}
+                                ></input>
+                                {formik.errors.image && formik.touched.image ? 
+                                <span className='text-rose-500 mt-1 ml-3 text-sm md:text-base'>{formik.errors.image}</span> : <></>}
+                            </div>
+
+                            <div>
+                                {formik.values.image ?
+                                    <>  
+                                        <img
+                                        src={previewImage}
+                                        className={`${styles.avatar} `}
+                                        />
+                                    </>
+                                    : "No Image"
+                                }
+                            </div>
+                        </div>
+
+                    </div>                   
+   
                 </form>
 
                 <Formik
@@ -518,7 +566,7 @@ export default function Register(){
                 onSubmit={onSubmit2}
                 validationSchema={validationSchema2}
                 >
-                {({ values, handleSubmit, handleChange, errors, resetForm,  setFieldValue, setTouched}) => (
+                {({ values, handleSubmit, handleChange, errors, touched, resetForm,  setFieldValue, setTouched}) => (
                     <>
                     
                     <section className='mx-auto w-[320px] md:w-[750px] flex flex-col gap-3 mt-3'>
@@ -526,69 +574,85 @@ export default function Register(){
                             <p className='w-3/4 ml-2 font-bold'>Meal ingredients:</p>
                         </div>
 
-                        <Form className='flex gap-5' onSubmit={handleSubmit}>
+                        <Form className='flex ' onSubmit={handleSubmit}>
                         <FieldArray
                         name="foodItems"
                         render={arrayHelpers => (
-                            <div className='w-full'>
+                            <div className='w-full flex flex-col '>
                             {values.foodItems.map((name, index) => (
-                                <div key={index} className={` flex column justify-evenly color to-blue-200 `}>
+                                <div key={index} className={`flex flex-col  w-full ${index < values.foodItems.length - 1 ? 'mb-4' : ''}`}>
                                     {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                                    <Field name={`foodItems[${index}].name`}>
-                                    {({ field, form }) => (
-                                    <Select
-                                        className="select-wrap"
-                                        classNamePrefix="select-box"
-                                        instanceId={instanceId}
-                                        isSearchable={true}
-                                        value={{ value: values.foodItems[index].name, label: values.foodItems[index].name }}
-                                        //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
-                                        options={
-                                            //availableFoodItems
-                                            availableFoodItems.filter(item => {
-                                                for (let i = 0; i < values.foodItems.length; i++) {
-                                                    if (item.value == values.foodItems[i].name) {
-                                                        //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
-                                                        return false;
-                                                    }
-                                                }
-                                                return true;
-                                            })
-                                        }
-                                        //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
-                                        onChange={(selectedOption) => { 
-                                            form.setFieldValue(`foodItems.${index}.name`, selectedOption.value,)
-                                            //form.setFieldValue(`names.${index}.qtyOption`, 'Qty')
-                                            updateQtyOptionAndId(index, selectedOption.value, setFieldValue)
-                                            }}
-                                    />)}
-                                    </Field>
-                                    <Field  type='number' name={`foodItems.${index}.qty`} className={styles.input_group} 
-                                    />
-                                    <Field  name={`foodItems.${index}.qtyOption`} className={styles.input_group} readOnly/>
-                                    <ErrorMessage name={`foodItems.${index}.name`} />
-                                    <ErrorMessage name={`foodItems.${index}.qty`} />
-                                    <div className="input-button m-2">
-                                    <button
-                                        type="button"
-                                        className={styles.button}
-                                        onClick={() => arrayHelpers.remove(index)} // remove a name from the list
-                                    >
-                                        Remove input
-                                    </button>
+                                    
+
+                                    <div className={`flex flex-row items-center `}>
+                                        <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
+                                            {values.foodItems[index].image ?
+                                                <Image
+                                                    className={`${styles.avatar_medium} border-2 flex justify-start`}
+                                                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                                                    publicId={values.foodItems[index].image}
+                                                    alt={values.foodItems[index].image ? values.foodItems[index].image as string : ''} 
+                                                    secure
+                                                    dpr="auto"
+                                                    quality="auto"
+                                                    width={350}
+                                                    height={350}
+                                                    crop="fill"
+                                                    gravity="auto" 
+                                                />
+                                                : <div className='text-center'>No Image</div>
+                                            }
+                                        </div>
+                                        
+                                        <div className='flex flex-wrap ml-2 max-w-[245px] md:max-w-none  gap-2 md:flex-row md:gap-4'>
+                                            <div className="flex items-center overflow-hidden pl-2 w-60 mb-0.5 md:mb-0 md:w-80 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                                                <p className="text-center whitespace-nowrap truncate">{values.foodItems[index].name}</p>
+                                            </div>
+
+                                            <div className='flex items-center justify-between w-[159px] md:w-48 border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base'>
+                                                <Field  type='number' name={`foodItems.${index}.qty`} className={`w-20 md:w-24 rounded-lg h-full pl-2`}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setFieldValue(`foodItems.${index}.qty`, value !== '' ? Number(value) : null); // Convert to number or set to null
+                                                  }}
+                                                />
+                                                <div className='ml-2 mr-2 flex items-center justify-center h-full'>{'['}{values.foodItems[index].qtyOption}{']'}</div>
+                                            </div>
+
+                                            <div className="min-w-[10px] ml-3 md:ml-0 mr-1 md:mr-2">
+                                                <button
+                                                type="button"
+                                                className={`${styles.button_no_bg} py-1 whitespace-nowrap bg-gradient-to-r from-red-500 to-red-600`}
+                                                onClick={() => arrayHelpers.remove(index)}
+                                                >
+                                                    <span className=" ml-1 mr-1 md:ml-4 md:mr-4">Remove</span>
+                                                </button>
+
+                                            </div>
+
+                                        </div>
                                     </div>
+                                
+                                    <div className={`text-rose-500 mr-5 text-left text-sm md:text-base ml-20 mt-1 md:mt-0 mb-1`}>
+                                        <ErrorMessage name={`foodItems[${index}].qty`} component="div"/>
+                                    </div>
+                                    
                                 </div>
                             ))}
 
-                            <div className={`text-rose-500 mr-5 text-sm md:text-base ml-2 mb-1`}>
-                                <ErrorMessage name={`foodItems`} />
+                            <div className={`text-rose-500 mr-5 text-sm md:text-base mt-1 md:mt-2 ml-2 mb-1`}>
+                                <ErrorMessage name="foodItems">
+                                    {(error) => <ErrorDisplay error={error} />}
+                                </ErrorMessage>
                             </div>              
 
-                            <FoodSelect arrayHelpers={arrayHelpers}  parentValues={values}/>
+                            <div className='mt-3'>
+                                <FoodSelect arrayHelpers={arrayHelpers}  parentValues={values}/>
+                            </div>
 
-                            <div className="input-button">
-                                <button type='submit' className={styles.button}>
-                                    Submit
+                            <div className="min-w-[10px] mt-3 flex justify-center">
+                                <button type='submit' className={`${styles.button} max-w-[100px] `}>
+                                    Add Meal
                                 </button>
                             </div>
 

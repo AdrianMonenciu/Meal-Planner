@@ -165,7 +165,7 @@ export default function ApiExamplePage() {
           {foodItems.status === 'loading' && <div>Loading...</div>}
           {foodItems.status === 'loaded' && 
             foodItems.payload.results.map((food, index) => (
-              <div key={index} className={`flex justify-between items-center gap-3 py-1`}>
+              <div key={index} className={`flex justify-between items-center gap-3 py-1 md:py-2`}>
                 <div className='flex items-center gap-3'>
                   <Image
                     className={`avatar_small_global border-2 flex justify-start`}
@@ -181,7 +181,10 @@ export default function ApiExamplePage() {
                     gravity="auto"
                   />
 
-                  <div className={` text-sm md:text-lg max-w-[200px] md:max-w-[300px]`}>{food.name}</div>
+                  <div className={`max-h[350] text-left  max-w-[160px] md:max-w-[300px] leading-tight`}>
+                    <p className="whitespace-nowrap text-xs md:text-sm font-bold truncate">{food.privateBool ? "Private" : "Public"}</p>
+                    <p className="text-left text-sm md:text-lg -mt-1 md:-mt-0 whitespace-nowrap truncate">{food.name}</p>
+                  </div>
                   {/*  <div className='mx-4'>Measuring unit: {food.foodMeasureUnit}</div>
                   <div className='mx-4'>Private: {food.privateBool ? "true" : "false"}</div>
                   <div className='mx-4'>ID: {food._id as unknown as string}</div>

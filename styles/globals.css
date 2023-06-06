@@ -61,7 +61,7 @@ iframe {
 }
 
 .avatar_small_global {
-  @apply w-9 md:w-12 h-9 md:h-12 bg-white rounded-full float-left bg-cover bg-no-repeat;
+  @apply w-9 md:w-14 h-9 md:h-14 bg-white rounded-full float-left bg-cover bg-no-repeat;
 }
 
 .avatar_x_small_global {

@@ -5,6 +5,10 @@ import Layout from "../../components/layout"
 import { IUser } from '../../models/user'
 import * as Yup from "yup";
 import styles from '../../styles/Form.module.css';
+import Head from "next/head";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faTrash, faUser, faUserCog } from "@fortawesome/free-solid-svg-icons";
+import { Image } from "cloudinary-react";
 
 interface FormValues {
   username: string;
@@ -153,46 +157,98 @@ export default function ApiExamplePage() {
 
   return (
     <Layout>
-      <h1>User list</h1>
-      <form className='flex flex-col' onSubmit={formik.handleSubmit}>
-        <div className={`${styles.input_group} ${formik.errors.username && formik.touched.username ? 'border-rose-600' : ''}`}>
-          <input 
-          type="text"
-          name='Username'
-          placeholder='Username'
-          className={styles.input_text}
-          {...formik.getFieldProps('username')}
-          />
+
+      <Head>
+        <title>Upate Users</title>
+      </Head>
+
+      <section className='min-w-[250px] max-w-[320px] md:max-w-[900px] items-center mx-auto flex flex-col gap-3 mt-4 md:mt-8'> 
+        <div className="flex justify-start">
+            <p className='font-bold md:text-xl'>Update Users</p>
         </div>
-        <div className="input-button">
-          <button type='submit' className={styles.button}>
-              Search
-          </button>
-        </div>
-      </form>
-      <div className='flex flex-col'>
-        {users.status === 'loading' && <div>Loading...</div>}
-        {users.status === 'loaded' && 
-          users.payload.results.map((user, index) => (
-            <div key={index} className={`flex justify-between`}>
-              <div className="flex justify-start">
-                <div>Username: {user.username}</div>
-                <div className='mx-4'>User role: {user.userRole}</div>
-              </div>
-              <span className="flex justify-end">
-                  <button onClick={handleUserRole(user.username, user.userRole)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
-                    Change role to: {user.userRole == 'user' ? 'ADMIN' : 'USER'}</button>
-                  <button onClick={handleUserDelete(user.username)} className={`bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`}> 
-                    DELETE USER</button>
+
+        <form className='flex flex-row items-center gap-3 md:gap-5' onSubmit={formik.handleSubmit}>
+          <div className={`${styles.input_group} ${formik.errors.username && formik.touched.username ? 'border-rose-600' : ''}`}>
+            <input 
+            type="text"
+            name='Username'
+            placeholder='Username'
+            className={styles.input_text}
+            {...formik.getFieldProps('username')}
+            />
+          </div>
+          <div className="min-w-[20px] ">
+            <button type='submit' className={`${styles.button} `}>
+              <span className="hidden md:inline ml-4 mr-4">Search</span>
+              <FontAwesomeIcon icon={faSearch} className="w-5 h-5  ml-2 mr-2 pt-1 md:hidden" aria-hidden="true" />
+            </button>
+          </div>
+        </form>
+
+        <div className='flex flex-col'>
+          {users.status === 'loading' && <div>Loading...</div>}
+          {users.status === 'loaded' && 
+            users.payload.results.map((user, index) => (
+              <div key={index} className={`flex justify-between items-center gap-3 py-1 md:py-2`}>
+                <div className='flex items-center gap-3'>
+                  <Image
+                    className={`avatar_small_global border-2 flex justify-start`}
+                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                    publicId={user.image}
+                    alt={user.image}
+                    secure
+                    dpr="auto"
+                    quality="auto"
+                    width={350}
+                    height={350}
+                    crop="fill"
+                    gravity="auto"
+                  />
+
+                  <div className={`max-h[350] text-left  max-w-[160px] md:max-w-[300px] leading-tight`}>
+                    <p className="whitespace-nowrap text-xs md:text-sm font-bold truncate">{user.userRole == "user" ? "User" : "Admin"}
+                      {user.userRole == "admin" ? (
+                        <FontAwesomeIcon className="w-3 h-3  md:w-4 md:h-4 ml-1 mr-1" icon={faUserCog} />
+                      ) : (
+                        <FontAwesomeIcon className="w-2.5 h-2.5 pb-0.5 md:w-3 md:h-3 ml-1 mr-1" icon={faUser} />
+                      )}
+                    </p>
+                    <p className="text-left text-sm md:text-lg -mt-1 md:-mt-0 whitespace-nowrap truncate">{user.username}</p>
+                  </div>
+                </div>
+
+                <span className="h-[24px] md:h-full flex justify-end">
+                  <div className="px-1 md:px-2 w-[75px] md:w-[110px]">
+                    <button onClick={handleUserRole(user.username, user.userRole)}
+                    className={`${styles.button_no_bg} whitespace-nowrap bg-gradient-to-r from-cyan-400 to-cyan-500`}>
+                      <span className="ml-2 md:ml-4">Make </span>
+                      {user.userRole == "user" ? (
+                        <FontAwesomeIcon className="w-3 h-3  md:w-4 md:h-4 mr-2 md:mr-4" icon={faUserCog} />
+                      ) : (
+                        <FontAwesomeIcon className="w-2.5 h-2.5 pb-0.5 md:w-3.5 md:h-3.5 mr-2 md:mr-4" icon={faUser} />
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="min-w-[20px] px-1 md:px-2">
+                    <button onClick={handleUserDelete(user.username)}
+                    className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
+                      <span className="hidden md:inline ml-4 mr-4">Delete</span>
+                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3  ml-1 mr-1 md:hidden" aria-hidden="true" />
+                    </button>
+                  </div>
                 </span>
-            </div>
-          ))
-        }
-        {users.status === 'error' && (
-          <div>{users.error}</div> //{users.error}
-        )}
-      </div>
-      
+                
+                
+              </div>
+            ))
+          }
+          {users.status === 'error' && (
+            <div>{users.error}</div> //{users.error}
+          )}
+        </div>
+
+      </section> 
     </Layout>
   )
 }

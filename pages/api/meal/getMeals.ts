@@ -23,6 +23,10 @@ export default async function handler(
   if(req.method === 'GET'){
 
     if(!req.body) return res.status(404).json({message: "No form data!"});
+
+    const session = await unstable_getServerSession(req, res, authOptions)
+    //console.log(session)
+    const currentUser = await Users.findOne({ email: session.user.email })
       
     //const { username } = req.body;
     const keys = Object.keys(req.query);
@@ -35,7 +39,21 @@ export default async function handler(
       const mealNameString = mealName as string
       const limitNumber = limit as unknown as number
 
-      meals = await Meal.find({name: new RegExp(mealNameString, 'i')}).sort({ createdAt: 'desc' })
+      let searchCondition = {
+        $or: [
+          {
+            privateBool: false,
+            name: new RegExp(mealNameString, 'i')
+          },
+          {
+            privateBool: true,
+            addedBy: currentUser._id,
+            name: new RegExp(mealNameString, 'i')
+          }
+        ]
+      }
+
+      meals = await Meal.find(searchCondition).sort({ createdAt: 'desc' })
       .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)
     } else {
@@ -45,6 +63,7 @@ export default async function handler(
           ? req.query.diets
           : req.query.diets.split(',');
       }
+
       meals = await Meal.find({diet: {"$in": queryArray}})
       .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)

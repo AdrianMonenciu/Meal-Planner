@@ -12,6 +12,8 @@ export interface IMeal {
     qty: number
   }[]
   owner: Schema.Types.ObjectId;
+  privateBool: boolean;
+  image: string;
 }
 
 interface IMealMethods {
@@ -24,6 +26,8 @@ export const mealSchema = new Schema<IMeal, MealModel, IMealMethods>({
   _id: {type: Schema.Types.ObjectId, required: true, auto: true },
   name: {type: String, required:true},
   diet: [{type: String, required:true}],
+  privateBool: {type: Boolean, default: false, required: true},
+  image: {type: String, default: 'MealPlanner/suqkcwqrvwoag1july5l'},
   foodItems: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: Number

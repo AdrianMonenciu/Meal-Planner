@@ -81,6 +81,7 @@ export default function AddFood(){
     })
 
     async function onSubmit(values: FormValues){
+        //console.log(values)
 
         const response = await uploadImage(values.image)
 

@@ -23,7 +23,7 @@ export default async function handler(
     if(req.method === 'POST'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodItems, diet } = req.body;
+      const { name, foodItems, diet, privateBool, image } = req.body;
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
@@ -42,6 +42,8 @@ export default async function handler(
         //_id: new mongoose.Types.ObjectId(),
         name: name,
         foodItems: foodItemsWithId,
+        privateBool: privateBool,
+        image: image,
         diet: diet,
         owner: currentUser._id    // assign the _id from the person
       });
