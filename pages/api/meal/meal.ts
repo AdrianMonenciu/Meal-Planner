@@ -85,7 +85,7 @@ export default async function handler(
     } else if (req.method === 'PUT'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodItems, diet, id } = req.body;
+      const { name, foodItems, diet, privateBool, image, id } = req.body;
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
@@ -108,7 +108,7 @@ export default async function handler(
 
       const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
 
-      const update = {name, foodItems: foodItemsWithId, diet, owner: currentUser._id };
+      const update = {name, foodItems: foodItemsWithId, diet, privateBool, image, owner: currentUser._id,  };
 
       var err = await Meal.findOneAndUpdate(filter, update, {
         new: true
@@ -119,8 +119,15 @@ export default async function handler(
       let mealPopulated = await Meal.findOne({name: updatedMeal.name}).populate("foodItems.foodId");
 
       if (!errors) {
-        currentUser.Meal.push(updatedMeal._id)
-        await currentUser.save().catch(error => {err = error, errors = true});
+        // currentUser.Meal.push(updatedMeal._id)
+        // await currentUser.save().catch(error => {err = error, errors = true});
+        if (!currentUser.Meal.includes(updatedMeal._id)) {
+          currentUser.Meal.push(updatedMeal._id);
+          await currentUser.save().catch(error => {
+            err = error;
+            errors = true;
+          });
+        }
       }
       
       if (errors) {

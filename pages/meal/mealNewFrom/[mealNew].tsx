@@ -384,7 +384,6 @@ export default function UpdateFood(mealItemProps){
                 foodId: string,
                 qty: number
             }[];
-            id: Schema.Types.ObjectId
         }
 
         const response = await uploadImage(formik.values.image)
@@ -395,14 +394,13 @@ export default function UpdateFood(mealItemProps){
                 diet: currentDietPlan,
                 privateBool: privateMeal, 
                 image: response,
-                foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty})),
-                id: mealItemProps.response.payload.results[0]._id
+                foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
             }
 
             console.log(meal_api_body)
 
             const options = {
-                method: "PUT",
+                method: "POST",
                 headers : { 'Content-Type': 'application/json'},
                 body: JSON.stringify(meal_api_body)
             }
@@ -480,7 +478,7 @@ export default function UpdateFood(mealItemProps){
 
             <section className='min-w-[250px] max-w-[320px] md:max-w-[900px] items-center mx-auto flex flex-col gap-3 mt-4 md:mt-8'> 
                 <div className="flex justify-start">
-                    <h1 className='font-bold md:text-xl'>Update Meal Item</h1>
+                    <h1 className='font-bold md:text-xl'>New Meal Item</h1>
                 </div>
 
                 {mealItems.status === 'loading' && <div>Loading...</div>}
@@ -735,7 +733,7 @@ export default function UpdateFood(mealItemProps){
 
                                 <div className="min-w-[10px] mt-3 flex justify-center">
                                     <button type='submit' className={`${styles.button} max-w-[120px] `}>
-                                        Update Meal
+                                        New Meal
                                     </button>
                                 </div>
 
@@ -774,7 +772,7 @@ function return_url(context) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     let url = return_url(context);
-    const mealNameQuerry = context.params?.meal;
+    const mealNameQuerry = context.params?.mealNew;
     let responseLoaded, responseError
 
     //console.log(foodNameQuerry)

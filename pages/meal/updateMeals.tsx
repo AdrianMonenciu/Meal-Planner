@@ -187,7 +187,7 @@ export default function ApiExamplePage() {
 
                 <span className="h-[24px] md:h-full flex justify-end">
                   <div className="px-1 md:px-2">
-                    <button onClick={() => router.push(`/meal/foodItemNewFrom/${meal.name}`)}
+                    <button onClick={() => router.push(`/meal/mealNewFrom/${meal.name}`)}
                     className={`${styles.button_no_bg} whitespace-nowrap bg-gradient-to-r from-cyan-400 to-cyan-500 `}>
                       <span className="ml-2 md:ml-4 mr-2 md:mr-4">New</span>
                     </button>

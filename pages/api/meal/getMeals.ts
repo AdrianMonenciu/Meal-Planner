@@ -47,7 +47,7 @@ export default async function handler(
             },
             {
               privateBool: true,
-              addedBy: currentUser._id,
+              owner: currentUser._id,
               name: new RegExp(mealNameString, 'i')
             }
           ]
@@ -55,7 +55,7 @@ export default async function handler(
       } else {
         searchCondition = {
           privateBool: true,
-          addedBy: currentUser._id,
+          owner: currentUser._id,
           name: new RegExp(mealNameString, 'i')
         }
       }
@@ -84,7 +84,7 @@ export default async function handler(
             {
               privateBool: true,
               diet: { $all: queryArray },
-              addedBy: currentUser._id
+              owner: currentUser._id
             }
           ]
         }
@@ -97,7 +97,7 @@ export default async function handler(
             },
             {
               privateBool: true,
-              addedBy: currentUser._id
+              owner: currentUser._id
             }
           ]
         }

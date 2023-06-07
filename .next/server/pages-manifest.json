@@ -3,5 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/api/meal/meal": "pages/api/meal/meal.js",
-  "/meal/meal": "pages/meal/meal.js"
+  "/meal/mealNewFrom/[mealNew]": "pages/meal/mealNewFrom/[mealNew].js",
+  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js"
 }

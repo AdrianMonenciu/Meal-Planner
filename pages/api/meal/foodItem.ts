@@ -132,7 +132,7 @@ export default async function handler(
           currentUser.FoodItem.push(updatedFood._id)
           await currentUser.save().catch(error => {err = error, errors = true});
         } else {
-          console.log(`Food id: ${updatedFood._id} already existi for this user.`)
+          console.log(`Food id: ${updatedFood._id} already exist for this user.`)
         }
         
       }
