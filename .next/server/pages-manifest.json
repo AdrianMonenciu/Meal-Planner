@@ -2,8 +2,10 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/meal/foodItemNewFrom/[foodItemNew]": "pages/meal/foodItemNewFrom/[foodItemNew].js",
+  "/user/login": "pages/user/login.js",
+  "/": "pages/index.js",
   "/api/meal/getFoodItems": "pages/api/meal/getFoodItems.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
   "/meal/[foodItem]": "pages/meal/[foodItem].js",
   "/meal/updatefoodItems": "pages/meal/updatefoodItems.js"
 }
