@@ -40,7 +40,8 @@ export default async function handler(
     //console.log(queryArray)
     //res.status(200).json({ queryArray })
 
-    const currentUser = await Users.findOne({ email: session.user.email })
+    const { username } = req.query;
+    const currentUser = await Users.findOne({ username: username })
     //addedBy: currentUser._id 
 
     // const result = await Users.find({username: new RegExp(foodNameString, 'i')}).sort({ createdAt: 'desc' }).limit(limitNumber).exec()

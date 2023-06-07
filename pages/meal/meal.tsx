@@ -368,7 +368,7 @@ export default function Register(){
           headers : { 'Content-Type': 'application/json'},
         }
         const encodedDiets = encodeURIComponent(querryData.join(',')) // encodeURIComponent(querryData.join(','))
-        const url = `/api/meal/getFoodItemsByDiet?diets=${encodedDiets}&isPrivate=${formik.values.privateBool}&privateAll=${formik.values.allPrivateFoodItems}`;
+        const url = `/api/meal/getFoodItemsByDiet?diets=${encodedDiets}&isPrivate=${formik.values.privateBool}&privateAll=${formik.values.allPrivateFoodItems}&username=${session.user.username}`;
 
         //console.log(url)
 

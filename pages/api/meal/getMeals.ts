@@ -3,8 +3,6 @@
 import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
 import mongoose from 'mongoose' //{ Error }
-import { unstable_getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user';
 import Meal from '../../../models/Meal';
@@ -24,9 +22,10 @@ export default async function handler(
 
     if(!req.body) return res.status(404).json({message: "No form data!"});
 
-    const session = await unstable_getServerSession(req, res, authOptions)
-    //console.log(session)
-    const currentUser = await Users.findOne({ email: session.user.email })
+    
+    const { username } = req.query;
+    const currentUser = await Users.findOne({ username: username })
+    let searchCondition
       
     //const { username } = req.body;
     const keys = Object.keys(req.query);
@@ -39,21 +38,29 @@ export default async function handler(
       const mealNameString = mealName as string
       const limitNumber = limit as unknown as number
 
-      let searchCondition = {
-        $or: [
-          {
-            privateBool: false,
-            name: new RegExp(mealNameString, 'i')
-          },
-          {
-            privateBool: true,
-            addedBy: currentUser._id,
-            name: new RegExp(mealNameString, 'i')
-          }
-        ]
+      if (currentUser.userRole == "admin") {
+        searchCondition = {
+          $or: [
+            {
+              privateBool: false,
+              name: new RegExp(mealNameString, 'i')
+            },
+            {
+              privateBool: true,
+              addedBy: currentUser._id,
+              name: new RegExp(mealNameString, 'i')
+            }
+          ]
+        }
+      } else {
+        searchCondition = {
+          privateBool: true,
+          addedBy: currentUser._id,
+          name: new RegExp(mealNameString, 'i')
+        }
       }
 
-      meals = await Meal.find(searchCondition).sort({ createdAt: 'desc' })
+      meals = await Meal.find(searchCondition).sort({ createdAt: 'desc' }).limit(limitNumber)
       .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)
     } else {
@@ -64,7 +71,39 @@ export default async function handler(
           : req.query.diets.split(',');
       }
 
-      meals = await Meal.find({diet: {"$in": queryArray}})
+      const privateAll = req.query.privateAll === 'true';
+      let searchCondition
+
+      if (!privateAll) {
+        searchCondition = {
+          $or: [
+            {
+              privateBool: false,
+              diet: { $all: queryArray }
+            },
+            {
+              privateBool: true,
+              diet: { $all: queryArray },
+              addedBy: currentUser._id
+            }
+          ]
+        }
+      } else {
+        searchCondition = {
+          $or: [
+            {
+              privateBool: false,
+              diet: { $all: queryArray }
+            },
+            {
+              privateBool: true,
+              addedBy: currentUser._id
+            }
+          ]
+        }
+      }
+
+      meals = await Meal.find(searchCondition)
       .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)
     }

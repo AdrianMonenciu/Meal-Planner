@@ -11,6 +11,7 @@ import Head from 'next/head'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Image } from "cloudinary-react";
+import { useSession } from 'next-auth/react';
 
 interface FormValues {
   mealName: string;
@@ -48,6 +49,8 @@ interface Idelete {
 export default function ApiExamplePage() {
   const [meals, setMeals] = useState<Service<IFoodItems>>({status: 'loading'})
 
+  const { data: session, status } = useSession()
+
   const router = useRouter()
 
   function handleUserDelete(name: string) { 
@@ -84,7 +87,7 @@ export default function ApiExamplePage() {
       method: "GET",
       headers : { 'Content-Type': 'application/json'},
     }
-    await fetch(`/api/meal/getMeals?mealName=${querryData.mealName}&limit=20`, options)
+    await fetch(`/api/meal/getMeals?mealName=${querryData.mealName}&limit=20&username=${session.user.username}`, options)
     .then(async (response) => {
       if (!response.ok) {
         const error = await response.json()
@@ -92,7 +95,7 @@ export default function ApiExamplePage() {
         throw new Error(error)
         //toast.success(`Logged in as ${values.email}`)
       } else {
-        return response.json()
+        return await response.json()
       }
     })
     .then(data => {setMeals({ status: 'loaded', payload: data })
