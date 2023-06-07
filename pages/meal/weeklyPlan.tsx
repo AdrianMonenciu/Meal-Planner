@@ -527,6 +527,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
     const sessionObj: Session | null = await unstable_getServerSession(context.req, context.res, authOptions)
+    console.log(sessionObj)
     const userDietPreference: string[] = sessionObj?.user.dietPreference
     const currentYear=  new Date().getFullYear()
     connectMongo()

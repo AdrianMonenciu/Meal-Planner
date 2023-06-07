@@ -3,7 +3,7 @@
 import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
 import mongoose from 'mongoose' //{ Error }
-import { unstable_getServerSession } from 'next-auth';
+import { Session, unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user';
@@ -31,20 +31,21 @@ export default async function handler(
 //const findTest = await testModel.find({});
   if(req.method === 'GET'){
 
-    if(!req.body) return res.status(404).json({message: "No form data!"});
-
-    const session = await unstable_getServerSession(req, res, authOptions)
-    const currentUser = await Users.findOne({ email: session.user.email })
+    if(!req.query) return res.status(404).json({message: "No form data!"});
       
     //const { username } = req.body;
-    const { foodName, limit } = req.query;
+    const { foodName, limit, username } = req.query;
     const foodNameString = foodName as string
     const limitNumber = limit as unknown as number
+    //console.log(req.query)
 
     let mongooseErr,searchCondition
 
     // const result = await Users.find({username: new RegExp(foodNameString, 'i')}).sort({ createdAt: 'desc' }).limit(limitNumber).exec()
     // .catch(err => {throw new Error(err)});
+
+    const currentUser = await Users.findOne({ username: username })
+    //console.log(currentUser)
 
     if (currentUser.userRole == "admin") {
       searchCondition = {
@@ -74,6 +75,7 @@ export default async function handler(
   //   searchOptions.name = new RegExp(req.query.name, 'i')
   // }
   //await Users.find().where('stars').gt(1000).byName('mongoose');
+    //console.log(foodItemsPopulated)
 
     if (mongooseErr) {
       res.status(500).json(`Database Error! - ${JSON.stringify(mongooseErr, null, 2)}`) //"Database Error!"
@@ -86,6 +88,7 @@ export default async function handler(
       //return res.end(JSON.stringify("No user Found"))
     } else {
       //return result;
+      //console.log(foodItemsPopulated)
       return res.status(201).send({results: foodItemsPopulated})
     }
   } else{

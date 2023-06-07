@@ -17,6 +17,8 @@ import { IFood } from '../../../models/FoodItem';
 import { Schema } from 'mongoose';
 import {useSession } from "next-auth/react"
 import { Image } from "cloudinary-react";
+import { Session, unstable_getServerSession } from 'next-auth';
+import { authOptions } from '../../api/auth/[...nextauth]';
 
 interface ServiceInit {
     status: 'init';
@@ -341,37 +343,41 @@ function return_url(context) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     let url = return_url(context);
-    const foodNameQuerry = context.params?.foodItem;
-    let responseLoaded, responseError
+    const foodNameQuerry = context.params?.foodItemNew;
 
     //console.log(foodNameQuerry)
+
+    const sessionObj: Session | null = await unstable_getServerSession(context.req, context.res, authOptions)
+    //console.log(sessionObj)
 
     const options = {
         method: "GET",
         headers : { 'Content-Type': 'application/json'},
-      }
-      await fetch(`${url}/api/meal/getFoodItems?foodName=${foodNameQuerry}&limit=1`, options)
-      .then(async (response) => {
-        if (!response.ok) {
-          const error = await response.json()
-          //console.log(error)
-          throw new Error(error)
-          //toast.success(`Logged in as ${values.email}`)
-        } else {
-          return response.json()
-        }
-      })
-      .then(data => responseLoaded = { status: 'loaded', payload: data })
-      .catch(err => responseError = { status: 'error', error: err.message});
-    
-
-        if (responseError) {
-            return {
-              props: { response: responseError },
-            }
-        }
-        
-        return {
-          props: {response: responseLoaded}
-        }
     }
+
+    const response = await fetch(`${url}/api/meal/getFoodItems?foodName=${foodNameQuerry}&limit=1&username=${sessionObj.user.username}`, options);
+
+    let responseLoaded;
+    let responseError;
+
+    if (!response.ok) {
+    const error = await response.json();
+    console.log(error);
+    responseError = { status: 'error', error: error.message };
+    } else {
+    const data = await response.json();
+    //console.log(data);
+    responseLoaded = { status: 'loaded', payload: data };
+    }
+
+    if (responseError) {
+    return {
+        props: { response: responseError },
+    };
+    }
+
+    return {
+    props: { response: responseLoaded },
+    };
+      
+}

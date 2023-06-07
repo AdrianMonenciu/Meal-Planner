@@ -13,6 +13,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Image } from "cloudinary-react";
+import { useSession } from 'next-auth/react';
 
 interface FormValues {
   foodName: string;
@@ -55,6 +56,8 @@ interface Idelete {
 export default function ApiExamplePage() {
   const [foodItems, setFoodItems] = useState<Service<IFoodItems>>({status: 'loading'})
 
+  const { data: session, status } = useSession()
+
   const router = useRouter()
 
   function handleUserDelete(name: string) { 
@@ -91,7 +94,7 @@ export default function ApiExamplePage() {
       method: "GET",
       headers : { 'Content-Type': 'application/json'},
     }
-    await fetch(`/api/meal/getFoodItems?foodName=${querryData.foodName}&limit=20`, options)
+    await fetch(`/api/meal/getFoodItems?foodName=${querryData.foodName}&limit=20&username=${session.user.username}`, options)
     .then(async (response) => {
       if (!response.ok) {
         const error = await response.json()

@@ -17,6 +17,8 @@ import { IFood } from '../../models/FoodItem';
 import { Schema } from 'mongoose';
 import {useSession } from "next-auth/react"
 import { Image } from "cloudinary-react";
+import { Session, unstable_getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 interface ServiceInit {
     status: 'init';
@@ -349,11 +351,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     //console.log(foodNameQuerry)
 
+    const sessionObj: Session | null = await unstable_getServerSession(context.req, context.res, authOptions)
+    //console.log(sessionObj)
+
     const options = {
         method: "GET",
         headers : { 'Content-Type': 'application/json'},
       }
-      await fetch(`${url}/api/meal/getFoodItems?foodName=${foodNameQuerry}&limit=1`, options)
+      await fetch(`${url}/api/meal/getFoodItems?foodName=${foodNameQuerry}&limit=1&username=${sessionObj.user.username}`, options)
       .then(async (response) => {
         if (!response.ok) {
           const error = await response.json()
@@ -361,7 +366,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           throw new Error(error)
           //toast.success(`Logged in as ${values.email}`)
         } else {
-          return response.json()
+          return await response.json()
         }
       })
       .then(data => responseLoaded = { status: 'loaded', payload: data })
