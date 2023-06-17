@@ -25,10 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/meal/mealNewFrom/[mealNew]": [
+    "/meal/weeklyPlan": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/meal/mealNewFrom/[mealNew].js"
+      "static/chunks/pages/meal/weeklyPlan.js"
     ]
   },
   "ampFirstPages": []

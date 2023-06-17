@@ -11,6 +11,14 @@ export default function IndexPage() {
           The app will create a shopping list based on your weekly meal plan.
         </p>
       </div>
+      <div className="flex w-[400px] mx-auto bg-slate-200">
+        <div className="w-[150px]">
+         Test strig here 1
+        </div>
+        <div>
+         Test strig here 2
+        </div>
+      </div>
     </Layout>
   )
 }

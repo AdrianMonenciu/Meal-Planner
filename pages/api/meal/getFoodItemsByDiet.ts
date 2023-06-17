@@ -54,7 +54,7 @@ export default async function handler(
     // // .populate('addedBy')
     // // searchOptions.name = new RegExp(req.query.name, 'i')
 
-    if(isPrivate as unknown as boolean == false) {
+    if(isPrivate == false) {
       searchCondition = {
         privateBool: false,
         diet: { $all: queryArray }
@@ -94,7 +94,7 @@ export default async function handler(
     let foodItems = await FoodItem.find(searchCondition).sort({ createdAt: 'desc' }).exec().catch(err => mongooseErr = err);
 
     if (mongooseErr) {
-      console.log(mongooseErr)
+      //console.log(mongooseErr)
       res.status(500).json(`Database Error! - ${JSON.stringify(mongooseErr, null, 2)}`) //"Database Error!"
     }
 
@@ -102,6 +102,7 @@ export default async function handler(
       console.log("foodItems undefined")
       res.status(500).json("No Food Item Found!")
     } else {
+      //console.log(foodItems)
       return res.status(201).send(foodItems)
     }
   } else{

@@ -2,7 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/api/meal/meal": "pages/api/meal/meal.js",
-  "/meal/mealNewFrom/[mealNew]": "pages/meal/mealNewFrom/[mealNew].js",
-  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js"
+  "/meal/weeklyPlan": "pages/meal/weeklyPlan.js",
+  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
+  "/api/meal/getMeals": "pages/api/meal/getMeals.js"
 }

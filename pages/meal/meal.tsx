@@ -88,6 +88,7 @@ export default function Register(){
             name: string;
             diet: string[];
             privateBool: boolean;
+            privateAllFoods: boolean;
             image?: File | string;
             foodItems: {
                 foodId: string,
@@ -102,6 +103,7 @@ export default function Register(){
                 name: formik.values.name.charAt(0).toUpperCase() + formik.values.name.slice(1).toLowerCase(), //formik.values.name
                 diet: currentDietPlan,
                 privateBool: privateMeal, 
+                privateAllFoods: allPrivateFoodItems,
                 image: response.public_id as string,
                 foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
             }

@@ -125,7 +125,7 @@ export default function UpdateFood(mealItemProps){
         name : mealItemProps.response.status == 'loaded' ? mealItemProps.response.payload.results[0].name : '',
         diet: mealItemProps.response.status == 'loaded' ? mealItemProps.response.payload.results[0].diet : [],
         privateBool: mealItemProps.response.status == 'loaded' ? mealItemProps.response.payload.results[0].privateBool : [],
-        allPrivateFoodItems: false,
+        allPrivateFoodItems: mealItemProps.response.status == 'loaded' ? mealItemProps.response.payload.results[0].privateAllFoods : false,
         image: null
     }
 
@@ -142,7 +142,7 @@ export default function UpdateFood(mealItemProps){
     }
 
     const [privateMeal, setPrivateMeal] = useState<boolean>(initialValues.privateBool)
-    const [allPrivateFoodItems, setAllPrivateFoodItems] = useState<boolean>(false)
+    const [allPrivateFoodItems, setAllPrivateFoodItems] = useState<boolean>(initialValues.allPrivateFoodItems)
     //const [resetAvailableFood, setResetAvailableFood] = useState<boolean>(false)
 
     const SUPPORTED_FORMATS: string[] = ['image/jpg', 'image/png', 'image/jpeg', 'image/gif'];
@@ -379,6 +379,7 @@ export default function UpdateFood(mealItemProps){
             name: string;
             diet: string[];
             privateBool: boolean;
+            privateAllFoods: boolean;
             image?: File | string;
             foodItems: {
                 foodId: string,
@@ -393,6 +394,7 @@ export default function UpdateFood(mealItemProps){
                 name: formik.values.name.charAt(0).toUpperCase() + formik.values.name.slice(1).toLowerCase(), //formik.values.name
                 diet: currentDietPlan,
                 privateBool: privateMeal, 
+                privateAllFoods: allPrivateFoodItems,
                 image: response,
                 foodItems: values.foodItems.map(({id, qty}) => ({foodId: id, qty: qty}))
             }

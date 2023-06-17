@@ -83,6 +83,7 @@ export default async function handler(
             },
             {
               privateBool: true,
+              privateAllFoods: false,
               diet: { $all: queryArray },
               owner: currentUser._id
             }

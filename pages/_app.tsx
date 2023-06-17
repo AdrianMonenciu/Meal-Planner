@@ -1,4 +1,5 @@
 import { SessionProvider } from "next-auth/react"
+//import 'tailwindcss/tailwind.css';
 //import "./styles.css"
 import "../styles/globals.css"
 import 'react-toastify/dist/ReactToastify.css';

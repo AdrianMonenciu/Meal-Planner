@@ -23,7 +23,7 @@ export default async function handler(
     if(req.method === 'POST'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodItems, diet, privateBool, image } = req.body;
+      const { name, foodItems, diet, privateBool, image, privateAllFoods } = req.body;
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
@@ -43,6 +43,7 @@ export default async function handler(
         name: name,
         foodItems: foodItemsWithId,
         privateBool: privateBool,
+        privateAllFoods: privateAllFoods,
         image: image,
         diet: diet,
         owner: currentUser._id    // assign the _id from the person
@@ -85,7 +86,7 @@ export default async function handler(
     } else if (req.method === 'PUT'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodItems, diet, privateBool, image, id } = req.body;
+      const { name, foodItems, diet, privateBool, privateAllFoods, image, id } = req.body;
       //console.log(req.body)
 
       const currentUser = await Users.findOne({ email: session.user.email });
@@ -108,7 +109,7 @@ export default async function handler(
 
       const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
 
-      const update = {name, foodItems: foodItemsWithId, diet, privateBool, image, owner: currentUser._id,  };
+      const update = {name, foodItems: foodItemsWithId, diet, privateBool, privateAllFoods , image, owner: currentUser._id,  };
 
       var err = await Meal.findOneAndUpdate(filter, update, {
         new: true

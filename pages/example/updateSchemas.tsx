@@ -84,6 +84,24 @@ export default function Register(){
             //if(data) router.push('/user/login')
         })
     }
+
+    async function handleSchemaMeal() {
+        const options = {
+            method: "POST",
+            headers : { 'Content-Type': 'application/json'},
+            body: JSON.stringify({test: "test"})
+        }
+        //console.log(values)
+        // console.log(user_api_body)
+
+        await fetch('/api/examples/updateSchemaMeal', options)
+        .then(res => res.json())
+        .then((data) => {
+            console.log(data)
+            toast(data.message)
+            //if(data) router.push('/user/login')
+        })
+    }
     
 
     return (
@@ -109,6 +127,11 @@ export default function Register(){
                 <button type='submit' className={styles.button} onClick={handleSchemaFood}>
                     Update Food Schema
                 </button>
+
+                <button type='submit' className={styles.button} onClick={handleSchemaMeal}>
+                    Update Meal Schema
+                </button>
+
 
             </section>
 
