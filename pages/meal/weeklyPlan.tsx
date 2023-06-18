@@ -20,7 +20,7 @@ import Select from 'react-select';
 import { authOptions } from "../api/auth/[...nextauth]"
 import { unstable_getServerSession } from 'next-auth';
 import type { Session } from "next-auth"
-import {DailyInputFieldArray} from '../../lib/weeklyPlan-SubForm'
+import {DailyInputFieldArray} from './weeklyPlan-SubForm'
 import connectMongo from '../../database/connectdb'
 import { getISOWeek, startOfWeek, endOfWeek, format, addDays, addWeeks } from 'date-fns';
 //import ShoppingList from './weeklyPlan-SubForm'
@@ -115,16 +115,8 @@ interface FormValues {
     sundayMealsDinner: IMealsForm[],
     sundaySnaks: IfoodItemsForm[],
     shoppingList: [{ foodItem: string, qty: number, qtyOption: string, isPurchased: boolean, image: string }],
-    shoppingListIsUpdated: boolean
-}
-
-interface IfoodItemsDataBase {
-    qty: number, 
-    id: string
-}
-
-interface IMealsDataBase { 
-    id: string
+    shoppingListIsUpdated: boolean,
+    daySelectFormik: string,
 }
 
 
@@ -221,7 +213,8 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
         sundayMealsDinner: [],
         sundaySnaks: [],
         shoppingList: [{ foodItem: '', qty: 0, qtyOption: '', isPurchased: false, image:"" }],
-        shoppingListIsUpdated: false
+        shoppingListIsUpdated: false,
+        daySelectFormik: "monday",
     }
 
     const validationSchema = Yup.object().shape({
@@ -487,7 +480,7 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
         setFieldValue(`shoppingListIsUpdated`, true)
     }
 
-    const customStyles = {
+    const customStylesWkPlan = {
         control: (provided) => ({
           ...provided,
           borderRadius: '0.375rem',
@@ -538,7 +531,7 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
                                         <Select
                                             className="select-wrap w-70 mb-0.5 md:mb-0 items-center md:w-85 text-sm md:text-base"
                                             menuPlacement="bottom"
-                                            styles={customStyles}
+                                            styles={customStylesWkPlan}
                                             classNamePrefix="select-box"
                                             instanceId={instanceId}
                                             isSearchable={true}
@@ -587,64 +580,80 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
 
                             {/* ${errors[fieldNameMealBreakfast] && touched[fieldNameMealBreakfast] ? "block" : "hidden" } */}
                             
-                            <div className={`w-[320px] md:w-[750px] h-auto flex flex-row justify-between gap-1 md:gap-2 overflow-x-scroll`}>
+                            <div className={`w-[320px] md:w-[750px] h-auto flex flex-row justify-between gap-1 md:gap-2 overflow-x-scroll md:overflow-hidden`}>
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("monday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    <button onClick={() => setFieldValue(`daySelectFormik`,"monday")}
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Monday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("tuesday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    <button onClick={() => setFieldValue(`daySelectFormik`, "tuesday")}
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Tuesday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
                                     <button onClick={() => setDaySelect("wednesday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Wednesday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
                                     <button onClick={() => setDaySelect("thursday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Thursday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
                                     <button onClick={() => setDaySelect("friday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Friday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
                                     <button onClick={() => setDaySelect("saturday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Saturday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
                                     <button onClick={() => setDaySelect("sunday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-500 py-1 px-1 md:px-2`}>
+                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
                                         Sunday
                                     </button>
                                 </div>
 
                             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             
-                            <div className={`w-[320px] md:w-[750px] ${daySelect == "monday" ? "block" : "hidden"}`}>
+                            <div className={`w-[320px] md:w-[750px] ${values.daySelectFormik == "monday" ? "block" : "hidden"}`}>
                                 <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} 
                                 setFieldValue={setFieldValue} fieldName="monday" errors={errors} touched={touched}/>
                             </div>
 
-                            <div className={`w-[320px] md:w-[750px] ${daySelect == "tuesday" ? "block" : "hidden"}`}>
+                            <div className={`w-[320px] md:w-[750px] ${values.daySelectFormik == "tuesday" ? "block" : "hidden"}`}>
                                 <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} 
                                 setFieldValue={setFieldValue} fieldName="tuesday" errors={errors} touched={touched}/>
                             </div>

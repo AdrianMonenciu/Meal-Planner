@@ -1,5 +1,4 @@
-
-import styles from '../styles/Form.module.css';
+import styles from '../../styles/Form.module.css';
 import { useEffect, useState, useRef, useId, CSSProperties } from 'react';
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
 import Select from 'react-select';
@@ -138,7 +137,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
         };
 
         return (
-            <div className={`flex flex-col h-[120px] bg-green-100 border rounded-xl`}>
+            <div className={`flex flex-col bg-green-100 border rounded-xl`}>
                 <div className='flex flex-row items-center mt-1 mb-1 md:mt-2 md:mb-2  gap-1'>
                     <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
                         {image ?
@@ -418,8 +417,8 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
     };
 
     return (
-    <div className='w-[320px] md:w-[750px] mb-1 md:mb-3 grid grid-rows-2 md:grid-cols-2 gap-5 md:gap-x-10 '>
-        <div className='col-span-1 flex flex-col justify-between'>
+    <div className='w-[320px] md:w-[750px] mb-1 md:mb-3 grid grid-rows-2 md:grid-cols-2 md:grid-rows-1  gap-5 md:gap-x-10 '>
+        <div className='md:col-span-1 flex flex-col justify-between'>
 
             <FieldArray
             name={`${fieldNameMealBreakfast}`}
@@ -590,7 +589,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
         
         </div>
 
-        <div className='col-span-1 flex flex-col justify-between'>
+        <div className='md:col-span-1 flex flex-col justify-between'>
             <FieldArray
             name={`${fieldNameSnaks}`}
             render={arrayHelpers => (
@@ -674,53 +673,54 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
     );
 };
 
-export const DailyInputFieldArrayView = ({ values, weeklyPlanProps,  fieldName }) => {
-    const fieldNameUpper = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
-    const fieldNameMeal = fieldName + "Meals"
-    const fieldNameSnaks = fieldName + "Snaks"
 
-    return (
-    <>
-        <FieldArray
-        name={`${fieldNameMeal}`}
-        render={(arrayHelpers) => (
-            <div>
-            <p className="w-3/4 mx-auto text-gray-400">{`${fieldNameUpper} Meals`}</p>
-            {values[fieldNameMeal].map((name, index) => (
-                <div
-                key={index}
-                className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}
-                >
-                    <Field  name={`${fieldNameMeal}[${index}].name`} className={styles.input_group} readOnly/>
-                </div>
-            ))}
-            </div>
-        )}
-        />
+// export const DailyInputFieldArrayView = ({ values, weeklyPlanProps,  fieldName }) => {
+//     const fieldNameUpper = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
+//     const fieldNameMeal = fieldName + "Meals"
+//     const fieldNameSnaks = fieldName + "Snaks"
 
-        <FieldArray
-        name={`${fieldNameSnaks}`}
-        render={arrayHelpers => (
-            <div>
-                <p className='w-3/4 mx-auto text-gray-400'>{`${fieldNameUpper} Snacks`}</p>
-            {values[fieldNameSnaks].map((name, index) => (
-                <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
-                    {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                    <Field name={`${fieldNameSnaks}[${index}].name`} className={styles.input_group} readOnly/>
-                    <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`} className={styles.input_group} readOnly/>
-                    <Field  name={`${fieldNameSnaks}.${index}.qtyOption`} className={styles.input_group} readOnly/>
-                    <div className="input-button m-2">
-                    </div>
-                </div>
-                ))}
-        </div>
-        )}
-        />
-    </>
-    );
-};
+//     return (
+//     <>
+//         <FieldArray
+//         name={`${fieldNameMeal}`}
+//         render={(arrayHelpers) => (
+//             <div>
+//             <p className="w-3/4 mx-auto text-gray-400">{`${fieldNameUpper} Meals`}</p>
+//             {values[fieldNameMeal].map((name, index) => (
+//                 <div
+//                 key={index}
+//                 className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}
+//                 >
+//                     <Field  name={`${fieldNameMeal}[${index}].name`} className={styles.input_group} readOnly/>
+//                 </div>
+//             ))}
+//             </div>
+//         )}
+//         />
 
-export default DailyInputFieldArray;
+//         <FieldArray
+//         name={`${fieldNameSnaks}`}
+//         render={arrayHelpers => (
+//             <div>
+//                 <p className='w-3/4 mx-auto text-gray-400'>{`${fieldNameUpper} Snacks`}</p>
+//             {values[fieldNameSnaks].map((name, index) => (
+//                 <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
+//                     {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
+//                     <Field name={`${fieldNameSnaks}[${index}].name`} className={styles.input_group} readOnly/>
+//                     <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`} className={styles.input_group} readOnly/>
+//                     <Field  name={`${fieldNameSnaks}.${index}.qtyOption`} className={styles.input_group} readOnly/>
+//                     <div className="input-button m-2">
+//                     </div>
+//                 </div>
+//                 ))}
+//         </div>
+//         )}
+//         />
+//     </>
+//     );
+// };
+
+// export default DailyInputFieldArray;
 
 
 
