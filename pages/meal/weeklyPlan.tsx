@@ -20,7 +20,7 @@ import Select from 'react-select';
 import { authOptions } from "../api/auth/[...nextauth]"
 import { unstable_getServerSession } from 'next-auth';
 import type { Session } from "next-auth"
-import {DailyInputFieldArray} from './weeklyPlan-SubForm'
+import {DailyInputFieldArray} from '../../components/weeklyPlan-SubForm'
 import connectMongo from '../../database/connectdb'
 import { getISOWeek, startOfWeek, endOfWeek, format, addDays, addWeeks } from 'date-fns';
 //import ShoppingList from './weeklyPlan-SubForm'
