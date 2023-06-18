@@ -48,6 +48,16 @@
     @apply text-gray-700 ;
 }
 
+.button_no_border{
+    @apply w-full rounded-md border;
+    @apply md:py-1 text-gray-50 text-sm md:text-lg
+}
+
+.button_no_border:hover{
+    @apply bg-gradient-to-r from-gray-50 to-gray-100 border border-blue-500;
+    @apply text-gray-700 ;
+}
+
 .button_custom{
  @apply w-full border py-2 flex justify-center gap-2 hover:bg-gray-200;
 }

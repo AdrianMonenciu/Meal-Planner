@@ -160,7 +160,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                     
                     <div className='flex flex-col gap-1 md:gap-2'>
                         <Select
-                            className="w-[150px]  text-sm md:text-base mr-1"
+                            className="text-sm md:text-base mr-1"
                             styles={customStyles}
                             instanceId={instanceId}
                             isSearchable={true}
@@ -417,7 +417,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
     };
 
     return (
-    <div className='w-[320px] md:w-[750px] mb-1 md:mb-3 grid grid-rows-2 md:grid-cols-2 md:grid-rows-1  gap-5 md:gap-x-10 '>
+    <div className='w-[320px] md:w-[750px] mb-1 md:mb-3 md:grid md:grid-cols-2 md:grid-rows-1  gap-5 md:gap-x-10 '>
         <div className='md:col-span-1 flex flex-col justify-between'>
 
             <FieldArray
@@ -455,7 +455,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                                 
 
                                 <div className="min-w-[20px] mb-1 px-1 ">
-                                    <button onClick={() => arrayHelpers.remove(index)}
+                                    <button type="button" onClick={() => arrayHelpers.remove(index)}
                                     className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
                                         <FontAwesomeIcon icon={faTrash} className="w-4.5 h-4.5 mt-1 ml-1 mr-1 md:ml-2 md:mr-2" aria-hidden="true" />
                                     </button>
@@ -465,12 +465,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                         </div>
                         
                     </div>
-                ))}
-
-                <div className={`text-rose-500 mr-5 text-sm md:text-base mt-0.5 md:mt-1 ml-2 mb-1`}>
-                    <ErrorMessage name={`${fieldNameMealBreakfast}`} component="div"/>
-                </div>              
-                
+                ))}              
             </div>
             )}
             />
@@ -510,7 +505,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                                 
 
                                 <div className="min-w-[20px] mb-1 px-1 ">
-                                    <button onClick={() => arrayHelpers.remove(index)}
+                                    <button type="button" onClick={() => arrayHelpers.remove(index)}
                                     className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
                                         <FontAwesomeIcon icon={faTrash} className="w-4.5 h-4.5 mt-1 ml-1 mr-1 md:ml-2 md:mr-2" aria-hidden="true" />
                                     </button>
@@ -521,11 +516,6 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                         
                     </div>
                 ))}
-
-                <div className={`text-rose-500 mr-5 text-sm md:text-base mt-0.5 md:mt-1 ml-2 mb-1`}>
-                    <ErrorMessage name={`${fieldNameMealLunch}`} component="div"/>
-                </div>              
-                
             </div>
             )}
             />
@@ -565,7 +555,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                                 
 
                                 <div className="min-w-[20px] mb-1 px-1 ">
-                                    <button onClick={() => arrayHelpers.remove(index)}
+                                    <button type="button" onClick={() => arrayHelpers.remove(index)}
                                     className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
                                         <FontAwesomeIcon icon={faTrash} className="w-4.5 h-4.5 mt-1 ml-1 mr-1 md:ml-2 md:mr-2" aria-hidden="true" />
                                     </button>
@@ -589,7 +579,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
         
         </div>
 
-        <div className='md:col-span-1 flex flex-col justify-between'>
+        <div className='mt-3 md:mt-0 md:col-span-1 md:flex md:flex-col md:justify-between'>
             <FieldArray
             name={`${fieldNameSnaks}`}
             render={arrayHelpers => (

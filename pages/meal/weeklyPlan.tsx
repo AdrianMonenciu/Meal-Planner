@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Layout_login from '../../layout_login/layout_login'
 import Link from 'next/link'
 import styles from '../../styles/Form.module.css';
-import Image from 'next/image'
+import { Image } from "cloudinary-react";
 import { useEffect, useState, useRef, useId } from 'react';
 import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
 import router, { useRouter } from 'next/router';
@@ -81,6 +81,14 @@ interface IfoodAndMealsOptions {
     label: string
 }
 
+interface IShoppingList {
+    foodItem: string, 
+    qty: number, 
+    qtyOption: string, 
+    isPurchased: boolean, 
+    image: string
+}
+
 interface FormValues {
     year: number;
     weekNr: number;
@@ -114,9 +122,8 @@ interface FormValues {
     sundayMealsLunch: IMealsForm[],
     sundayMealsDinner: IMealsForm[],
     sundaySnaks: IfoodItemsForm[],
-    shoppingList: [{ foodItem: string, qty: number, qtyOption: string, isPurchased: boolean, image: string }],
+    shoppingList: IShoppingList[],
     shoppingListIsUpdated: boolean,
-    daySelectFormik: string,
 }
 
 
@@ -212,9 +219,8 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
         sundayMealsLunch: [],
         sundayMealsDinner: [],
         sundaySnaks: [],
-        shoppingList: [{ foodItem: '', qty: 0, qtyOption: '', isPurchased: false, image:"" }],
+        shoppingList: [],
         shoppingListIsUpdated: false,
-        daySelectFormik: "monday",
     }
 
     const validationSchema = Yup.object().shape({
@@ -582,50 +588,57 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
                             
                             <div className={`w-[320px] md:w-[750px] h-auto flex flex-row justify-between gap-1 md:gap-2 overflow-x-scroll md:overflow-hidden`}>
                                 <div className="mb-1 ">
-                                    <button onClick={() => setFieldValue(`daySelectFormik`,"monday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("monday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.mondayMealsBreakfast && touched.mondayMealsBreakfast) || (errors.mondaySnaks && touched.mondaySnaks) ? 'border-rose-600' : 'border-transparent'}`}>
                                         Monday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setFieldValue(`daySelectFormik`, "tuesday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("tuesday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.tuesdayMealsBreakfast && touched.tuesdayMealsBreakfast) || (errors.tuesdaySnaks && touched.tuesdaySnaks) ? 'border border-rose-600' : 'border-transparent'}`}>
                                         Tuesday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("wednesday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("wednesday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.wednesdayMealsBreakfast && touched.wednesdayMealsBreakfast) || (errors.wednesdaySnaks && touched.wednesdaySnaks) ? 'border border-rose-600' : 'border-transparent'}`}>
                                         Wednesday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("thursday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("thursday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.thursdayMealsBreakfast && touched.thursdayMealsBreakfast) || (errors.thursdaySnaks && touched.thursdaySnaks) ? 'border border-rose-600' : 'border-transparent'}`}>
                                         Thursday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("friday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("friday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.fridayMealsBreakfast && touched.fridayMealsBreakfast) || (errors.fridaySnaks && touched.fridaySnaks) ? 'border border-rose-600' : 'border-transparent'}`}>
                                         Friday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("saturday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("saturday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.saturdayMealsBreakfast && touched.saturdayMealsBreakfast) || (errors.saturdaySnaks && touched.saturdaySnaks) ? 'border border-rose-600' : 'border-transparent'}`}>
                                         Saturday
                                     </button>
                                 </div>
 
                                 <div className="mb-1 ">
-                                    <button onClick={() => setDaySelect("sunday")}
-                                    className={`${styles.button_no_bg} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2`}>
+                                    <button type="button" onClick={() => setDaySelect("sunday")}
+                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2
+                                    ${(errors.sundayMealsBreakfast && touched.sundayMealsBreakfast) || (errors.sundaySnaks && touched.sundaySnaks) ? 'border border-rose-600' : 'border-transparent'}`}>
                                         Sunday
                                     </button>
                                 </div>
@@ -637,23 +650,13 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
 
 
 
-
-
-
-
-
-
-
-
-
-
                             
-                            <div className={`w-[320px] md:w-[750px] ${values.daySelectFormik == "monday" ? "block" : "hidden"}`}>
+                            <div className={`w-[320px] md:w-[750px] ${daySelect == "monday" ? "block" : "hidden"}`}>
                                 <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} 
                                 setFieldValue={setFieldValue} fieldName="monday" errors={errors} touched={touched}/>
                             </div>
 
-                            <div className={`w-[320px] md:w-[750px] ${values.daySelectFormik == "tuesday" ? "block" : "hidden"}`}>
+                            <div className={`w-[320px] md:w-[750px] ${daySelect == "tuesday" ? "block" : "hidden"}`}>
                                 <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} 
                                 setFieldValue={setFieldValue} fieldName="tuesday" errors={errors} touched={touched}/>
                             </div>
@@ -693,18 +696,57 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
                                 >
                                     Update Shopping List
                                 </button>
+                            </div>
+
+                            <p className="mb-1 md:text-lg font-bold text-left">{`Shopping List`}</p>
+                            {values.shoppingList.map((name, index) => ( 
+                                <div key={index} className={`flex flex-col  w-full ${index < values.shoppingList.length - 1 ? 'mb-4' : ''}`}>
+                                    {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
+                                    
+                                    <div className={`flex flex-row items-center `}>
+                                        <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
+                                            {values.shoppingList[index].image ?
+                                                <Image
+                                                    className={`${styles.avatar_medium} border-2 flex justify-start`}
+                                                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                                                    publicId={values.shoppingList[index].image}
+                                                    alt={values.shoppingList[index].image ? values.shoppingList[index].image as string : ''} 
+                                                    secure
+                                                    dpr="auto"
+                                                    quality="auto"
+                                                    width={350}
+                                                    height={350}
+                                                    crop="fill"
+                                                    gravity="auto" 
+                                                />
+                                                : <div className='text-center'>No Image</div>
+                                            }
+                                        </div>
+                                        
+                                        <div className='flex flex-wrap ml-2 items-center max-w-[245px] md:max-w-none  gap-1 md:flex-row md:gap-4'>
+                                            <div className="flex items-center overflow-hidden pl-2 w-60 mb-0.5 md:mb-0 md:w-80 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                                                <p className="text-center whitespace-nowrap truncate">{values.shoppingList[index].foodItem}</p>
+                                            </div>
+
+                                            <div className='flex items-center justify-between w-[159px] md:w-48 border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base'>
+                                                <div className="flex items-center overflow-hidden pl-2 w-20 md:w-24 mb-0.5 md:mb-0 text-sm md:text-base bg-white">
+                                                    <p className="text-center whitespace-nowrap truncate">{values.shoppingList[index].qty}</p>
+                                                </div>
+                                                <div className='ml-2 mr-2 flex items-center justify-center h-full'>{'['}{values.shoppingList[index].qtyOption}{']'}</div>
+                                            </div>
+
+                                            <div className='flex items-center justify-between border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base'>
+                                                <div className="flex items-center overflow-hidden pl-1 text-sm md:text-base bg-white">
+                                                    Bought
+                                                </div>
+                                                <Field  type="checkbox" name={`shoppingList.${index}.isPurchased`} className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2 mr-1 md:mr-2"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                        
                                 </div>
 
-                            <p className='w-3/4 mx-auto overflow-scroll text-gray-400'>{`Shopping List`}</p>
-                            {values.shoppingList.map((name, index) => ( 
-                                <div key={index} className={`${styles.input_group} overflow-scroll flex column justify-evenly color to-blue-200 `}>
-                                    <Field  name={`shoppingList.${index}.foodItem`} className={styles.input_group} readOnly/>
-                                    <Field  name={`shoppingList.${index}.qty`} className={styles.input_group} readOnly/>
-                                    <Field  name={`shoppingList.${index}.qtyOption`} className={styles.input_group} readOnly/>
-                                    <label> Is puchased: 
-                                        <Field  type="checkbox" name={`shoppingList.${index}.isPurchased`} className={styles.input_group}/>
-                                    </label>
-                                </div>
                             ))}
 
                             {/* login buttons */}
