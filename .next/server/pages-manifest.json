@@ -2,12 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/meal/updateWeeklyPlan": "pages/meal/updateWeeklyPlan.js",
-  "/api/meal/getWeeklyPlan": "pages/api/meal/getWeeklyPlan.js",
-  "/meal/weeklyPlanNewFrom/[weeklyPlanIdNewFrom]": "pages/meal/weeklyPlanNewFrom/[weeklyPlanIdNewFrom].js",
-  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js",
-  "/meal/weeklyPlanEdit/[weeklyPlanId]": "pages/meal/weeklyPlanEdit/[weeklyPlanId].js",
-  "/api/meal/getMeals": "pages/api/meal/getMeals.js",
-  "/meal/weeklyPlanView/[weeklyPlanIdView]": "pages/meal/weeklyPlanView/[weeklyPlanIdView].js",
-  "/meal/weeklyPlan": "pages/meal/weeklyPlan.js"
+  "/meal/updateWeeklyPlan": "pages/meal/updateWeeklyPlan.js"
 }

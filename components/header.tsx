@@ -378,7 +378,7 @@ export default function Header() {
 
               <div className="flex">
                 {session.user.image && (
-                  <div className="flex items-center">
+                  <div className="flex items-center my-1 md:my-0">
                     <div className={`${styles.image_container} flex items-center`} onMouseLeave={closePopup} onMouseEnter={cancelClosePopup}>
                       <Image
                         className={`${styles.avatar} border-2 hover:cursor-pointer ${showPopup ? 'border-black' : 'border-green-400'}`}
