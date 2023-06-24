@@ -26,6 +26,7 @@ interface FormValues {
     email: string;
     noDiet: boolean;
     dietPreference: string[];
+    updatePassword: boolean;
     oldPassword?: string;
     password: string;
     cpassword?: string;
@@ -63,7 +64,11 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
     
     async function onSubmit(values: FormValues){
         //console.log(values)
-        const confPassword = await compare(values.oldPassword, sessionObj.user.password)
+
+        let confPassword = true
+        if (values.updatePassword) {
+            confPassword = await compare(values.oldPassword, sessionObj.user.password)
+        }
     
         if (confPassword) {
             const response = await uploadImage(values.image)
@@ -75,6 +80,7 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
                     email: values.email,
                     noDiet: values.noDiet,
                     dietPreference: values.dietPreference,
+                    updatePassword: values.updatePassword,
                     password: values.password,
                     public_id: response
                 }
@@ -112,6 +118,7 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
         email: user.email,
         noDiet: user.noDiet,
         dietPreference: user.dietPreference,
+        updatePassword: false,
         oldPassword: '',
         password: '',
         cpassword: '',
@@ -121,26 +128,78 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
 
     const SUPPORTED_FORMATS: string[] = ['image/jpg', 'image/png', 'image/jpeg', 'image/gif'];
 
+    // const validationSchemaYup: Yup.SchemaOf<FormValues> = Yup.object().shape({
+    //     username: Yup.string().required('Username required')
+    //     .test("Empty space", "Invalid username, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
+    //     email: Yup.string().email().required('Email required'),
+    //     noDiet: Yup.bool().required(),
+    //     dietPreference: Yup.array(Yup.string()).min(1, 'Select at least 1 diet requirement!'),
+    //     updatePassword: ,
+    //     oldPassword: Yup.string().required('Old password required'),
+    //     //.test("Match old password", "Incorrect password!", async function(value) {if (value) return await compare(value, user.password) }),
+    //     password: Yup.string().required('Password required').min(8, 'Password must be min 8 characters')
+    //     .max(20, 'Password must be max 20 characters')
+    //     .test("Empty space", "Invalid password, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
+    //     cpassword: Yup.string().required('Confirm password required')
+    //     .test("Confirm password", "Password doesn't match!", function(item) {return (this.parent.password == this.parent.cpassword)})
+    //     .test("Empty space", "Invalid password, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
+    //     image: Yup.mixed().nullable().test('size', 'File size is too big',
+    //     function(value) {if (value) {return value.size <= 1024 * 1024} else {return true} }// 5MB
+    //     ).test('type','Invalid file format selection',
+    //     (value) =>
+    //     !value || (value && SUPPORTED_FORMATS.includes(value?.type))
+    //     )
+    // });
+
     const validationSchemaYup: Yup.SchemaOf<FormValues> = Yup.object().shape({
         username: Yup.string().required('Username required')
-        .test("Empty space", "Invalid username, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
+          .test("Empty space", "Invalid username, spaces not allowed!", function(value) {
+            if (value) return !value.includes(" ");
+            else return true;
+          }),
         email: Yup.string().email().required('Email required'),
         noDiet: Yup.bool().required(),
         dietPreference: Yup.array(Yup.string()).min(1, 'Select at least 1 diet requirement!'),
-        oldPassword: Yup.string().required('Old password required'),
-        //.test("Match old password", "Incorrect password!", async function(value) {if (value) return await compare(value, user.password) }),
-        password: Yup.string().required('Password required').min(8, 'Password must be min 8 characters')
-        .max(20, 'Password must be max 20 characters')
-        .test("Empty space", "Invalid password, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
-        cpassword: Yup.string().required('Confirm password required')
-        .test("Confirm password", "Password doesn't match!", function(item) {return (this.parent.password == this.parent.cpassword)})
-        .test("Empty space", "Invalid password, spaces not allowed!", function(value) {if (value) return !value.includes(" "); else return true }),
-        image: Yup.mixed().nullable().test('size', 'File size is too big',
-        function(value) {if (value) {return value.size <= 1024 * 1024} else {return true} }// 5MB
-        ).test('type','Invalid file format selection',
-        (value) =>
-        !value || (value && SUPPORTED_FORMATS.includes(value?.type))
-        )
+        updatePassword: Yup.bool(),
+        oldPassword: Yup.string().when('updatePassword', {
+          is: true,
+          then: Yup.string().required('Old password required'),
+          otherwise: Yup.string()
+        }),
+        password: Yup.string().when('updatePassword', {
+          is: true,
+          then: Yup.string().required('Password required')
+            .min(8, 'Password must be min 8 characters')
+            .max(20, 'Password must be max 20 characters')
+            .test("Empty space", "Invalid password, spaces not allowed!", function(value) {
+              if (value) return !value.includes(" ");
+              else return true;
+            }),
+          otherwise: Yup.string()
+        }),
+        cpassword: Yup.string().when('updatePassword', {
+          is: true,
+          then: Yup.string().required('Confirm password required')
+            .test("Confirm password", "Password doesn't match!", function(item) {
+              return (this.parent.password == this.parent.cpassword);
+            })
+            .test("Empty space", "Invalid password, spaces not allowed!", function(value) {
+              if (value) return !value.includes(" ");
+              else return true;
+            }),
+          otherwise: Yup.string()
+        }),
+        image: Yup.mixed().nullable()
+          .test('size', 'File size is too big', function(value) {
+            if (value) {
+              return value.size <= 1024 * 1024;
+            } else {
+              return true;
+            }
+          })
+          .test('type', 'Invalid file format selection', (value) =>
+            !value || (value && SUPPORTED_FORMATS.includes(value?.type))
+          )
     });
 
     const formik = useFormik({
@@ -165,7 +224,7 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
                 </div>
 
                 {/* form */}
-                <form className='flex flex-col gap-5 items-center' onSubmit={formik.handleSubmit}>
+                <form className='flex flex-col gap-3 md:gap-5 items-center' onSubmit={formik.handleSubmit}>
                     <div className='flex flex-col'>
                         <div className={`${styles.input_group} ${formik.errors.username && formik.touched.username ? 'border-rose-600' : ''}`}>
                             <input 
@@ -239,6 +298,13 @@ export default function UpdateUser({ sessionObj }: { sessionObj: Session }){
                         {(formik.errors.dietPreference && formik.touched.dietPreference && !formik.values.noDiet) ? 
                         <span className='text-rose-500 mb-1 ml-1 text-sm md:text-base'>{formik.errors.dietPreference}</span> : <></>}
                     </div>
+
+                    <label className={`mr-3 ml-2 -mb-1 md:-mb-1.5 md:ml-3 mt-2 md:mt-3 self-start text-left text-sm md:text-base ${formik.values.noDiet ? 'text-gray-500' : ''}`}>
+                        <input className={`mr-1`}
+                        type="checkbox" name="updatePassword" {...formik.getFieldProps('updatePassword')}
+                        checked={formik.values.updatePassword} 
+                        /> {/* defaultChecked={(formik.values.diet.indexOf(diet) > -1) ? true : false}   */}
+                    Update Password </label>
 
 
                     <div className='flex flex-col'>

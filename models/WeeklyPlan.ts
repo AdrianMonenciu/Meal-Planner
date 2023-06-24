@@ -8,43 +8,58 @@ export interface IWeeklyPlan {
   owner: Schema.Types.ObjectId,
   year: number,
   weekNr: number,
-  diet: string[];
-  mondayMeals: Schema.Types.ObjectId[],
+  diet: string[],
+  privateAll: boolean;
+  mondayMealsBreakfast: Schema.Types.ObjectId[],
+  mondayMealsLunch: Schema.Types.ObjectId[],
+  mondayMealsDinner: Schema.Types.ObjectId[],
   mondaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  tuesdayMeals: Schema.Types.ObjectId[],
+  tuesdayMealsBreakfast: Schema.Types.ObjectId[],
+  tuesdayMealsLunch: Schema.Types.ObjectId[],
+  tuesdayMealsDinner: Schema.Types.ObjectId[],
   tuesdaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  wednesdayMeals: Schema.Types.ObjectId[],
+  wednesdayMealsBreakfast: Schema.Types.ObjectId[],
+  wednesdayMealsLunch: Schema.Types.ObjectId[],
+  wednesdayMealsDinner: Schema.Types.ObjectId[],
   wednesdaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  thursdayMeals: Schema.Types.ObjectId[],
+  thursdayMealsBreakfast: Schema.Types.ObjectId[],
+  thursdayMealsLunch: Schema.Types.ObjectId[],
+  thursdayMealsDinner: Schema.Types.ObjectId[],
   thursdaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  fridayMeals: Schema.Types.ObjectId[],
+  fridayMealsBreakfast: Schema.Types.ObjectId[],
+  fridayMealsLunch: Schema.Types.ObjectId[],
+  fridayMealsDinner: Schema.Types.ObjectId[],
   fridaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  saturdayMeals: Schema.Types.ObjectId[],
+  saturdayMealsBreakfast: Schema.Types.ObjectId[],
+  saturdayMealsLunch: Schema.Types.ObjectId[],
+  saturdayMealsDinner: Schema.Types.ObjectId[],
   saturdaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  sundayMeals: Schema.Types.ObjectId[],
+  sundayMealsBreakfast: Schema.Types.ObjectId[],
+  sundayMealsLunch: Schema.Types.ObjectId[],
+  sundayMealsDinner: Schema.Types.ObjectId[],
   sundaySnaks: {
     foodId: Schema.Types.ObjectId,
     qty: number
   }[],
-  shoppingList: { foodItem: string, qty: number, qtyOption: string, isPurchased: boolean }[]
+  shoppingList: { foodItem: string, qty: number, qtyOption: string, isPurchased: boolean, image: string; }[]
 }
 
 interface IWeeklyPlanMethods {
@@ -59,42 +74,57 @@ export const weeklyPlanSchema = new Schema<IWeeklyPlan, WeeklyPlanModel, IWeekly
   weekNr: {type: Number, required:true},
   owner: { type: Schema.Types.ObjectId, ref: 'Users' },
   diet: [{type: String, required:true}],
-  mondayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  privateAll: {type: Boolean, default: false, required: true},
+  mondayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  mondayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  mondayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   mondaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  tuesdayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  tuesdayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  tuesdayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  tuesdayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   tuesdaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  wednesdayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  wednesdayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  wednesdayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  wednesdayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   wednesdaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  thursdayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  thursdayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  thursdayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  thursdayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   thursdaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  fridayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  fridayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  fridayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  fridayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   fridaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  saturdayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  saturdayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  saturdayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  saturdayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   saturdaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  sundayMeals: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  sundayMealsBreakfast: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  sundayMealsLunch: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
+  sundayMealsDinner: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
   sundaySnaks: [{
     foodId: { type: Schema.Types.ObjectId, ref: 'FoodItem' },
     qty: { type: Number, required: true }
   }],
-  shoppingList: [{ foodItem: String, qty: Number, qtyOption: String, isPurchased: Boolean }]
+  shoppingList: [{ foodItem: String, qty: Number, qtyOption: String, isPurchased: Boolean, image: String }]
 },
 { timestamps: true },);
 

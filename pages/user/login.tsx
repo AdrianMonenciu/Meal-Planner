@@ -33,7 +33,7 @@ export default function Login(){
     // formik hook
     const formik = useFormik({
         initialValues: initialValues,
-        validate : login_validate,
+        //validate : login_validate,
         onSubmit
     })
 

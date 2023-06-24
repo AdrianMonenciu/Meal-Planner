@@ -14,24 +14,6 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
     const fieldNameMealDinner = fieldName + "MealsDinner";
     const fieldNameSnaks = fieldName ? fieldName + "Snaks" : 'MondaySnaks';
     const instanceId = useId();
-    const instanceId2 = useId();
-
-    function updateQtyOptionAndId (index, selectedOption, setFieldValue, currentField: string) {
-        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
-        const currentMeal = weeklyPlanProps.response.payload.weeklyPlanData.availableFoodItems.find(food => food.name === selectedOption)
-        //console.log(currentFoodItem)
-        setFieldValue(`${currentField}.${index}.qtyOption`, currentMeal.foodMeasureUnit)
-        setFieldValue(`${currentField}.${index}.id`, currentMeal._id)
-        setFieldValue(`${currentField}.${index}.image`, currentMeal.image)
-    };
-
-    function updateMeals (index, selectedOption, setFieldValue, currentField: string) {
-        //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
-        const currentMeal = mealOptionsObj.find(food => food.name === selectedOption)
-        //console.log(currentFoodItem)
-        setFieldValue(`${currentField}.${index}.id`, currentMeal._id)
-        setFieldValue(`${currentField}.${index}.image`, currentMeal.image)
-    };
 
     const ErrorDisplay = ({ error }) => {
         if (typeof error === 'string') {
@@ -465,7 +447,17 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                         </div>
                         
                     </div>
-                ))}              
+                ))}  
+
+                <div className={`text-rose-500 mr-5 text-sm md:text-base mt-0.5 md:mt-1 ml-2 mb-1`}>
+                    <ErrorMessage name={fieldNameMealBreakfast}>
+                        {(errorMsg) => {
+                        const hasMaxError = errorMsg.includes('Maximum 3 meals are allowed!');
+                        return hasMaxError ? <div>{errorMsg}</div> : null;
+                        }}
+                    </ErrorMessage>
+                </div>  
+
             </div>
             )}
             />
@@ -516,6 +508,17 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                         
                     </div>
                 ))}
+
+                <div className={`text-rose-500 mr-5 text-sm md:text-base mt-0.5 md:mt-1 ml-2 mb-1`}>
+                    <ErrorMessage name={fieldNameMealLunch}>
+                        {(errorMsg) => {
+                        const hasMaxError = errorMsg.includes('Maximum 3 meals are allowed!');
+                        return hasMaxError ? <div>{errorMsg}</div> : null;
+                        }}
+                    </ErrorMessage>
+                </div>  
+                
+
             </div>
             )}
             />
@@ -664,51 +667,176 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
 };
 
 
-// export const DailyInputFieldArrayView = ({ values, weeklyPlanProps,  fieldName }) => {
-//     const fieldNameUpper = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
-//     const fieldNameMeal = fieldName + "Meals"
-//     const fieldNameSnaks = fieldName + "Snaks"
+export const DailyInputFieldArrayView = ({ values,  fieldName }) => {
+    const fieldNameUpper = fieldName ? fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase() : '';
+    const fieldNameMealBreakfast = fieldName ? fieldName + "MealsBreakfast" : 'MondayMeals';
+    const fieldNameMealLunch = fieldName + "MealsLunch";
+    const fieldNameMealDinner = fieldName + "MealsDinner";
+    const fieldNameSnaks = fieldName ? fieldName + "Snaks" : 'MondaySnaks';
 
-//     return (
-//     <>
-//         <FieldArray
-//         name={`${fieldNameMeal}`}
-//         render={(arrayHelpers) => (
-//             <div>
-//             <p className="w-3/4 mx-auto text-gray-400">{`${fieldNameUpper} Meals`}</p>
-//             {values[fieldNameMeal].map((name, index) => (
-//                 <div
-//                 key={index}
-//                 className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}
-//                 >
-//                     <Field  name={`${fieldNameMeal}[${index}].name`} className={styles.input_group} readOnly/>
-//                 </div>
-//             ))}
-//             </div>
-//         )}
-//         />
+    return (
+    <div className='mt-2 md:mt-3 w-[320px] md:w-[750px] mb-1 md:mb-3 md:grid md:grid-cols-2 md:grid-rows-1  gap-5 md:gap-x-10 '>
+        <div className='md:col-span-1 flex flex-col justify-between'> 
+            <div className='w-full flex flex-col mb-1'>
+                <p className="mb-1 md:text-lg font-bold text-left">{`${fieldNameUpper} Breakfast:`}</p>
+                {values[fieldNameMealBreakfast] && values[fieldNameMealBreakfast].map((name, index) => (
+                <div key={index} className={`flex flex-col  w-full ${index < values[fieldNameMealBreakfast].length - 1 ? 'mb-1' : 'mb-1'}`}>
+                    <div className={`flex flex-row items-center `}>
+                        <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
+                            {values[fieldNameMealBreakfast][index].image ?
+                                <Image
+                                    className={`${styles.avatar_medium} border-2 flex justify-start`}
+                                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                                    publicId={values[fieldNameMealBreakfast][index].image}
+                                    alt={values[fieldNameMealBreakfast][index].image ? values[fieldNameMealBreakfast][index].image as string : ''} 
+                                    secure
+                                    dpr="auto"
+                                    quality="auto"
+                                    width={350}
+                                    height={350}
+                                    crop="fill"
+                                    gravity="auto" 
+                                />
+                                : <div className='text-center'>No Image</div>
+                            }
+                        </div>
+                        
+                        <div className='flex flex-row items-center ml-1 '>
+                            <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                                <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealBreakfast][index].name}</p>
+                            </div>
 
-//         <FieldArray
-//         name={`${fieldNameSnaks}`}
-//         render={arrayHelpers => (
-//             <div>
-//                 <p className='w-3/4 mx-auto text-gray-400'>{`${fieldNameUpper} Snacks`}</p>
-//             {values[fieldNameSnaks].map((name, index) => (
-//                 <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
-//                     {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-//                     <Field name={`${fieldNameSnaks}[${index}].name`} className={styles.input_group} readOnly/>
-//                     <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`} className={styles.input_group} readOnly/>
-//                     <Field  name={`${fieldNameSnaks}.${index}.qtyOption`} className={styles.input_group} readOnly/>
-//                     <div className="input-button m-2">
-//                     </div>
-//                 </div>
-//                 ))}
-//         </div>
-//         )}
-//         />
-//     </>
-//     );
-// };
+                        </div>
+                    </div>
+                    
+                </div>
+                ))}  
+            </div>
+
+            <div className='w-full flex flex-col mb-1'>
+                <p className="mb-1 md:text-lg font-bold text-left">{`${fieldNameUpper} Lunch:`}</p>
+                {values[fieldNameMealLunch] && values[fieldNameMealLunch].map((name, index) => (
+                <div key={index} className={`flex flex-col  w-full ${index < values[fieldNameMealLunch].length - 1 ? 'mb-1' : 'mb-1'}`}>
+                    <div className={`flex flex-row items-center `}>
+                        <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
+                            {values[fieldNameMealLunch][index].image ?
+                                <Image
+                                    className={`${styles.avatar_medium} border-2 flex justify-start`}
+                                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                                    publicId={values[fieldNameMealLunch][index].image}
+                                    alt={values[fieldNameMealLunch][index].image ? values[fieldNameMealLunch][index].image as string : ''} 
+                                    secure
+                                    dpr="auto"
+                                    quality="auto"
+                                    width={350}
+                                    height={350}
+                                    crop="fill"
+                                    gravity="auto" 
+                                />
+                                : <div className='text-center'>No Image</div>
+                            }
+                        </div>
+                        
+                        <div className='flex flex-row items-center ml-1 '>
+                            <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                                <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealLunch][index].name}</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                </div>
+                ))}  
+            </div>
+
+            <div className='w-full flex flex-col mb-1'>
+                <p className="mb-1 md:text-lg font-bold text-left">{`${fieldNameUpper} Dinner:`}</p>
+                {values[fieldNameMealDinner] && values[fieldNameMealDinner].map((name, index) => (
+                <div key={index} className={`flex flex-col  w-full ${index < values[fieldNameMealDinner].length - 1 ? 'mb-1' : 'mb-1'}`}>
+                    <div className={`flex flex-row items-center `}>
+                        <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
+                            {values[fieldNameMealDinner][index].image ?
+                                <Image
+                                    className={`${styles.avatar_medium} border-2 flex justify-start`}
+                                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                                    publicId={values[fieldNameMealDinner][index].image}
+                                    alt={values[fieldNameMealDinner][index].image ? values[fieldNameMealDinner][index].image as string : ''} 
+                                    secure
+                                    dpr="auto"
+                                    quality="auto"
+                                    width={350}
+                                    height={350}
+                                    crop="fill"
+                                    gravity="auto" 
+                                />
+                                : <div className='text-center'>No Image</div>
+                            }
+                        </div>
+                        
+                        <div className='flex flex-row items-center ml-1 '>
+                            <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                                <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealDinner][index].name}</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                </div>
+                ))}  
+            </div>
+        </div>
+
+        <div className='mt-2 md:mt-0 md:col-span-1 md:flex md:flex-col md:justify-between'>
+            <div className='w-full flex flex-col '>
+                <p className="mb-1 md:text-lg font-bold text-left">{`${fieldNameUpper} Snacks:`}</p>
+                {values[fieldNameSnaks] && values[fieldNameSnaks].map((name, index) => (
+                <div key={index} className={`flex flex-col justify-start w-full ${index < values[fieldNameSnaks].length - 1 ? 'mb-2 md:mb-3' : 'mb-0'}`}>
+                    
+                    <div className={`flex flex-row items-center `}>
+                        <div className='w-16 h-16 ml-1 flex items-center justify-center'>
+                            {values[fieldNameSnaks][index].image ?
+                                <Image
+                                    className={`${styles.avatar_medium} border-2 flex justify-start`}
+                                    cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                                    publicId={values[fieldNameSnaks][index].image}
+                                    alt={values[fieldNameSnaks][index].image ? values[fieldNameSnaks][index].image as string : ''} 
+                                    secure
+                                    dpr="auto"
+                                    quality="auto"
+                                    width={350}
+                                    height={350}
+                                    crop="fill"
+                                    gravity="auto" 
+                                />
+                                : <div className='text-center'>No Image</div>
+                            }
+                        </div>
+                        
+                        <div className='flex flex-col justify-end ml-2 max-w-[245px] md:max-w-[275px]  gap-1 md:gap-2'>
+                            <div className="flex items-center overflow-hidden pl-2 w-60 mb-0.5 md:mb-0 md:w-[270px] text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                                <p className="text-center whitespace-nowrap truncate">{values[fieldNameSnaks][index].name}</p>
+                            </div>
+
+                            <div className='flex self-start items-center justify-between w-[159px] md:w-[180px] border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base'>
+                                <div className={`w-20 md:w-24 flex items-center rounded-lg h-full pl-2`}>{values[fieldNameSnaks][index].qty}</div>
+                                <div className='ml-1 mr-2 flex items-center justify-center h-full'>{'['}{values[fieldNameSnaks][index].qtyOption}{']'}</div>
+                            </div>
+                        </div>
+
+                    </div>
+                
+                </div>
+                ))}           
+
+            </div>
+
+        </div>
+    </div>
+    );
+
+};
+
+
 
 // export default DailyInputFieldArray;
 

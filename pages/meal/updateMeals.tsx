@@ -46,7 +46,7 @@ interface Idelete {
 }
 
 
-export default function ApiExamplePage() {
+export default function UpdateMeals() {
   const [meals, setMeals] = useState<Service<IFoodItems>>({status: 'loading'})
 
   const { data: session, status } = useSession()

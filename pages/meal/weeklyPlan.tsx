@@ -22,7 +22,7 @@ import { unstable_getServerSession } from 'next-auth';
 import type { Session } from "next-auth"
 import {DailyInputFieldArray} from '../../components/weeklyPlan-SubForm'
 import connectMongo from '../../database/connectdb'
-import { getISOWeek, startOfWeek, endOfWeek, format, addDays, addWeeks } from 'date-fns';
+import { getISOWeek, startOfWeek, endOfWeek, format, addWeeks } from 'date-fns';
 //import ShoppingList from './weeklyPlan-SubForm'
 
 interface ServiceInit {
@@ -400,26 +400,31 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
         setFieldValue("sundaySnaks", [])
     };
 
-    async function onSubmit(values: FormValues){
+    async function onSubmit(values: FormValues, {setFieldValue}) {
+        const updatedShoppingList = generateShoppingList(values, setFieldValue)
+
+
         console.log(values)
+        console.log(updatedShoppingList)
 
-        // const valuesAPI = {
-        //     values: values
-        // }
+        const valuesAPI = {
+            values: values,
+            updatedShoppingList: updatedShoppingList
+        }
 
-        // const options = {
-        //     method: "POST",
-        //     headers : { 'Content-Type': 'application/json'},
-        //     body: JSON.stringify(valuesAPI)
-        // }
+        const options = {
+            method: "POST",
+            headers : { 'Content-Type': 'application/json'},
+            body: JSON.stringify(valuesAPI)
+        }
 
-        // await fetch('/api/meal/weeklyPlan', options)
-        // .then(res => res.json())
-        // .then((data) => {
-        //     console.log(data)
-        //     toast(data.message)
-        //     //if(data) router.push('/')
-        // })
+        await fetch('/api/meal/weeklyPlan', options)
+        .then(res => res.json())
+        .then((data) => {
+            console.log(data)
+            toast(data.message)
+            //if(data) router.push('/')
+        })
     }
 
 
@@ -484,6 +489,8 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
 
         setFieldValue(`shoppingList`, newShoppingList)
         setFieldValue(`shoppingListIsUpdated`, true)
+
+        return newShoppingList
     }
 
     const customStylesWkPlan = {
@@ -646,10 +653,6 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
                             </div>
 
 
-
-
-
-
                             
                             <div className={`w-[320px] md:w-[750px] ${daySelect == "monday" ? "block" : "hidden"}`}>
                                 <DailyInputFieldArray values={values} weeklyPlanProps={weeklyPlanProps} 
@@ -688,10 +691,10 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
 
                          
                             
-                            <div className="input-button m-2">
+                            <div className="in-w-[10px] mt-3 flex justify-center">
                                 <button
                                     type="button"
-                                    className={styles.button}
+                                    className={`${styles.button} px-1 md:px-3`}
                                     onClick={() => generateShoppingList(values, setFieldValue)}
                                 >
                                     Update Shopping List
@@ -743,16 +746,21 @@ export default function CreateWeeklyPlan(weeklyPlanProps){
                                             </div>
                                         </div>
                                     </div>
-                                
-                                        
+                                         
                                 </div>
 
                             ))}
 
-                            {/* login buttons */}
-                            {!values.shoppingListIsUpdated ? <div>Please update the shopping list before submitting!</div> : <></>}
-                            <div className="mt-3">
+                            
+                            {/* {!values.shoppingListIsUpdated ? <div>Please update the shopping list before submitting!</div> : <></>} 
+                             <div className="mt-3">
                                 <button type='submit' className={`${styles.button} mx-1 md:mx-3`} disabled={!values.shoppingListIsUpdated}>
+                                    Submit
+                                </button>
+                            </div>  */}
+
+                            <div className="min-w-[10px] mt-3 flex justify-center">
+                                <button type='submit' className={`${styles.button} px-1 md:px-3`}>
                                     Submit
                                 </button>
                             </div>  

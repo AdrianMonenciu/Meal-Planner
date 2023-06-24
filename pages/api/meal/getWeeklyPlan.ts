@@ -39,29 +39,79 @@ export default async function handler(
       const weekNrNumber = weekNr as unknown as number
       //console.log(yearNumber + ' ' + weekNr + ' ' + limitNumber)
 
-      weeklyPlans = await WeeklyPlan.find({year: yearNumber, weekNr: { $lte: weekNrNumber }, owner: currentUser._id}).sort({ createdAt: 'desc' }).limit(limitNumber)
-      .populate("mondayMeals").populate("mondaySnaks.foodId")
-      .populate("tuesdayMeals").populate("tuesdaySnaks.foodId")
-      .populate("wednesdayMeals").populate("wednesdaySnaks.foodId")
-      .populate("thursdayMeals").populate("thursdaySnaks.foodId")
-      .populate("fridayMeals").populate("fridaySnaks.foodId")
-      .populate("saturdayMeals").populate("saturdaySnaks.foodId")
-      .populate("sundayMeals").populate("sundaySnaks.foodId")
-      .exec().catch(err => mongooseErr = err);
+      weeklyPlans = await WeeklyPlan.find({
+        year: yearNumber,
+        weekNr: { $lte: weekNrNumber },
+        owner: currentUser._id
+      })
+        .sort({ createdAt: 'desc' })
+        .limit(limitNumber)
+        .populate([
+          {
+            path: "mondayMealsBreakfast mondayMealsLunch mondayMealsDinner mondaySnaks.foodId",
+          },
+          {
+            path: "tuesdayMealsBreakfast tuesdayMealsLunch tuesdayMealsDinner tuesdaySnaks.foodId",
+          },
+          {
+            path: "wednesdayMealsBreakfast wednesdayMealsLunch wednesdayMealsDinner wednesdaySnaks.foodId",
+          },
+          {
+            path: "thursdayMealsBreakfast thursdayMealsLunch thursdayMealsDinner thursdaySnaks.foodId",
+          },
+          {
+            path: "fridayMealsBreakfast fridayMealsLunch fridayMealsDinner fridaySnaks.foodId",
+          },
+          {
+            path: "saturdayMealsBreakfast saturdayMealsLunch saturdayMealsDinner saturdaySnaks.foodId",
+          },
+          {
+            path: "sundayMealsBreakfast sundayMealsLunch sundayMealsDinner sundaySnaks.foodId",
+          },
+        ])
+        .exec()
+        .catch((err) => {
+          mongooseErr = err;
+        });
       //console.log(weeklyPlans)
     } else {
       const { weeklyPlanId } = req.query;
       //console.log(weeklyPlanId)
 
-      weeklyPlans = await WeeklyPlan.find({_id: weeklyPlanId})
-      .populate("mondayMeals").populate("mondaySnaks.foodId")
-      .populate("tuesdayMeals").populate("tuesdaySnaks.foodId")
-      .populate("wednesdayMeals").populate("wednesdaySnaks.foodId")
-      .populate("thursdayMeals").populate("thursdaySnaks.foodId")
-      .populate("fridayMeals").populate("fridaySnaks.foodId")
-      .populate("saturdayMeals").populate("saturdaySnaks.foodId")
-      .populate("sundayMeals").populate("sundaySnaks.foodId")
-      .exec().catch(err => mongooseErr = err);
+      weeklyPlans = await WeeklyPlan.find({
+        _id: weeklyPlanId
+      })
+        //.sort({ createdAt: 'desc' })
+        //.limit(limitNumber)
+        .populate([
+          {
+            path: "mondayMealsBreakfast mondayMealsLunch mondayMealsDinner mondaySnaks.foodId",
+          },
+          {
+            path: "tuesdayMealsBreakfast tuesdayMealsLunch tuesdayMealsDinner tuesdaySnaks.foodId",
+          },
+          {
+            path: "wednesdayMealsBreakfast wednesdayMealsLunch wednesdayMealsDinner wednesdaySnaks.foodId",
+          },
+          {
+            path: "thursdayMealsBreakfast thursdayMealsLunch thursdayMealsDinner thursdaySnaks.foodId",
+          },
+          {
+            path: "fridayMealsBreakfast fridayMealsLunch fridayMealsDinner fridaySnaks.foodId",
+          },
+          {
+            path: "saturdayMealsBreakfast saturdayMealsLunch saturdayMealsDinner saturdaySnaks.foodId",
+          },
+          {
+            path: "sundayMealsBreakfast sundayMealsLunch sundayMealsDinner sundaySnaks.foodId",
+          },
+        ])
+        .exec()
+        .catch((err) => {
+          mongooseErr = err;
+        });
+
+      
       //console.log(weeklyPlans)
     }
 

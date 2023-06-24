@@ -40,6 +40,10 @@ export default function Header() {
   function Popup() {
     return (
       <div className={styles.popup_content}>
+        <span className={`flex-col text-xs items-center`}>
+          <strong>{`${session.user.email ?? session.user.username}` }</strong>
+          <div>{`Role: ${session.user.userRole}` }</div>
+        </span>
         <a
           href={`/api/auth/signout`}
           className={`${styles.buttonPrimary} mb-1 mt-2 bg-red-400`}
@@ -130,13 +134,17 @@ export default function Header() {
           <div className="absolute top-14 left-0 w-full h-screen bg-white z-9999">
             <div className="p-6">
 
+              <div className='px-3 border-b-4 border-gray-500 h-14 flex items-center'>
+                <Link className={styles.menu_button} href="/">Home</Link>
+              </div>
+
               <div 
               onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
               className={`px-3 border-b-4 border-gray-500 `}>
                 <button
                   className={`${styles.menu_button} py-2`}
                 >
-                  Ingredients/Snacks
+                  Foods and Meals
                 </button>
 
                 <FontAwesomeIcon
@@ -155,6 +163,12 @@ export default function Header() {
                     <li className={styles.navItem}>
                       <Link href="/meal/updatefoodItems">Update Ingredient/Snack</Link>
                     </li>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/meal">Add Meal</Link>
+                    </li>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/updateMeals">Update Meals</Link>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -165,7 +179,7 @@ export default function Header() {
                 <button
                   className={`${styles.menu_button} py-2`}
                 >
-                  Meals
+                  Weekly Plan
                 </button>
 
                 <FontAwesomeIcon
@@ -179,10 +193,10 @@ export default function Header() {
 
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
-                      <Link href="/meal/meal">Add Meal</Link>
+                      <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
                     </li>
                     <li className={styles.navItem}>
-                      <Link href="/meal/updateMeals">Update Meals</Link>
+                      <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
                     </li>
                   </ul>
 
@@ -195,7 +209,7 @@ export default function Header() {
                 <button
                   className={`${styles.menu_button} py-2`}
                 >
-                  Weekly Plan
+                  Shopping List
                 </button>
 
                 <FontAwesomeIcon
@@ -209,10 +223,7 @@ export default function Header() {
 
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
-                      <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
-                    </li>
-                    <li className={styles.navItem}>
-                      <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
+                      <Link href="/meal/updateShoppingList">Update Shopping List</Link>
                     </li>
                   </ul>
 
@@ -263,7 +274,7 @@ export default function Header() {
           {session?.user && (
             <div className="flex justify-between items-center h-full">
             
-              <ul className='h-14 flex items-center'>
+              <ul className='hidden h-14 md:flex items-center'>
                 <li className={styles.navItem}>
                   <Link href="/">Home</Link>
                 </li>
@@ -276,7 +287,7 @@ export default function Header() {
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
-                  Ingredients/Snacks
+                    Foods and Meals  
                 </button>
 
                 <FontAwesomeIcon
@@ -294,6 +305,12 @@ export default function Header() {
                     <li className={styles.navItem}>
                       <Link href="/meal/updatefoodItems">Update Ingredient/Snack</Link>
                     </li>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/meal">Add Meal</Link>
+                    </li>
+                    <li className={styles.navItem}>
+                      <Link href="/meal/updateMeals">Update Meals</Link>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -306,7 +323,7 @@ export default function Header() {
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
-                  Meals
+                  Weekly Plan
                 </button>
 
                 <FontAwesomeIcon
@@ -319,10 +336,10 @@ export default function Header() {
                 >
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
-                      <Link href="/meal/meal">Add Meal</Link>
+                      <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
                     </li>
                     <li className={styles.navItem}>
-                      <Link href="/meal/updateMeals">Update Meals</Link>
+                      <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
                     </li>
                   </ul>
                 </div>
@@ -336,7 +353,7 @@ export default function Header() {
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
-                  Weekly Plan
+                  Shopping List
                 </button>
 
                 <FontAwesomeIcon
@@ -349,10 +366,7 @@ export default function Header() {
                 >
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
-                      <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
-                    </li>
-                    <li className={styles.navItem}>
-                      <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
+                      <Link href="/meal/updateShoppingList">Update Shopping List</Link>
                     </li>
                   </ul>
           
@@ -386,10 +400,7 @@ export default function Header() {
                         </div>
                       )}
                     </div>
-                    <span className={`ml-3 flex-col text-xs items-center`}>
-                      <strong>{`${session.user.email ?? session.user.username}` }</strong>
-                      <div>{`Role: ${session.user.userRole}` }</div>
-                    </span>
+                    
                   </div>
                 )}
               </div>

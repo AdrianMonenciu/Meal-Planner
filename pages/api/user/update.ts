@@ -27,7 +27,7 @@ export default async function handler(
     if(req.method === 'PUT'){
 
         if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-        const { username, email, password, dietPreference, public_id } = req.body;
+        const { username, email, password, dietPreference, public_id, updatePassword } = req.body;
         //console.log(req.body)
 
         // check duplicate email
@@ -45,9 +45,15 @@ export default async function handler(
         }
 
         //hash password
-        let errors: boolean = false
+        let errors: boolean = false, update
         const filter = { email };
-        const update = {username, email, password: await hash(password, 12), dietPreference, image: public_id };
+
+        if (updatePassword) {
+          update = {username, email, password: await hash(password, 12), dietPreference, image: public_id };
+        } else {
+          update = {username, email, dietPreference, image: public_id };
+        }
+        
 
         let err = await Users.findOneAndUpdate(filter, update, {
           new: true

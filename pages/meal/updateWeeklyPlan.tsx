@@ -7,6 +7,10 @@ import { IWeeklyPlan } from '../../models/WeeklyPlan'
 import * as Yup from "yup";
 import styles from '../../styles/Form.module.css';
 import { useRouter } from "next/router";
+import { getISOWeek, startOfWeek, endOfWeek, format, addWeeks } from 'date-fns';
+import Head from 'next/head'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faEye, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 interface FormValues {
   year: number;
@@ -38,12 +42,8 @@ interface IWeeklyPlans {
   results: IWeeklyPlan[];
 }
 
-interface Idelete {
-  name: string;
-}
 
-
-export default function ApiExamplePage() {
+export default function UpdateWeeklyPlan() {
   const [weeklyPlans, setWeeklyPlans] = useState<Service<IWeeklyPlans>>({status: 'loading'})
 
   const router = useRouter()
@@ -70,15 +70,41 @@ export default function ApiExamplePage() {
     .catch(err => {setWeeklyPlans({ status: 'error', error: err.message})});
   }
 
-  function getWeekNr() {
+  function getWeekNr(): number {
     const now: Date = new Date();
-    const onejan: Date = new Date(now.getFullYear(), 0, 1);
-    const weekNumber: number = Math.ceil((((now.valueOf() - onejan.valueOf()) / 86400000) + onejan.getDay() + 1) / 7) ?? 0;
-
+    const weekNumber: number = getISOWeek(now);
+  
     return weekNumber;
-}
+  }
   const currentYear=  new Date().getFullYear()
   const currentWeekNr = getWeekNr();
+
+  function generateDatesFromWkNumber(weekNumbers, currentYear) {
+    const startDate = getStartDateOfWeek(weekNumbers, currentYear);
+    const endDate = getEndDateOfWeek(startDate);
+
+    const startDateFormatted = formatDate(startDate);
+    const endDateFormatted = formatDate(endDate);
+
+    const label = `${startDateFormatted} - ${endDateFormatted}`;
+  
+    return label;
+  }
+  
+  function getStartDateOfWeek(weekNr, year) {
+    const januaryFirst = new Date(year, 0, 1);
+    const startOfWeekISO = startOfWeek(januaryFirst, { weekStartsOn: 1 });
+  
+    return addWeeks(startOfWeekISO, weekNr);
+}
+    
+  function getEndDateOfWeek(startDate) {
+    return endOfWeek(startDate, { weekStartsOn: 1 });
+  }
+    
+  function formatDate(date) {
+    return format(date, 'dd/MM/yyyy');
+}
 
   useEffect(() => {
     getInitialData({year: currentYear, weekNr: currentWeekNr + 4, limit: 10}) 
@@ -109,74 +135,94 @@ export default function ApiExamplePage() {
 
   return (
     <Layout>
-      <h1>Weekly Plan List</h1>
-      <form className='flex flex-col' onSubmit={formik.handleSubmit}>
-        <div className={`${styles.input_group} ${formik.errors.year && formik.touched.year ? 'border-rose-600' : ''}`}>
+
+      <Head>
+        <title>Weekly Plan Update</title>
+      </Head>
+
+      <section className='min-w-[250px] max-w-[320px] md:max-w-[900px] items-center mx-auto flex flex-col gap-3 mt-4 md:mt-8'> 
+        <div className="flex justify-start">
+          <p className='font-bold md:text-xl'>Update Weekly Plan</p>
+        </div>
+
+        <form className='flex flex-row items-center justify-between bg-green-100 border rounded-xl gap-1 md:gap-1.5' onSubmit={formik.handleSubmit}>
+          <label className="ml-3">Year: </label>
           <input 
           type="number"
           name='year'
           placeholder='Current Year'
-          className={styles.input_text}
+          className={`w-[60px] md:w-[70px] border text-center rounded-lg h-8 md:h-9 bg-white text-sm md:text-base pl-1 md:pl-2 pr-0
+          ${formik.errors.year && formik.touched.year ? 'border-rose-600' : ''}`}
           {...formik.getFieldProps('year')}
           />
-        </div>
-        <div className={`${styles.input_group} ${formik.errors.year && formik.touched.year ? 'border-rose-600' : ''}`}>
+
+          <label className="ml-1 md:ml-2">Week: </label>
+          
           <input 
           type="number"
           name='weekNr'
           placeholder='Current Week number'
-          className={styles.input_text}
+          className={`w-[50px] md:w-[60px] border text-center rounded-lg h-8 md:h-9 bg-white text-sm md:text-base pl-1 md:pl-2 pr-0
+          ${formik.errors.weekNr && formik.touched.weekNr ? 'border-rose-600' : ''}`}
           {...formik.getFieldProps('weekNr')}
           />
-        </div>
-        <div className="input-button">
-          <button type='submit' className={styles.button}>
-              Search
-          </button>
-        </div>
-      </form>
-      <div className='flex flex-col'>
-        {weeklyPlans.status === 'loading' && <div>Loading...</div>}
-        {weeklyPlans.status === 'loaded' && 
-          weeklyPlans.payload.results.map((weeklyPlan, index) => (
-            <div key={index} className={`flex justify-between`}>
-              <div className="flex justify-start">
-                <div>Year: {weeklyPlan.year}</div>
-                <div className='mx-4'>Week Number: {weeklyPlan.weekNr}</div>
+          
+          <div className="min-w-[20px] my-1.5 md:my-2 mr-2 md:mr-3 ml-1 md:ml-2">
+            <button type='submit' className={`${styles.button} `}>
+              <span className="hidden md:inline ml-4 mr-4">Search</span>
+              <FontAwesomeIcon icon={faSearch} className="w-3.5 h-3.5 ml-2 mr-2 pt-1 md:hidden" aria-hidden="true" />
+            </button>
+          </div>
+        </form>
+        <div className='flex flex-col'>
+          {weeklyPlans.status === 'loading' && <div>Loading...</div>}
+          {weeklyPlans.status === 'loaded' && 
+            weeklyPlans.payload.results.map((weeklyPlan, index) => (
+              <div key={index} className={`flex justify-between items-center gap-1 md:gap-3 py-1 md:py-2`}>
+                <div className="flex justify-start items-center gap-1.5 md:gap-3 text-xs md:text-base">
+                  <div>Year: {weeklyPlan.year}</div>
+                  <div className=''>Week: {weeklyPlan.weekNr}</div>
+                  <div className="text-[9px] md:text-sm">{generateDatesFromWkNumber(weeklyPlan.weekNr, weeklyPlan.year)}</div>
+                </div>
+                
+                <span className="h-[24px] md:h-full flex justify-end items-center">
+                  <div className="px-1 md:px-2">
+                    <button onClick={() => router.push(`/meal/weeklyPlanNewFrom/${weeklyPlan._id}`)}
+                    className={`${styles.button_no_bg} h-full whitespace-nowrap bg-gradient-to-r from-cyan-400 to-cyan-500 `}>
+                      <span className="ml-1 md:ml-4 mr-1 md:mr-4">New</span>
+                    </button>
+                  </div>
+
+                  <div className={`${weeklyPlan.weekNr < currentWeekNr ? "hidden" : "block"} min-w-[20px] md:w-[90px] h-full px-1 md:px-2`}>
+                    <button onClick={() => router.push(`/meal/weeklyPlanEdit/${weeklyPlan._id}`)}
+                    className={`${styles.button_no_bg} bg-gradient-to-r from-green-400 to-green-500`}>
+                      <span className="hidden md:inline ml-4 mr-4">Edit</span>
+                      <FontAwesomeIcon icon={faEdit} className="w-3 h-full  ml-1 mr-1 pb-[2px] md:hidden" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div className={`${weeklyPlan.weekNr < currentWeekNr ? "block" : "hidden"} min-w-[20px] md:w-[90px] h-full px-1 md:px-2`}>
+                    <button onClick={() => router.push(`/meal/weeklyPlanView/${weeklyPlan._id}`)}
+                    className={`${styles.button_no_bg} bg-gradient-to-r from-blue-500 to-blue-600`}>
+                      <span className="hidden md:inline ml-4 mr-4">View</span>
+                      <FontAwesomeIcon icon={faEye} className="w-3 h-full ml-1 mr-1 pb-[2px] md:hidden" aria-hidden="true"/>
+                    </button>
+                  </div>
+                </span>
+
               </div>
-              <span className="flex justify-end">
-                <button onClick={() => router.push(`/meal/weeklyPlanEdit/${weeklyPlan._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
-                  EDIT
-                </button>
-                <button onClick={() => router.push(`/meal/shoppingListEdit/${weeklyPlan._id}`)} className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2`}> 
-                  EDIT SHOPPING LIST
-                </button>
-                <button onClick={() => router.push(`/meal/weeklyPlanView/${weeklyPlan._id}`)} className='bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded m-2'> 
-                  VIEW
-                </button>
-              </span>
-            </div>
-          ))
-        }
-        {weeklyPlans.status === 'error' && (
-          <div>{weeklyPlans.error}</div>
-        )}
-      </div>
+            ))
+          }
+          {weeklyPlans.status === 'error' && (
+            <div>{weeklyPlans.error}</div>
+          )}
+        </div>
+
+      </section>
       
     </Layout>
   )
 }
 
-//<pre>{JSON.stringify(food, null, 2)}</pre>
-//<pre>{JSON.stringify(users, null, 2)}</pre>
 
-// {users && service.payload.results.map((user, index) => (
-//   <div key={index}>{JSON.stringify(user.username, null, 2)}</div>))}
-
-
-// users.payload.results.map((user, index) => (
-//   <>
-//     <div key={index}>{user.username}</div>
-//     <pre>{JSON.stringify(user, null, 2)}</pre>
-//   </>
-// ))
+// className={`${weeklyPlan.weekNr < currentWeekNr ? "block" : "hidden"} min-w-[20px] h-full px-1 md:px-2`}

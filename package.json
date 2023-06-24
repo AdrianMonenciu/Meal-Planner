@@ -26,6 +26,7 @@
     "eslint": "^8.28.0",
     "eslint-config-next": "^13.0.5",
     "formik": "^2.2.9",
+    "framer-motion": "^10.12.17",
     "mongoose": "^6.9.1",
     "next": "latest",
     "next-auth": "latest",

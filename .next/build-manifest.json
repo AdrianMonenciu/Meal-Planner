@@ -25,10 +25,30 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/meal/updateWeeklyPlan": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/meal/updateWeeklyPlan.js"
+    ],
     "/meal/weeklyPlan": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/meal/weeklyPlan.js"
+    ],
+    "/meal/weeklyPlanEdit/[weeklyPlanId]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/meal/weeklyPlanEdit/[weeklyPlanId].js"
+    ],
+    "/meal/weeklyPlanNewFrom/[weeklyPlanIdNewFrom]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/meal/weeklyPlanNewFrom/[weeklyPlanIdNewFrom].js"
+    ],
+    "/meal/weeklyPlanView/[weeklyPlanIdView]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/meal/weeklyPlanView/[weeklyPlanIdView].js"
     ]
   },
   "ampFirstPages": []
