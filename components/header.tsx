@@ -2,7 +2,7 @@ import Link from "next/link"
 import { signIn, signOut, useSession } from "next-auth/react"
 import styles from "./header.module.css"
 import { Image } from "cloudinary-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
@@ -36,6 +36,13 @@ export default function Header() {
 
   const [selectedButton, setSelectedButton] = useState("");
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedButtonSmall, setSelectedButtonSmall] = useState("")
+
+  function toggleMenu () {
+    setIsOpen(!isOpen);
+    setSelectedButtonSmall("");
+  };
 
   function Popup() {
     return (
@@ -84,17 +91,14 @@ export default function Header() {
     );
   }
 
-  
-
   const HamburgerMenu = () => {
-    const [isOpen, setIsOpen] = useState(false);
-  
-    const toggleMenu = () => {
-      setIsOpen(!isOpen);
-      setSelectedButtonSmall("");
-    };
+    // const [isOpen, setIsOpen] = useState(false);
+    // const [selectedButtonSmall, setSelectedButtonSmall] = useState("")
 
-    const [selectedButtonSmall, setSelectedButtonSmall] = useState("")
+    // const toggleMenu = () => {
+    //   setIsOpen(!isOpen);
+    //   setSelectedButtonSmall("");
+    // };
 
     return (
       <nav className="md:hidden">
