@@ -92,13 +92,13 @@ export default function Header() {
   }
 
   const HamburgerMenu = () => {
-    // const [isOpen, setIsOpen] = useState(false);
-    // const [selectedButtonSmall, setSelectedButtonSmall] = useState("")
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedButtonSmall, setSelectedButtonSmall] = useState("")
 
-    // const toggleMenu = () => {
-    //   setIsOpen(!isOpen);
-    //   setSelectedButtonSmall("");
-    // };
+    const toggleMenu = () => {
+      setIsOpen(!isOpen);
+      setSelectedButtonSmall("");
+    };
 
     return (
       <nav className="md:hidden">
@@ -377,7 +377,148 @@ export default function Header() {
                 </div> 
               </div>
 
-              <HamburgerMenu />
+
+
+            {/* HamurgherMenu */}
+              <nav className="md:hidden">
+                <div className="flex justify-end">
+                  <button
+                    className={`text-gray-900 transition transform duration-300 ${isOpen ? "rotate-90" : ""}`}
+                    onClick={toggleMenu}
+                  >
+                    {isOpen ? (
+                    // Show the "X" icon when the menu is open
+                    <svg
+                      className="h-6 w-6 fill-current"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12 10.586L16.95 5.636a1 1 0 0 1 1.414 1.414L13.414 12l4.95 4.95a1 1 0 1 1-1.414 1.414L12 13.414l-4.95 4.95a1 1 0 0 1-1.414-1.414L10.586 12 5.636 7.05A1 1 0 0 1 7.05 5.636L12 10.586z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    // Show the "hamburger" icon when the menu is closed
+                    <svg
+                      className="h-6 w-6 fill-current"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect x="4" y="5" width="16" height="2" />
+                      <rect x="4" y="11" width="16" height="2" />
+                      <rect x="4" y="17" width="16" height="2" />
+                    </svg>
+                  )}
+                  </button>
+                </div>
+                {isOpen && (
+                  <div className="absolute top-14 left-0 w-full h-screen bg-white z-9999">
+                    <div className="p-6">
+
+                      <div className='px-3 border-b-4 border-gray-500 h-14 flex items-center'>
+                        <Link className={styles.menu_button} href="/">Home</Link>
+                      </div>
+
+                      <div 
+                      onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
+                      className={`px-3 border-b-4 border-gray-500 `}>
+                        <button
+                          className={`${styles.menu_button} py-2`}
+                        >
+                          Foods and Meals
+                        </button>
+
+                        <FontAwesomeIcon
+                          icon={faAngleUp}
+                          className={`pl-2 pr-2 text-black transition-all duration-300 ease-in-out transform ${selectedButtonSmall === "Ingredients/Snacks" ? "rotate-180" : "rotate-0"}`}
+                        />
+
+                        <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Ingredients/Snacks" ? "max-h-40" :
+                        "max-h-0"} `}
+                          style={{ transformOrigin: "top" }}>
+
+                          <ul className={styles.navItems}>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/foodItem">Add Ingredient/Snack</Link>
+                            </li>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/updatefoodItems">Update Ingredient/Snack</Link>
+                            </li>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/meal">Add Meal</Link>
+                            </li>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/updateMeals">Update Meals</Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div 
+                      onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Meals" ? "Meals" : "")}
+                      className={`px-3 border-b-4 border-gray-500 `}>
+                        <button
+                          className={`${styles.menu_button} py-2`}
+                        >
+                          Weekly Plan
+                        </button>
+
+                        <FontAwesomeIcon
+                          icon={faAngleUp}
+                          className={`pl-2 pr-2 text-black transition-all duration-300 ease-in-out transform ${selectedButtonSmall === "Meals" ? "rotate-180" : "rotate-0"}`}
+                        />
+
+                        <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Meals" ? "max-h-40" :
+                        "max-h-0"} `}
+                          style={{ transformOrigin: "top" }}>
+
+                          <ul className={styles.navItems}>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/weeklyPlan">New Weekly Plan</Link>
+                            </li>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/updateWeeklyPlan">Update Weekly Plan</Link>
+                            </li>
+                          </ul>
+
+                        </div> 
+                      </div>
+
+                      <div 
+                      onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Weekly Plan" ? "Weekly Plan" : "")}
+                      className={`px-3 border-b-4 border-gray-500 `}>
+                        <button
+                          className={`${styles.menu_button} py-2`}
+                        >
+                          Shopping List
+                        </button>
+
+                        <FontAwesomeIcon
+                          icon={faAngleUp}
+                          className={`pl-2 pr-2 text-black transition-all duration-300 ease-in-out transform ${selectedButtonSmall === "Weekly Plan" ? "rotate-180" : "rotate-0"}`}
+                        />
+
+                        <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Weekly Plan" ? "max-h-40" :
+                        "max-h-0"} `}
+                          style={{ transformOrigin: "top" }}>
+
+                          <ul className={styles.navItems}>
+                            <li className={styles.navItem}>
+                              <Link href="/meal/updateShoppingList">Update Shopping List</Link>
+                            </li>
+                          </ul>
+
+                        </div> 
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+              </nav>
+
+
 
 
               <div className="flex">
