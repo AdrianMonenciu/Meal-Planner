@@ -4,15 +4,10 @@ import { withAuth } from "next-auth/middleware"
 export default withAuth({
   callbacks: {
     authorized({ req, token, }) {
-      // `/admin` requires admin role
-      // console.log("Token from middleware")
-      // console.log(token)
       if (req.nextUrl.pathname === "/example/admin"|| req.nextUrl.pathname === "/user/updateUsers") {
-        //return token?.userRole === "admin"
         return token?.userRole === "admin"
       }
-
-      // `/me` only requires the user to be logged in
+      
       return !!token
     },
   },

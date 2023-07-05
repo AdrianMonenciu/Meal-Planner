@@ -1,6 +1,6 @@
 {
   "private": true,
-  "description": "An example project for NextAuth.js with Next.js",
+  "description": "Meal Plan Project",
   "repository": "https://github.com/n",
   "bugs": {
     "url": "https://github.com/nextauthjs/next-auth/issues"

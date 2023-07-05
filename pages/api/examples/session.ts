@@ -9,6 +9,5 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const session = await unstable_getServerSession(req, res, authOptions)
-  //console.log("Session in API: " + JSON.stringify(session, null, 2))
   res.send(JSON.stringify(session, null, 2))
 }

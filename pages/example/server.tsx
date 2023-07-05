@@ -1,16 +1,8 @@
 import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "../api/auth/[...nextauth]"
 import Layout from "../../components/layout"
-import { useSession } from "next-auth/react"
-
-import type { GetServerSidePropsContext, GetServerSideProps } from "next"
+import type { GetServerSideProps } from "next"
 import type { Session } from "next-auth"
-
-interface sessionProps {
-  session: Session | null
-}
-
-//{JSON.stringify(sessionObj, null, 2)}
 
 export default function ServerSidePage({ sessionObj, text }: { sessionObj: Session, text: String }) {
   // As this page uses Server Side Rendering, the `session` will be already

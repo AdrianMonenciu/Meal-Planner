@@ -1,6 +1,5 @@
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user'
-import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(
@@ -9,34 +8,12 @@ export default async function handler(
 ){
     connectMongo()
     
-
-    // try {
-    //   connectMongo();
-    // } catch (error) {
-    //   console.error(error);
-    //   res.status(500).json({ message: 'Internal server error' });
-    // }
-
     // only post method is accepted
     if(req.method === 'POST'){
 
         if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
         const { test } = req.body;
         //console.log(req.body)
-
-        
-
-        // //hash password
-        // let errors: boolean = false
-        // const newUser = new Users({ username, email, password: await hash(password, 12), dietPreference, image: public_id })
- 
-        // //console.log(newUser)
-        // let err = await newUser.save().catch(err => {err = err, errors = true});
-
-        // const MyModel = mongoose.model('MyModel', mySchema);
-        // MyModel.updateMany({}, { $set: { newVariable: '' } }, (err, res) => {
-        //   console.log(res);
-        // });
 
         let updatedUsers, errorsComp
         let errors: boolean = false 
@@ -52,7 +29,6 @@ export default async function handler(
           }
           
         })
-
 
         if (errors) {
           console.log(errorsComp)

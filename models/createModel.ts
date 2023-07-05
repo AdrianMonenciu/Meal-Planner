@@ -1,8 +1,6 @@
-// lib/createModel.ts
 import { Model, model, Schema } from "mongoose";
 
-// Simple Generic Function for reusability
-// Feel free to modify however you like
+// Generic Function for reusability
 export default function createModel<T, TModel = Model<T>>(
     modelName: string,
     schema: Schema<T>

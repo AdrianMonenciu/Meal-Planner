@@ -1,7 +1,5 @@
 import { Model, Schema } from "mongoose";
 import createModel from "./createModel";
-import { IMeal, MealModel, mealSchema } from './Meal';
-import { IUser, UserModel, userSchema } from './user';
 
 export interface IFood {
   id: number;
@@ -37,8 +35,5 @@ export const foodSchema = new Schema<IFood, FoodModel, IFoodMethods>({
 foodSchema.method("nameReturn", function nameReturn() {
   return this.name;
 });
-
-//createModel<IMeal, MealModel>("Meal", mealSchema)
-//createModel<IUser, UserModel>("Users", userSchema)
 
 export default createModel<IFood, FoodModel>("FoodItem", foodSchema);

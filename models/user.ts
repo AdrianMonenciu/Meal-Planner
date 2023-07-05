@@ -17,7 +17,6 @@ export interface IUser {
   WeeklyPlan: Schema.Types.ObjectId[];
   FoodItem: Schema.Types.ObjectId[];
   Meal: Schema.Types.ObjectId[];
-  //ShoppingList: Schema.Types.ObjectId[];
 }
 
 interface IUserMethods {
@@ -39,7 +38,6 @@ export const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   WeeklyPlan: [{ type: Schema.Types.ObjectId, ref: 'WeeklyPlan' }],
   FoodItem: [{ type: Schema.Types.ObjectId, ref: 'FoodItem' }],
   Meal: [{ type: Schema.Types.ObjectId, ref: 'Meal' }],
-  //ShoppingList: [{ type: Schema.Types.ObjectId, ref: 'ShoppingList' }]
 },
 { timestamps: true },);
 

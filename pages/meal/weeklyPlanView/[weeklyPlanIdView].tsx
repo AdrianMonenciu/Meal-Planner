@@ -1,554 +1,833 @@
-import Head from 'next/head'
-import Link from 'next/link'
-import styles from '../../../styles/Form.module.css';
+import Head from "next/head";
+import styles from "../../../styles/Form.module.css";
 import { Image } from "cloudinary-react";
-import { useEffect, useState, useRef, useId } from 'react';
-import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
-import router, { useRouter } from 'next/router';
-import Layout from "../../../components/layout"
-import {dietPreferencesFood} from "../../../lib/dietPreference"
-import {foodMeasureUnit} from "../../../lib/foodMeasureUnit"
-import * as Yup from "yup";
-import { toast } from 'react-toastify';
-import { GetServerSideProps } from 'next';
-import { Schema } from 'mongoose';
-import { IFood } from '../../../models/FoodItem';
-import { IMeal } from '../../../models/Meal';
-import { IWeeklyPlan } from '../../../models/WeeklyPlan';
-import WeeklyPlan from '../../../models/WeeklyPlan';
-import Select from 'react-select';
-import { authOptions } from "../../api/auth/[...nextauth]"
-import { unstable_getServerSession } from 'next-auth';
-import type { Session } from "next-auth"
-import {DailyInputFieldArrayView} from '../../../components/weeklyPlan-SubForm'
-import connectMongo from '../../../database/connectdb'
-import { getISOWeek, startOfWeek, endOfWeek, format, addWeeks } from 'date-fns';
-//import ShoppingList from './weeklyPlan-SubForm'
+import { useEffect, useState } from "react";
+import Layout from "../../../components/layout";
+import { GetServerSideProps } from "next";
+import { IWeeklyPlan } from "../../../models/WeeklyPlan";
+import { authOptions } from "../../api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth";
+import type { Session } from "next-auth";
+import { DailyInputFieldArrayView } from "../../../components/weeklyPlan-SubForm";
+import { startOfWeek, endOfWeek, format, addWeeks } from "date-fns";
 
 interface ServiceInit {
-    status: 'init';
+  status: "init";
 }
 interface ServiceLoading {
-status: 'loading';
+  status: "loading";
 }
 interface ServiceLoaded<T> {
-status: 'loaded';
-payload: T;
+  status: "loaded";
+  payload: T;
 }
 interface ServiceError {
-status: 'error';
-error: string;
+  status: "error";
+  error: string;
 }
 type Service<T> =
-| ServiceInit
-| ServiceLoading
-| ServiceLoaded<T>
-| ServiceError;
+  | ServiceInit
+  | ServiceLoading
+  | ServiceLoaded<T>
+  | ServiceError;
 
 interface IWeklyPlan {
-    weeklyPlanData: {
-        currentWeeklyPlan: IWeeklyPlan,
-        userId: string,
-    };
+  weeklyPlanData: {
+    currentWeeklyPlan: IWeeklyPlan;
+    userId: string;
+  };
 }
 
 interface IfoodItemsForm {
-    qty: number, 
-    name: string,
-    qtyOption: string,
-    id: string,
-    image: string
+  qty: number;
+  name: string;
+  qtyOption: string;
+  id: string;
+  image: string;
 }
 
-interface IMealsForm { 
-    name: string,
-    id: string,
-    image: string
+interface IMealsForm {
+  name: string;
+  id: string;
+  image: string;
 }
 
 interface IShoppingList {
-    foodItem: string, 
-    qty: number, 
-    qtyOption: string, 
-    isPurchased: boolean, 
-    image: string
+  foodItem: string;
+  qty: number;
+  qtyOption: string;
+  isPurchased: boolean;
+  image: string;
 }
 
 interface IWeeklyPlanValues {
-    year: number;
-    weekNr: number;
-    diet: string[];
-    privateAll: boolean;
-    mondayMealsBreakfast: IMealsForm[],
-    mondayMealsLunch: IMealsForm[],
-    mondayMealsDinner: IMealsForm[],
-    mondaySnaks: IfoodItemsForm[],
-    tuesdayMealsBreakfast: IMealsForm[],
-    tuesdayMealsLunch: IMealsForm[],
-    tuesdayMealsDinner: IMealsForm[],
-    tuesdaySnaks: IfoodItemsForm[],
-    wednesdayMealsBreakfast: IMealsForm[],
-    wednesdayMealsLunch: IMealsForm[],
-    wednesdayMealsDinner: IMealsForm[],
-    wednesdaySnaks: IfoodItemsForm[],
-    thursdayMealsBreakfast: IMealsForm[],
-    thursdayMealsLunch: IMealsForm[],
-    thursdayMealsDinner: IMealsForm[],
-    thursdaySnaks: IfoodItemsForm[],
-    fridayMealsBreakfast: IMealsForm[],
-    fridayMealsLunch: IMealsForm[],
-    fridayMealsDinner: IMealsForm[],
-    fridaySnaks: IfoodItemsForm[],
-    saturdayMealsBreakfast: IMealsForm[],
-    saturdayMealsLunch: IMealsForm[],
-    saturdayMealsDinner: IMealsForm[],
-    saturdaySnaks: IfoodItemsForm[],
-    sundayMealsBreakfast: IMealsForm[],
-    sundayMealsLunch: IMealsForm[],
-    sundayMealsDinner: IMealsForm[],
-    sundaySnaks: IfoodItemsForm[],
-    shoppingList: IShoppingList[],
-    shoppingListIsUpdated: boolean,
-    id: string
+  year: number;
+  weekNr: number;
+  diet: string[];
+  privateAll: boolean;
+  mondayMealsBreakfast: IMealsForm[];
+  mondayMealsLunch: IMealsForm[];
+  mondayMealsDinner: IMealsForm[];
+  mondaySnaks: IfoodItemsForm[];
+  tuesdayMealsBreakfast: IMealsForm[];
+  tuesdayMealsLunch: IMealsForm[];
+  tuesdayMealsDinner: IMealsForm[];
+  tuesdaySnaks: IfoodItemsForm[];
+  wednesdayMealsBreakfast: IMealsForm[];
+  wednesdayMealsLunch: IMealsForm[];
+  wednesdayMealsDinner: IMealsForm[];
+  wednesdaySnaks: IfoodItemsForm[];
+  thursdayMealsBreakfast: IMealsForm[];
+  thursdayMealsLunch: IMealsForm[];
+  thursdayMealsDinner: IMealsForm[];
+  thursdaySnaks: IfoodItemsForm[];
+  fridayMealsBreakfast: IMealsForm[];
+  fridayMealsLunch: IMealsForm[];
+  fridayMealsDinner: IMealsForm[];
+  fridaySnaks: IfoodItemsForm[];
+  saturdayMealsBreakfast: IMealsForm[];
+  saturdayMealsLunch: IMealsForm[];
+  saturdayMealsDinner: IMealsForm[];
+  saturdaySnaks: IfoodItemsForm[];
+  sundayMealsBreakfast: IMealsForm[];
+  sundayMealsLunch: IMealsForm[];
+  sundayMealsDinner: IMealsForm[];
+  sundaySnaks: IfoodItemsForm[];
+  shoppingList: IShoppingList[];
+  shoppingListIsUpdated: boolean;
+  id: string;
 }
 
-export default function UpdateWeeklyPlan(weeklyPlanProps){
-    const [weeklyPlans, setWeeklyPlans] = useState<Service<IWeklyPlan>>({status: 'loading'})
-    const [daySelect, setDaySelect] = useState("monday")
+export default function UpdateWeeklyPlan(weeklyPlanProps) {
+  const [weeklyPlans, setWeeklyPlans] = useState<Service<IWeklyPlan>>({
+    status: "loading",
+  });
+  const [daySelect, setDaySelect] = useState("monday");
 
-    //console.log(weeklyPlanProps)
+  let currentWeeklyPlan;
+  if (weeklyPlanProps.response.status == "loaded") {
+    currentWeeklyPlan =
+      weeklyPlanProps.response.payload.weeklyPlanData.currentWeeklyPlan[0];
+  }
 
-    let currentWeeklyPlan
-    if (weeklyPlanProps.response.status == 'loaded') {
-        currentWeeklyPlan = weeklyPlanProps.response.payload.weeklyPlanData.currentWeeklyPlan[0]
-        //console.log(currentWeeklyPlan)
+  useEffect(() => {
+    if (weeklyPlanProps.response.status == "error") {
+      setWeeklyPlans({
+        status: "error",
+        error: weeklyPlanProps.response.error,
+      });
+    } else {
+      setWeeklyPlans({
+        status: "loaded",
+        payload: weeklyPlanProps.response.payload,
+      });
+      console.log(weeklyPlanProps);
     }
+  }, []);
 
-    useEffect(() => {
-        if(weeklyPlanProps.response.status == 'error') {
-            setWeeklyPlans({ status: 'error', error: weeklyPlanProps.response.error})
-        } else {
-            setWeeklyPlans({ status: 'loaded', payload: weeklyPlanProps.response.payload })
-            console.log(weeklyPlanProps)
-        }
-    },[])
-    //console.log(currentWeeklyPlan.privateAll)
+  function generateWeekNrOption(weekNr, currentYear) {
+    const startDate = getStartDateOfWeek(weekNr, currentYear);
+    const endDate = getEndDateOfWeek(startDate);
 
-    function generateWeekNrOption(weekNr, currentYear) {
-        const startDate = getStartDateOfWeek(weekNr, currentYear);
-        const endDate = getEndDateOfWeek(startDate);
-    
-        const startDateFormatted = formatDate(startDate);
-        const endDateFormatted = formatDate(endDate);
-    
-        const label = `Week ${weekNr} - ${startDateFormatted} to ${endDateFormatted}`;
-    
-        return label
-    }
-      
-    function getStartDateOfWeek(weekNr, year) {
-        const januaryFirst = new Date(year, 0, 1);
-        const startOfWeekISO = startOfWeek(januaryFirst, { weekStartsOn: 1 });
-      
-        return addWeeks(startOfWeekISO, weekNr);
-    }
-      
-    function getEndDateOfWeek(startDate) {
-        return endOfWeek(startDate, { weekStartsOn: 1 });
-    }
-      
-    function formatDate(date) {
-        return format(date, 'dd/MM/yyyy');
-    }
+    const startDateFormatted = formatDate(startDate);
+    const endDateFormatted = formatDate(endDate);
 
-    const weeklyPlanValues: IWeeklyPlanValues = {
-        year: weeklyPlanProps.response.status == 'loaded' ? currentWeeklyPlan.year : 0,
-        weekNr: weeklyPlanProps.response.status == 'loaded' ? currentWeeklyPlan.weekNr : 0,
-        diet: weeklyPlanProps.response.status == 'loaded' ? currentWeeklyPlan.diet : [''],
-        privateAll: weeklyPlanProps.response.status == 'loaded' ? currentWeeklyPlan.privateAll : false,
+    const label = `Week ${weekNr} - ${startDateFormatted} to ${endDateFormatted}`;
 
-        mondayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.mondayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    return label;
+  }
 
-        mondayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.mondayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+  function getStartDateOfWeek(weekNr, year) {
+    const januaryFirst = new Date(year, 0, 1);
+    const startOfWeekISO = startOfWeek(januaryFirst, { weekStartsOn: 1 });
 
-        mondayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.mondayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    return addWeeks(startOfWeekISO, weekNr);
+  }
 
-        mondaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.mondaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+  function getEndDateOfWeek(startDate) {
+    return endOfWeek(startDate, { weekStartsOn: 1 });
+  }
 
-        tuesdayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.tuesdayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+  function formatDate(date) {
+    return format(date, "dd/MM/yyyy");
+  }
 
-        tuesdayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.tuesdayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+  const weeklyPlanValues: IWeeklyPlanValues = {
+    year:
+      weeklyPlanProps.response.status == "loaded" ? currentWeeklyPlan.year : 0,
+    weekNr:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.weekNr
+        : 0,
+    diet:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.diet
+        : [""],
+    privateAll:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.privateAll
+        : false,
 
-        tuesdayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.tuesdayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    mondayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.mondayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        tuesdaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.tuesdaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+    mondayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.mondayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        wednesdayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.wednesdayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    mondayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.mondayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        wednesdayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.wednesdayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    mondaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.mondaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
 
-        wednesdayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.wednesdayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    tuesdayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.tuesdayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        wednesdaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.wednesdaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+    tuesdayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.tuesdayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        thursdayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.thursdayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    tuesdayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.tuesdayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        thursdayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.thursdayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    tuesdaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.tuesdaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
 
-        thursdayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.thursdayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    wednesdayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.wednesdayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        thursdaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.thursdaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+    wednesdayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.wednesdayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        fridayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.fridayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    wednesdayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.wednesdayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        fridayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.fridayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    wednesdaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.wednesdaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
 
-        fridayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.fridayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    thursdayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.thursdayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        fridaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.fridaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+    thursdayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.thursdayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        saturdayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.saturdayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    thursdayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.thursdayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        saturdayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.saturdayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    thursdaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.thursdaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
 
-        saturdayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.saturdayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    fridayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.fridayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        saturdaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.saturdaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+    fridayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.fridayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        sundayMealsBreakfast: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.sundayMealsBreakfast.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    fridayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.fridayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        sundayMealsLunch: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.sundayMealsLunch.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    fridaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.fridaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
 
-        sundayMealsDinner: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.sundayMealsDinner.map((meal) => ({name: meal.name, id: meal._id, image: meal.image})) 
-        : [{name: '', id: '', image: ''}],
+    saturdayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.saturdayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        sundaySnaks: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.sundaySnaks.map((snack) => ({name: snack.foodId.name, qty: snack.qty, qtyOption: snack.foodId.foodMeasureUnit, id: snack.foodId._id, image: snack.foodId.image})) 
-        : [{name: '', qty: 0, qtyOption: '', id: '', image: ''}],
+    saturdayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.saturdayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        shoppingList: weeklyPlanProps.response.status == 'loaded' ? 
-        currentWeeklyPlan.shoppingList.map((list) => ({foodItem: list.foodItem, qty: list.qty, qtyOption: list.qtyOption, isPurchased: list.isPurchased, image: list.image})) 
-        : [{ foodItem: '', qty: 0, qtyOption: '', isPurchased: false, image: ''}],
+    saturdayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.saturdayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-        shoppingListIsUpdated: true,
-        id: weeklyPlanProps.response.status == 'loaded' ? currentWeeklyPlan._id : ''
-    }
-    //console.log(initialValues)
+    saturdaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.saturdaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
 
-    return (
-        
-        <Layout>
+    sundayMealsBreakfast:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.sundayMealsBreakfast.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-            <Head>
-                <title>Weekly Plan View</title>
-            </Head>
+    sundayMealsLunch:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.sundayMealsLunch.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
 
-            <section className='w-[320px] md:w-[750px] mx-auto  items-center gap-3 mt-4 md:mt-8'> 
-                <div className="flex justify-center">
-                    <h1 className='font-bold md:text-xl'>Weekly Plan View</h1>
+    sundayMealsDinner:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.sundayMealsDinner.map((meal) => ({
+            name: meal.name,
+            id: meal._id,
+            image: meal.image,
+          }))
+        : [{ name: "", id: "", image: "" }],
+
+    sundaySnaks:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.sundaySnaks.map((snack) => ({
+            name: snack.foodId.name,
+            qty: snack.qty,
+            qtyOption: snack.foodId.foodMeasureUnit,
+            id: snack.foodId._id,
+            image: snack.foodId.image,
+          }))
+        : [{ name: "", qty: 0, qtyOption: "", id: "", image: "" }],
+
+    shoppingList:
+      weeklyPlanProps.response.status == "loaded"
+        ? currentWeeklyPlan.shoppingList.map((list) => ({
+            foodItem: list.foodItem,
+            qty: list.qty,
+            qtyOption: list.qtyOption,
+            isPurchased: list.isPurchased,
+            image: list.image,
+          }))
+        : [
+            {
+              foodItem: "",
+              qty: 0,
+              qtyOption: "",
+              isPurchased: false,
+              image: "",
+            },
+          ],
+
+    shoppingListIsUpdated: true,
+    id:
+      weeklyPlanProps.response.status == "loaded" ? currentWeeklyPlan._id : "",
+  };
+
+  return (
+    <Layout>
+      <Head>
+        <title>Weekly Plan View</title>
+      </Head>
+
+      <section className="w-[320px] md:w-[750px] mx-auto  items-center gap-3 mt-4 md:mt-8">
+        <div className="flex justify-center">
+          <h1 className="font-bold md:text-xl">Weekly Plan View</h1>
+        </div>
+
+        {weeklyPlans.status === "loading" && <div>Loading...</div>}
+        {weeklyPlans.status === "loaded" && (
+          <div className="w-[320px] md:w-[750px] grid grid-rows-10 mx-auto justify-items-center gap-3 mt-4 md:mt-8">
+            <div className="w-[320px] md:w-[750px] mb-2 grid grid-cols-1 md:grid-cols-2 md:grid-rows-1 md:gap-x-10 gap-5 justify-around">
+              <div className="flex flex-col gap-2 md:col-start-1 md:row-start-1">
+                <p
+                  className={`text-left ml-1 mt-1 text-sm md:text-base mb-1 font-medium`}
+                >
+                  Week number:
+                </p>
+
+                <div className="pl-1 md:pl-1.5 w-70 mb-0.5 md:mb-0 flex items-center md:w-85 text-sm md:text-base border rounded-lg h-8 md:h-10">
+                  {generateWeekNrOption(
+                    weeklyPlanValues.weekNr,
+                    weeklyPlanValues.year
+                  )}
+                </div>
+              </div>
+
+              <div
+                className={`${styles.input_group} flex-col md:col-start-2 md:row-start-1 bg-green-100`}
+              >
+                <div
+                  className={`text-left ml-3 mt-1 text-sm md:text-base mb-1 font-medium`}
+                >{` 
+                  ${
+                    weeklyPlanValues.privateAll
+                      ? "All private food items and meals"
+                      : "Private food items and miels based on diet"
+                  }`}</div>
+                <label className={`mr-3 ml-3 mt-1 text-sm md:text-base`}>
+                  <input
+                    type="radio"
+                    name="privateBool"
+                    className="mr-1"
+                    checked={weeklyPlanValues.privateAll === true}
+                    disabled={true}
+                  />
+                  All private food items and meals
+                </label>
+                <label className={`mr-3 ml-3 mt-1 mb-1 text-sm md:text-base`}>
+                  <input
+                    type="radio"
+                    name="privateBool"
+                    className="mr-1"
+                    checked={weeklyPlanValues.privateAll === false}
+                    disabled={true}
+                  />
+                  Only food items and meals based on diet
+                </label>
+              </div>
+            </div>
+
+            <div
+              className={`w-[320px] md:w-[750px] overflow-x-scroll md:overflow-hidden scrollbar-thin`}
+            >
+              <div className="flex flex-row justify-between gap-1 md:gap-2">
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("monday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Monday
+                  </button>
                 </div>
 
-                {weeklyPlans.status === 'loading' && <div>Loading...</div>}
-                {weeklyPlans.status === 'loaded' &&  (  
-                    <div className='w-[320px] md:w-[750px] grid grid-rows-10 mx-auto justify-items-center gap-3 mt-4 md:mt-8'>
-                        <div className='w-[320px] md:w-[750px] mb-2 grid grid-cols-1 md:grid-cols-2 md:grid-rows-1 md:gap-x-10 gap-5 justify-around'>
-                            <div className='flex flex-col gap-2 md:col-start-1 md:row-start-1'>
-                                <p className={`text-left ml-1 mt-1 text-sm md:text-base mb-1 font-medium`}>Week number:</p>
-                                
-                                <div className="pl-1 md:pl-1.5 w-70 mb-0.5 md:mb-0 flex items-center md:w-85 text-sm md:text-base border rounded-lg h-8 md:h-10">
-                                    {generateWeekNrOption(weeklyPlanValues.weekNr, weeklyPlanValues.year)}</div>
-                            </div>
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("tuesday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Tuesday
+                  </button>
+                </div>
 
-                            <div className={`${styles.input_group} flex-col md:col-start-2 md:row-start-1 bg-green-100`}>
-                                <div className={`text-left ml-3 mt-1 text-sm md:text-base mb-1 font-medium`}>{` 
-                                ${weeklyPlanValues.privateAll ? "All private food items and meals" : "Private food items and miels based on diet"}`}</div>
-                                <label className={`mr-3 ml-3 mt-1 text-sm md:text-base`}>
-                                    <input type="radio" name="privateBool" className='mr-1' checked={weeklyPlanValues.privateAll === true}
-                                    disabled={true}
-                                    />
-                                    All private food items and meals
-                                </label>
-                                <label className={`mr-3 ml-3 mt-1 mb-1 text-sm md:text-base`}>
-                                    <input type="radio" name="privateBool" className='mr-1' checked={weeklyPlanValues.privateAll === false}
-                                    disabled={true}
-                                    />
-                                    Only food items and meals based on diet
-                                </label>
-                            </div>
-                        </div>   
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("wednesday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Wednesday
+                  </button>
+                </div>
 
-                        {/* ${errors[fieldNameMealBreakfast] && touched[fieldNameMealBreakfast] ? "block" : "hidden" } */}
-                        
-                        <div className={`w-[320px] md:w-[750px] overflow-x-scroll md:overflow-hidden scrollbar-thin`}>
-                            <div className="flex flex-row justify-between gap-1 md:gap-2">
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("monday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Monday
-                                    </button>
-                                </div>
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("thursday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Thursday
+                  </button>
+                </div>
 
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("tuesday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Tuesday
-                                    </button>
-                                </div>
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("friday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Friday
+                  </button>
+                </div>
 
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("wednesday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Wednesday
-                                    </button>
-                                </div>
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("saturday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Saturday
+                  </button>
+                </div>
 
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("thursday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Thursday
-                                    </button>
-                                </div>
+                <div className="mb-1 ">
+                  <button
+                    type="button"
+                    onClick={() => setDaySelect("sunday")}
+                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}
+                  >
+                    Sunday
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("friday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Friday
-                                    </button>
-                                </div>
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "monday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="monday"
+              />
+            </div>
 
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("saturday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Saturday
-                                    </button>
-                                </div>
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "tuesday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="tuesday"
+              />
+            </div>
 
-                                <div className="mb-1 ">
-                                    <button type="button" onClick={() => setDaySelect("sunday")}
-                                    className={`${styles.button_no_border} bg-gradient-to-r from-teal-400 to-teal-400 py-1 px-1 md:px-2 border border-transparent`}>
-                                        Sunday
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "wednesday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="wednesday"
+              />
+            </div>
 
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "thursday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="thursday"
+              />
+            </div>
 
-                        
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "monday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="monday" />
-                        </div>
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "friday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="friday"
+              />
+            </div>
 
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "tuesday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="tuesday" />
-                        </div>
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "saturday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="saturday"
+              />
+            </div>
 
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "wednesday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="wednesday" />
-                        </div>
+            <div
+              className={`w-[320px] md:w-[750px] ${
+                daySelect == "sunday" ? "block" : "hidden"
+              }`}
+            >
+              <DailyInputFieldArrayView
+                values={weeklyPlanValues}
+                fieldName="sunday"
+              />
+            </div>
 
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "thursday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="thursday" />
-                        </div>
+            <p className="mb-1 mt-3 md:mt-4 md:text-lg font-bold text-left">{`Shopping List`}</p>
+            {weeklyPlanValues.shoppingList.map((name, index) => (
+              <div
+                key={index}
+                className={`flex flex-col  w-full ${
+                  index < weeklyPlanValues.shoppingList.length - 1 ? "mb-4" : ""
+                }`}
+              >
 
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "friday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="friday" />
-                        </div>
+                <div className={`flex flex-row items-center `}>
+                  <div className="w-16 h-16 ml-1 md:ml-2 flex items-center justify-center">
+                    {weeklyPlanValues.shoppingList[index].image ? (
+                      <Image
+                        className={`${styles.avatar_medium} border-2 flex justify-start`}
+                        cloudName={
+                          process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+                        }
+                        publicId={weeklyPlanValues.shoppingList[index].image}
+                        alt={
+                          weeklyPlanValues.shoppingList[index].image
+                            ? (weeklyPlanValues.shoppingList[index]
+                                .image as string)
+                            : ""
+                        }
+                        secure
+                        dpr="auto"
+                        quality="auto"
+                        width={350}
+                        height={350}
+                        crop="fill"
+                        gravity="auto"
+                      />
+                    ) : (
+                      <div className="text-center">No Image</div>
+                    )}
+                  </div>
 
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "saturday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="saturday" />
-                        </div>
-
-                        <div className={`w-[320px] md:w-[750px] ${daySelect == "sunday" ? "block" : "hidden"}`}>
-                            <DailyInputFieldArrayView values={weeklyPlanValues} fieldName="sunday" />
-                        </div>
-
-                        <p className="mb-1 mt-3 md:mt-4 md:text-lg font-bold text-left">{`Shopping List`}</p>
-                        {weeklyPlanValues.shoppingList.map((name, index) => ( 
-                            <div key={index} className={`flex flex-col  w-full ${index < weeklyPlanValues.shoppingList.length - 1 ? 'mb-4' : ''}`}>
-                                {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-                                
-                                <div className={`flex flex-row items-center `}>
-                                    <div className='w-16 h-16 ml-1 md:ml-2 flex items-center justify-center'>
-                                        {weeklyPlanValues.shoppingList[index].image ?
-                                            <Image
-                                                className={`${styles.avatar_medium} border-2 flex justify-start`}
-                                                cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-                                                publicId={weeklyPlanValues.shoppingList[index].image}
-                                                alt={weeklyPlanValues.shoppingList[index].image ? weeklyPlanValues.shoppingList[index].image as string : ''} 
-                                                secure
-                                                dpr="auto"
-                                                quality="auto"
-                                                width={350}
-                                                height={350}
-                                                crop="fill"
-                                                gravity="auto" 
-                                            />
-                                            : <div className='text-center'>No Image</div>
-                                        }
-                                    </div>
-                                    
-                                    <div className='flex flex-wrap ml-2 items-center max-w-[245px] md:max-w-none  gap-1 md:flex-row md:gap-4'>
-                                        <div className="flex items-center overflow-hidden pl-2 w-60 mb-0.5 md:mb-0 md:w-80 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
-                                            <p className="text-center whitespace-nowrap truncate">{weeklyPlanValues.shoppingList[index].foodItem}</p>
-                                        </div>
-
-                                        <div className='flex items-center justify-between w-[159px] md:w-48 border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base'>
-                                            <div className="flex items-center overflow-hidden pl-2 w-20 md:w-24 mb-0.5 md:mb-0 text-sm md:text-base bg-white">
-                                                <p className="text-center whitespace-nowrap truncate">{weeklyPlanValues.shoppingList[index].qty}</p>
-                                            </div>
-                                            <div className='ml-2 mr-2 flex items-center justify-center h-full'>{'['}{weeklyPlanValues.shoppingList[index].qtyOption}{']'}</div>
-                                        </div>
-
-                                        <div className='flex items-center justify-between border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base'>
-                                            <div className="flex items-center overflow-hidden pl-1 text-sm md:text-base bg-white">
-                                                Bought
-                                            </div>
-                                            <input  type="checkbox" checked={weeklyPlanValues.shoppingList[index].isPurchased === true} disabled={true} 
-                                            className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2 mr-1 md:mr-2"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                        
-                            </div>
-
-                        ))}
-
-
+                  <div className="flex flex-wrap ml-2 items-center max-w-[245px] md:max-w-none  gap-1 md:flex-row md:gap-4">
+                    <div className="flex items-center overflow-hidden pl-2 w-60 mb-0.5 md:mb-0 md:w-80 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                      <p className="text-center whitespace-nowrap truncate">
+                        {weeklyPlanValues.shoppingList[index].foodItem}
+                      </p>
                     </div>
-                   
-                )}
 
-                {weeklyPlans.status === 'error' && (
-                    <div>{weeklyPlans.error}</div>
-                )}
+                    <div className="flex items-center justify-between w-[159px] md:w-48 border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base">
+                      <div className="flex items-center overflow-hidden pl-2 w-20 md:w-24 mb-0.5 md:mb-0 text-sm md:text-base bg-white">
+                        <p className="text-center whitespace-nowrap truncate">
+                          {weeklyPlanValues.shoppingList[index].qty}
+                        </p>
+                      </div>
+                      <div className="ml-2 mr-2 flex items-center justify-center h-full">
+                        {"["}
+                        {weeklyPlanValues.shoppingList[index].qtyOption}
+                        {"]"}
+                      </div>
+                    </div>
 
-            </section>
+                    <div className="flex items-center justify-between border rounded-lg h-8 md:h-10 bg-white text-sm md:text-base">
+                      <div className="flex items-center overflow-hidden pl-1 text-sm md:text-base bg-white">
+                        Bought
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={
+                          weeklyPlanValues.shoppingList[index].isPurchased ===
+                          true
+                        }
+                        disabled={true}
+                        className="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2 mr-1 md:mr-2"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-        </Layout>
-        
-    )
+        {weeklyPlans.status === "error" && <div>{weeklyPlans.error}</div>}
+      </section>
+    </Layout>
+  );
 }
 
 function return_url(context) {
-    if (process.env.NODE_ENV === "production") {
-      return `https://${context.req.rawHeaders[1]}`;
-    } else {
-      return "http://localhost:3000";
-    }
+  if (process.env.NODE_ENV === "production") {
+    return `https://${context.req.rawHeaders[1]}`;
+  } else {
+    return "http://localhost:3000";
   }
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    let absoluteUrl = return_url(context);
-    const weeklyPlanIdView = context.params?.weeklyPlanIdView as string;
-    console.log(`WeeklyPlanId from url querry: ${weeklyPlanIdView}` )
-    let responseLoaded: ServiceLoaded<IWeklyPlan> = {
-        status: 'loaded',
-        payload: {
-            weeklyPlanData: {
-                currentWeeklyPlan: undefined,
-                userId: '',
-            }
-        }
-    }
-    
-    let responseError
-    //console.log(foodNameQuerry)
+  let absoluteUrl = return_url(context);
+  const weeklyPlanIdView = context.params?.weeklyPlanIdView as string;
+  console.log(`WeeklyPlanId from url querry: ${weeklyPlanIdView}`);
+  let responseLoaded: ServiceLoaded<IWeklyPlan> = {
+    status: "loaded",
+    payload: {
+      weeklyPlanData: {
+        currentWeeklyPlan: undefined,
+        userId: "",
+      },
+    },
+  };
 
-    async function getWeeklyPlan(weeklyPlanId: string) {
-        const options = {
-            method: "GET",
-            headers : { 'Content-Type': 'application/json'},
-        }
-        const url = `${absoluteUrl}/api/meal/getWeeklyPlan?weeklyPlanId=${weeklyPlanIdView}`;
+  let responseError;
 
-        await fetch(url, options)
-        .then(async (response) => {
+  async function getWeeklyPlan(weeklyPlanId: string) {
+    const options = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+    const url = `${absoluteUrl}/api/meal/getWeeklyPlan?weeklyPlanId=${weeklyPlanIdView}`;
+
+    await fetch(url, options)
+      .then(async (response) => {
         if (!response.ok) {
-            const error = await response.json()
-            //console.log(error)
-            throw new Error(error)
-            //toast.success(`Logged in as ${values.email}`)
+          const error = await response.json();
+          throw new Error(error);
         } else {
-            return response.json()
+          return response.json();
         }
-        })
-        .then(data => {responseLoaded.payload.weeklyPlanData.currentWeeklyPlan = data.results
-        //console.log(data)
-        })
-        .catch(err => responseError = { status: 'error', error: "Error getting the Weekly Plan!"});
-        
-    }
+      })
+      .then((data) => {
+        responseLoaded.payload.weeklyPlanData.currentWeeklyPlan = data.results;
+      })
+      .catch(
+        (err) =>
+          (responseError = {
+            status: "error",
+            error: "Error getting the Weekly Plan!",
+          })
+      );
+  }
 
-    const sessionObj: Session | null = await unstable_getServerSession(context.req, context.res, authOptions)
+  const sessionObj: Session | null = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
 
-    responseLoaded.payload.weeklyPlanData.userId = sessionObj.user._id
+  responseLoaded.payload.weeklyPlanData.userId = sessionObj.user._id;
 
-    await getWeeklyPlan(weeklyPlanIdView)
+  await getWeeklyPlan(weeklyPlanIdView);
 
-    
-    if (responseError) {
-        //console.log(responseError)
-        return {
-            props: { response: responseError },
-        }
-    }
-
-    //console.log(responseLoaded)
-    
+  if (responseError) {
     return {
-        props: {response: responseLoaded}
-    }
-}
+      props: { response: responseError },
+    };
+  }
+
+  return {
+    props: { response: responseLoaded },
+  };
+};

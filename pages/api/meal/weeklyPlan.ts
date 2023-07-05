@@ -1,13 +1,9 @@
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user'
-import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
-import { useSession } from 'next-auth/react';
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import WeeklyPlan from '../../../models/WeeklyPlan';
-//import mongoose from 'mongoose';
-import { string } from 'yup';
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,29 +14,23 @@ export default async function handler(
     const session = await unstable_getServerSession(req, res, authOptions)
     //console.log(session)
 
-
     // only post method is accepted
     if(req.method === 'POST'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
       const { values, updatedShoppingList } = req.body;
-      //console.log(values)
-      //console.log(updatedShoppingList)
 
       const currentUser = await Users.findOne({ email: session.user.email });
 
       // check duplicate meal name
       const checkExistingWeeklyPlan = await WeeklyPlan.findOne({ owner: currentUser._id, weekNr: values.weekNr, year: values.year });
-      if(checkExistingWeeklyPlan ) { //&& session.user.username != username
-        //console.log(checkexisting)
+      if(checkExistingWeeklyPlan ) { 
         return res.status(422).json({ message: "Weekly Plan Already Exists...!"})
       }
 
       const mongoose = require('mongoose')
-      //const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
 
       const newWeeklyPlan = new WeeklyPlan({
-        //_id: new mongoose.Types.ObjectId(),
         year: values.year,
         weekNr: values.weekNr,
         owner: currentUser._id, 
@@ -77,8 +67,6 @@ export default async function handler(
         shoppingList: updatedShoppingList,
       });
 
-      //console.log(newWeeklyPlan)
-
       var errors: boolean = false
       var mongooseErr
 
@@ -105,11 +93,7 @@ export default async function handler(
       .populate("fridayMealsBreakfast").populate("fridayMealsLunch").populate("fridayMealsDinner").populate("fridaySnaks.foodId")
       .populate("saturdayMealsBreakfast").populate("saturdayMealsLunch").populate("saturdayMealsDinner").populate("saturdaySnaks.foodId")
       .populate("sundayMealsBreakfast").populate("sundayMealsLunch").populate("sundayMealsDinner").populate("sundaySnaks.foodId")
-    
-      //console.log(weeklyPlanPopulated)
-      // console.log(currentUser)
-      //console.log(userPopulated)
-
+  
       if (errors) {
         console.log(mongooseErr)
         return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
@@ -117,8 +101,7 @@ export default async function handler(
         console.log(weeklyPlanPopulated)
         res.status(201).json({ message: `Weekly Plan, week nr: ${newWeeklyPlan.weekNr} created successfuly!`, status : true, data: weeklyPlanPopulated})
       }
-
-
+      
     } else if (req.method === 'PUT'){
 
       if(!req.body) return res.status(404).json({message: "Don't have form data...!"});

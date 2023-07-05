@@ -1,6 +1,6 @@
 import styles from '../styles/Form.module.css';
-import { useEffect, useState, useRef, useId, CSSProperties } from 'react';
-import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik, useFormikContext } from 'formik';
+import { useState, useId } from 'react';
+import { ErrorMessage, Field, FieldArray} from 'formik';
 import Select from 'react-select';
 import React from 'react';
 import { Image } from "cloudinary-react";
@@ -29,6 +29,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
     const mealOptions = !values.privateAll ? weeklyPlanProps.response.payload.weeklyPlanData.mealsSelectOptions : weeklyPlanProps.response.payload.weeklyPlanData.mealsSelectOptionsAllPrivate;
     const mealOptionsObj = !values.privateAll ? weeklyPlanProps.response.payload.weeklyPlanData.availableMeals : weeklyPlanProps.response.payload.weeklyPlanData.availableMealsAllPrivate;
 
+    //Component used to add meals
     const MealSelect = ({ setFieldValue}) => {
         const [name, setName] = useState('Please select a meal!')
         const [id, setId] = useState('')
@@ -88,6 +89,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
             setFieldValue(mealType, updatedArray); //"foodItems"
         };
           
+        //Custom styles as tailwind doesn't work properly for React Select
         const customStyles = {
             control: (provided) => ({
               ...provided,
@@ -146,15 +148,12 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                             styles={customStyles}
                             instanceId={instanceId}
                             isSearchable={true}
-                            //isDisabled={availableFoodItems[0].label == ''}
                             value={{ value: name, label: name }}
-                            //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
                             options={
                                 mealOptions.filter(item => {
                                     if (mealType != "Meal Type") {
                                         for (let i = 0; i < values[mealType].length; i++) {
                                             if (item.value == values[mealType][i].name) {
-                                                //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
                                                 return false;
                                             }
                                         }
@@ -173,14 +172,11 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                         <div className="gap-1 flex flex-row items-center">
                             <Select
                                 className="text-sm md:text-base"
-                                //classNamePrefix="select-box"
                                 styles={customStyles2}
                                 instanceId={instanceId}
                                 isSearchable={true}
                                 value={{ value: mealType, label: getMealOptionLabel(mealType) }}
-                                //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
                                 options={mealTypeOptions}
-                                //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
                                 onChange={(selectedOption) => { 
                                     setMealType(selectedOption.value)
                                     checkDuplicateMeals(selectedOption.value)
@@ -225,6 +221,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
         );
     };
 
+    //Component used to add food items
     const FoodSelect = ({ setFieldValue}) => {
         const [name, setName] = useState('Please select a food item!')
         const [qty, setQty] = useState<any>(0)
@@ -236,10 +233,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
           
 
         function updateQtyOptionAndIdSelect (selectedOption) {
-            //setFieldValue("fullName", `${values.firstName} ${values.lastName}`);
             const currentFoodItem = foodItemsOptionsObj.find(food => food.name === selectedOption)
-            //console.log(currentFoodItem)
-    
             setQtyOption(currentFoodItem.foodMeasureUnit)
             setId(currentFoodItem._id as unknown as string)
             setImage(currentFoodItem.image)
@@ -262,22 +256,13 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
         }
 
         const addNewField = () => {
-            // interface FormValues2 {
-            //     foodItems: IfoodItems[];
-            // }
-        
-            // const initialValues2: FormValues2 = {
-            //     //foodItems: [{name: '', qty: 0, qtyOption: 'Quantity', id: '', image: null}],
-            //     foodItems: []
-            // }
             const currentArray = values[fieldNameSnaks];
             const updatedArray = [...currentArray];
             updatedArray.push({name: name, qty: qty, qtyOption: qtyOption, id: id, image: image});
             setFieldValue(fieldNameSnaks, updatedArray);
-            //setFieldValue
-            //arrayHelpers.push({name: name, qty: qty, qtyOption: qtyOption, id: id, image: image}); // Add a new field to the array
         };
           
+        //Custom styles as tailwind doesn't work for React Select
         const customStyles = {
             control: (provided) => ({
               ...provided,
@@ -318,25 +303,20 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                     <div className='flex flex-col gap-1 md:gap-2 ml-1 mr-1'> 
                         <Select
                             className="mb-0.5 md:mb-0 items-center text-sm md:text-base"
-                            //classNamePrefix="select-box"
                             styles={customStyles}
                             instanceId={instanceId}
                             isSearchable={true}
                             value={{ value: name, label: name }}
-                            //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
                             options={
-                                //availableFoodItems
                                 foodItemsOptions.filter(item => {
                                     for (let i = 0; i < values[fieldNameSnaks].length; i++) {
                                         if (item.value == values[fieldNameSnaks][i].name) {
-                                            //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
                                             return false;
                                         }
                                     }
                                     return true;
                                 })
                             }
-                            //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
                             onChange={(selectedOption) => { 
                                 setName(selectedOption.value)
                                 updateQtyOptionAndIdSelect(selectedOption.value)
@@ -434,8 +414,6 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                                     <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealBreakfast][index].name}</p>
                                 </div>
 
-                                
-
                                 <div className="min-w-[20px] mb-1 px-1 ">
                                     <button type="button" onClick={() => arrayHelpers.remove(index)}
                                     className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
@@ -493,8 +471,6 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                                 <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
                                     <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealLunch][index].name}</p>
                                 </div>
-
-                                
 
                                 <div className="min-w-[20px] mb-1 px-1 ">
                                     <button type="button" onClick={() => arrayHelpers.remove(index)}
@@ -554,8 +530,6 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                                 <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
                                     <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealDinner][index].name}</p>
                                 </div>
-
-                                
 
                                 <div className="min-w-[20px] mb-1 px-1 ">
                                     <button type="button" onClick={() => arrayHelpers.remove(index)}
@@ -650,17 +624,13 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue,  
                     <ErrorMessage name={`${fieldNameSnaks}`}>
                         {(error) => <ErrorDisplay error={error} />}
                     </ErrorMessage>
-                </div>              
-
-                
+                </div>                      
 
             </div>
             )}
             />
 
-
             <FoodSelect setFieldValue={setFieldValue}/>
-
         </div>
     </div>
     );
@@ -835,159 +805,3 @@ export const DailyInputFieldArrayView = ({ values,  fieldName }) => {
     );
 
 };
-
-
-
-// export default DailyInputFieldArray;
-
-
-
-
-
-// return (
-//     <>
-//         <FieldArray
-//         name={`${fieldNameMealBreakfast}`}
-//         render={(arrayHelpers) => (
-//             <div>
-//             <p className="w-3/4 mx-auto text-gray-400">{`${fieldNameUpper} Meals`}</p>
-//             {values[fieldNameMealBreakfast] && values[fieldNameMealBreakfast].map((name, index) => (
-//                 <div
-//                 key={index}
-//                 className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}
-//                 >
-//                 <Field name={`${fieldNameMealBreakfast}[${index}].name`}>
-//                     {({ field, form }) => (
-//                     <Select
-//                         className="select-wrap w-500"
-//                         classNamePrefix="select-box"
-//                         instanceId={instanceId}
-//                         isSearchable={true}
-//                         value={{
-//                         value: values[fieldNameMealBreakfast][index].name,
-//                         label: values[fieldNameMealBreakfast][index].name,
-//                         }}
-//                         options={ 
-//                             mealOptions.filter(
-//                             (item) => {
-//                             for (let i = 0; i < values[fieldNameMealBreakfast].length; i++) {
-//                                 if (item.value == values[fieldNameMealBreakfast][i].name) {
-//                                 return false;
-//                                 }
-//                             }
-//                             return true;
-//                             })
-//                         }
-//                         onChange={(selectedOption) => {
-//                         form.setFieldValue(`${fieldNameMealBreakfast}.${index}.name`, selectedOption.value);
-//                         updateMeals(index, selectedOption.value, setFieldValue, fieldNameMealBreakfast);
-//                         form.setFieldValue(`shoppingListIsUpdated`, false)
-//                         //generateShoppingList(values)
-//                         }}
-//                     />
-//                     )}
-//                 </Field>
-
-//                 <ErrorMessage name={`${fieldNameMealBreakfast}.${index}.name`} />
-//                 <div className="input-button m-2">
-//                     <button
-//                     type="button"
-//                     className={styles.button}
-//                     onClick={() => arrayHelpers.remove(index)}
-//                     >
-//                     Remove input
-//                     </button>
-//                 </div>
-//                 </div>
-//             ))}
-//             <button type="button" onClick={() => arrayHelpers.push({ name: '', id: '' })}>
-//                 Add input
-//             </button>
-//             </div>
-//         )}
-//         />
-
-//         <div className='mt-3'>
-//             <MealSelect setFieldValue={setFieldValue}/>
-//         </div>
-
-//         <FieldArray
-//         name={`${fieldNameSnaks}`}
-//         render={arrayHelpers => (
-//             <div>
-//                 <p className='w-3/4 mx-auto text-gray-400'>{`${fieldNameUpper} Snacks`}</p>
-//             {values[fieldNameSnaks].map((name, index) => (
-//                 <div key={index} className={` flex column justify-evenly color to-blue-200 items-center gap-5 sm:w-full md:w-1/2 lg:w-1/3 `}> 
-//                     {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
-//                     <Field name={`${fieldNameSnaks}[${index}].name`}>
-//                     {({ field, form }) => (
-//                     <Select
-//                         className="select-wrap w-24"
-//                         classNamePrefix="select-box"
-//                         instanceId={instanceId2}
-//                         isSearchable={true}
-//                         value={{ value: values[fieldNameSnaks][index].name, label: values[fieldNameSnaks][index].name }}
-//                         //defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
-//                         options={
-//                             //availableFoodItems
-//                             weeklyPlanProps.response.payload.weeklyPlanData.foodItemsSelectOptions.filter(item => {
-//                                 for (let i = 0; i < values[fieldNameSnaks].length; i++) {
-//                                     if (item.value == values[fieldNameSnaks][i].name) {
-//                                         //console.log(`curent av food: ${item.value},  current value: ${values.foodItems[i].name}`)
-//                                         return false;
-//                                     }
-//                                 }
-//                                 return true;
-//                             })
-//                         }
-//                         //options= {formik.values.diet.map((diet, index) => ({value : diet, label : diet}))}
-//                         onChange={(selectedOption) => { 
-//                             form.setFieldValue(`${fieldNameSnaks}.${index}.name`, selectedOption.value,)
-//                             updateQtyOptionAndId(index, selectedOption.value, setFieldValue, fieldNameSnaks)
-//                             form.setFieldValue(`shoppingListIsUpdated`, false)
-//                             }}
-//                     />)}
-//                     </Field>
-//                     <Field  type='number' name={`${fieldNameSnaks}.${index}.qty`}  className={`${styles.input_field}`} default={''} //className={styles.input_group}
-//                         onChange={(e) => {
-//                             const inputValue = e.target.value;
-//                             let numericValue;
-//                             if (inputValue === '') {
-//                                 numericValue = '';
-//                             } else {
-//                                 numericValue = Number(inputValue);
-//                             }
-//                             setFieldValue("shoppingListIsUpdated", false);
-//                             setFieldValue(`${fieldNameSnaks}.${index}.qty`, numericValue);
-//                         }}
-//                     />
-//                     <Field  name={`${fieldNameSnaks}.${index}.qtyOption`}  className={`${styles.input_field}`} readOnly/>
-//                     <ErrorMessage name={`${fieldNameSnaks}.${index}.name`} />
-//                     <ErrorMessage name={`${fieldNameSnaks}.${index}.qty`} />
-//                     <div className="input-button m-2">
-//                     <button
-//                         type="button"
-//                         className={styles.button}
-//                         onClick={() => arrayHelpers.remove(index)} // remove a name from the list
-//                     >
-//                         Remove input
-//                     </button>
-//                     </div>
-//                 </div>
-//                 ))}
-//             <button
-//             type="button"
-//             onClick={() => arrayHelpers.push({name: '', qty: 0, qtyOption: '', id: ''})} // insert an empty string at a position
-//             >
-//                 Add input
-//             </button>
-//         </div>
-//         )}
-//         />
-
-//         <div className='mt-3'>
-//             <FoodSelect setFieldValue={setFieldValue}/>
-//         </div>
-//     </>
-//     );
-// };

@@ -1,15 +1,11 @@
 import Link from "next/link"
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import styles from "./header.module.css"
 import { Image } from "cloudinary-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
-// The approach used in this component shows how to build a sign in and sign out
-// component that works on pages which support both client and server side
-// rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
   const [showPopup, setShowPopup] = useState(false);
 
@@ -44,6 +40,7 @@ export default function Header() {
     setSelectedButtonSmall("");
   };
 
+  //Popup box component
   function Popup() {
     return (
       <div className={styles.popup_content}>
@@ -257,12 +254,8 @@ export default function Header() {
               </span>
               <span className="">
                 <a
-                  href={`/user/login`} ///api/auth/signin
+                  href={`/user/login`} 
                   className={styles.buttonPrimary}
-                  // onClick={(e) => {
-                  //   e.preventDefault()
-                  //   signIn()
-                  // }}
                 >
                   Sign in
                 </a>

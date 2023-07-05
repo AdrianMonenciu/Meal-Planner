@@ -1,7 +1,6 @@
 import { Model, Schema } from "mongoose";
 import createModel from "./createModel";
 import { IFood, FoodModel, foodSchema } from './FoodItem';
-import { IUser, UserModel, userSchema } from './user';
 
 export interface IMeal {
   _id: Schema.Types.ObjectId;
@@ -43,6 +42,5 @@ mealSchema.method("nameReturn", function nameReturn() {
 });
 
 createModel<IFood, FoodModel>("FoodItem", foodSchema)
-//createModel<IUser, UserModel>("Users", userSchema)
 
 export default createModel<IMeal, MealModel>("Meal", mealSchema);

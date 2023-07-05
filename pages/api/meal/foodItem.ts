@@ -1,14 +1,9 @@
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user'
-import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
-import { useSession } from 'next-auth/react';
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import FoodItem from '../../../models/FoodItem';
-import mongoose from 'mongoose';
-import { string } from 'yup';
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -17,7 +12,6 @@ export default async function handler(
     
     const session = await unstable_getServerSession(req, res, authOptions)
     //console.log(session)
-
 
     // only post method is accepted
     if(req.method === 'POST'){
@@ -30,13 +24,12 @@ export default async function handler(
 
       // check duplicate food name
       const checkExistingFood = await FoodItem.findOne({ name });
-      if(checkExistingFood ) { //&& session.user.username != username
+      if(checkExistingFood ) { 
         //console.log(checkexisting)
         return res.status(422).json({ message: "Food item Already Exists...!"})
       }
 
       const newFoodItem = new FoodItem({
-        //_id: new mongoose.Types.ObjectId(),
         name: name,
         privateBool: privateBool,
         foodMeasureUnit: foodMeasureUnit,
@@ -49,7 +42,6 @@ export default async function handler(
       
 
       let errors: boolean = false
-      //const filter = { username };
       let mongooseErr
 
       newFoodItem.save(function (err) {
@@ -63,27 +55,8 @@ export default async function handler(
       if (!errors) {
         currentUser.FoodItem.push(newFoodItem._id)
         mongooseErr = await currentUser.save().catch(err => {mongooseErr = err, errors = true});
-        // currentUser.save(function (err) {
-        //   if (err) {
-        //     console.log(err)
-        //     mongooseErr = err
-        //     errors = true
-        //   }
-        // })
       }
-
-      // let userPopulated = await Users.findOne({email: currentUser.email}).populate('FoodItem');
-      // Users.findOne({email: currentUser.email}).
-      //   populate('FoodItem').
-      //   exec(function (err, userPopulated1) {
-      //     if (err) console.log(err);
-      //     userPopulated = userPopulated1
-      //     //console.log(userPopulated);
-      //     // prints "The author is Ian Fleming"
-      //   });
-    
       // console.log(newFoodItem)
-      // console.log(userPopulated)
 
       if (errors) {
         console.log(mongooseErr)
@@ -108,9 +81,6 @@ export default async function handler(
       var mongoose = require('mongoose');
       var idObj = mongoose.mongo.ObjectId(id);
 
-      // console.log(checkExistingFood)
-      // console.log(idObj)
-
       if(checkExistingFood && String(checkExistingFood._id) !== String(idObj)) { //&& session.user.username != username
         return res.status(422).json({ message: "Food name Already Exists...!"})
       }
@@ -121,11 +91,9 @@ export default async function handler(
 
       var err = await FoodItem.findOneAndUpdate(filter, update, {
         new: true
-      }).catch(err => {err = err, errors = true}); //, (err, doc) => {errs = err, errors = true});
+      }).catch(err => {err = err, errors = true}); 
       
       let updatedFood = await FoodItem.findOne({_id: id})
-
-      //console.log(currentUser.FoodItem)
 
       if (!errors) {
         if (!currentUser.FoodItem.find(item => String(item) == String(idObj))) {
@@ -133,8 +101,7 @@ export default async function handler(
           await currentUser.save().catch(error => {err = error, errors = true});
         } else {
           console.log(`Food id: ${updatedFood._id} already exist for this user.`)
-        }
-        
+        }   
       }
       
       if (errors) {
@@ -156,27 +123,22 @@ export default async function handler(
       const filter = { name };
       let mongooseErr
 
-      //var mongooseErr = await Users.findOneAndDelete((filter)).catch(err => {mongooseErr = err, errors = true});
-
       const deletedFood = FoodItem.findOneAndDelete((filter), function (err, docs) {
         if (err){
           console.log(err)
           mongooseErr = err
           errors = true
-          //ow err
         }
-     })    //.catch(function(err){ console.log(err)});
+     })
 
       if (errors) {
         console.log(mongooseErr)
         return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
       } else {
-        //console.log(updatedUser)
         res.status(201).json({ message: `Food ${name} deleted successfuly!`, status : true,})
       }
 
     }else {
       res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
     }
-
 }

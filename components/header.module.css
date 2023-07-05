@@ -14,12 +14,7 @@
   position: relative;
   top: 0;
   opacity: 1;
-  //overflow: hidden;
-  //border-radius: 0 0 0.6rem 0.6rem;
-  //padding: 0.6rem 1rem;
   margin: 0;
-  //background-color: rgba(0, 0, 0, 0.05);
-  //transition: all 0.2s ease-in;
   padding: 0px 20px 0;
   padding-bottom: 0;
 }
@@ -31,8 +26,6 @@
 
 .signedInText,
 .notSignedInText {
-  //position: absolute;
-  //padding-top: 0.8rem;
   left: 1rem;
   right: 6.5rem;
   white-space: nowrap;
@@ -71,12 +64,10 @@
   padding: 0.01rem;
   position: relative;
   z-index: 9;
-  //background-color: transparent;
   color: #555;
 }
 
 .buttonPrimary {
-  //background-color: #346df1;
   border-color: #346df1;
   color: #fff;
   text-decoration: none;
@@ -88,15 +79,12 @@
 }
 
 .navItems {
-  //margin-bottom: 2rem;
   padding: 0;
   list-style: none;
 }
 
 .navItem {
-  //display: inline-block;
   margin-left: 0.5rem;
-  //margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   @apply hover:underline;
 }
@@ -127,26 +115,18 @@
 }
 
 .menu_button {
-  //background-color: transparent;
-  //border: none;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
-  //padding: 0.5rem;
 }
 
 .menu_items {
-  //background-color: #f1f1f1;
   border: 1px solid #ddd;
-  //border-radius: 4px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  //display: none;
   position: absolute;
   top: 100%;
   left: 0;
   z-index: 1;
-  //transform: translateY(-1px);
-  //transition: all 0.2s ease-in;
 }
 
 .menu_items a {

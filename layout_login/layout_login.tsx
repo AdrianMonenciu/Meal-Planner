@@ -1,9 +1,5 @@
 import styles from '../styles/Layout.module.css';
 
-//{children}
-// h-3/4 removed from <div className="m-auto bg-slate-50 rounded-md w-3/5 grid lg:grid-cols-2">
-
-
 export default function Layout_login( { children }){
     return (
         <div className="flex h-screen bg-blue-200">

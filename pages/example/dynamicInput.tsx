@@ -1,19 +1,11 @@
 import Head from 'next/head'
-import Layout_login from '../../layout_login/layout_login'
-import Link from 'next/link'
 import styles from '../../styles/Form.module.css';
-import Image from 'next/image'
-import { HiAtSymbol, HiFingerPrint } from "react-icons/hi";
 import { useId, useState } from 'react';
 import { useFormik, Form, Field, FieldArray, Formik, getIn, ErrorMessage } from 'formik';
-import login_validate from '../../lib/validate';
 import { useRouter } from 'next/router';
 import Layout from "../../components/layout"
 import * as yup from 'yup';
 import Select from 'react-select';
-import { string } from 'yup/lib/locale';
-import { Input } from 'postcss';
-
 
 export default function Login(){
   const instanceId = useId();
@@ -54,7 +46,6 @@ export default function Login(){
 
     const [show, setShow] = useState(false)
     const router = useRouter()
-    // formik hook
     const formik = useFormik({
         initialValues: initialValues,
         onSubmit
@@ -62,22 +53,9 @@ export default function Login(){
 
     async function onSubmit(values: FormValues){
       setTimeout(() => {
-        //alert(JSON.stringify(values, null, 2));
         console.log(values)
       }, 500)
     }
-
-    // const FieldComponent = ({ field, form: { touched, errors } }) => {
-    //   const error = getIn(errors, field.name);
-    //   const touch = getIn(touched, field.name);
-    //   return (
-    //     <div>
-    //       <input type="text" name={field.name} onChange={field.onChange} className={styles.input_group}/>
-    //       {touch && error ? <p>{error}</p> : null}
-    //     </div>
-    //   )
-    // }
-    //console.log(initialValues)
 
     return (
       <Formik
@@ -105,7 +83,7 @@ export default function Login(){
                 <div>
                   {values.names.map((name, index) => (
                       <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
-                        {/*<Field name={`names.${index}`} className={styles.input_group}/>*/}
+                      
                         <Field name={`names[${index}].name`}>
                         {({ field, form }) => (
                           <Select
@@ -141,7 +119,6 @@ export default function Login(){
                   >
                     Add input
                   </button>
-                  {/* login buttons */}
                   <div className="input-button">
                           <button type='submit' className={styles.button}>
                             Submit
@@ -150,24 +127,6 @@ export default function Login(){
                 </div>
               )}
               />
-            {/*<Field name="meal">
-            {({ field, form }) => (
-              <Select
-                className="select-wrap"
-                classNamePrefix="select-box"
-                instanceId={useId()}
-                defaultValue={{ value: initialValues.meal, label: initialValues.meal }}
-                options={mealOptions}
-                onChange={(selectedOption) =>
-                    form.setFieldValue(
-                      'meal',
-                      selectedOption.value,
-                      )}
-              />)}
-            </Field>
-              {errors.meal && (
-                <span className="error">{errors.meal}</span>
-              )}*/}
             </Form>
           </section>
 
@@ -175,4 +134,4 @@ export default function Login(){
       )}
       </Formik>
     )
-}
+  }
