@@ -186,19 +186,17 @@ export default function UpdateFood(mealItemProps) {
     diet: Yup.array(Yup.string()).min(1, "Select at least 1 diet oprion!"),
     privateBool: Yup.bool().required(),
     allPrivateFoodItems: Yup.bool().required(),
-    image: Yup.mixed()
-      .nullable()
-      .required("Image is required!")
-      .test(
-        "size",
-        "File size is too big",
-        (value) => value && value.size <= 1024 * 1024 // 5MB
+    image: Yup.mixed().nullable()
+      .test('size', 'File size is too big', function(value) {
+        if (value) {
+          return value.size <= 1024 * 1024;
+        } else {
+          return true;
+        }
+      })
+      .test('type', 'Invalid file format selection', (value) =>
+        !value || (value && SUPPORTED_FORMATS.includes(value?.type))
       )
-      .test(
-        "type",
-        "Invalid file format selection",
-        (value) => !value || (value && SUPPORTED_FORMATS.includes(value?.type))
-      ),
   });
 
   const validationSchema2 = Yup.object().shape({
@@ -975,7 +973,7 @@ export default function UpdateFood(mealItemProps) {
                                         }
                                       >
                                         <span className=" ml-1 mr-1 md:ml-4 md:mr-4">
-                                          Remove
+                                          Del
                                         </span>
                                       </button>
                                     </div>
