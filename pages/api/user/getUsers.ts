@@ -24,7 +24,7 @@ export default async function handler(
     let mongooseErr
 
     const result = await Users.find({username: new RegExp(usernameString, 'i')}).sort({ createdAt: 'desc' }).limit(limitNumber).exec()
-    .catch(err => mongooseErr = err);
+      .catch(err => mongooseErr = err);
 
     if(result === undefined || !result.length){
       res.status(500).json("No user Found!")

@@ -20,5 +20,5 @@
     "incremental": true
   },
   "include": ["process.d.ts", "next-env.d.ts", "next-auth.d.ts", "**/*.ts", "**/*.tsx", "postcss.config.js", "next.config.js","tailwind.config.js"],
-  "exclude": ["node_modules","tailwind.config_.js"]
+  "exclude": ["node_modules","tailwind.config_.js", "prettier.config.js"]
 }

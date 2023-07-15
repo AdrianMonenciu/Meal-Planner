@@ -36,14 +36,14 @@ export default function ServerSidePage({ sessionObj, text }: { sessionObj: Sessi
 // Export the `session` prop to use sessions with Server Side Rendering
 export const getServerSideProps: GetServerSideProps<{
   sessionObj: Session | null}> = async (context) => {
-  return {
-    props: {
-      sessionObj: await unstable_getServerSession(
-        context.req,
-        context.res,
-        authOptions
-      ),
-      text: "Empty text"
-    },
+    return {
+      props: {
+        sessionObj: await unstable_getServerSession(
+          context.req,
+          context.res,
+          authOptions
+        ),
+        text: "Empty text"
+      },
+    }
   }
-}

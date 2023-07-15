@@ -1,3 +1,3 @@
 # Meal-Planner-WIP
 
-meal planner app - wip
+meal planner app

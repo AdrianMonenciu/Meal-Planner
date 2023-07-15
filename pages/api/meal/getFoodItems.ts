@@ -1,14 +1,8 @@
-// import connectMongo from '../../../database/conn';
-// import Users from '../../../model/Schema'
-import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from "next"
-import mongoose from 'mongoose' //{ Error }
-import { Session, unstable_getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import mongoose from 'mongoose' 
 import connectMongo from '../../../database/connectdb';
 import Users from '../../../models/user';
 import FoodItem from '../../../models/FoodItem';
-import { ApiError } from 'next/dist/server/api-utils';
 
 mongoose.set('strictQuery', false);
 
@@ -25,12 +19,10 @@ export default async function handler(
     const { foodName, limit, username } = req.query;
     const foodNameString = foodName as string
     const limitNumber = limit as unknown as number
-    //console.log(req.query)
 
     let mongooseErr,searchCondition
 
     const currentUser = await Users.findOne({ username: username })
-    //console.log(currentUser)
 
     if (currentUser.userRole == "admin") {
       searchCondition = {
@@ -55,7 +47,7 @@ export default async function handler(
     }
 
     let foodItemsPopulated = await FoodItem.find(searchCondition).sort({ createdAt: 'desc' })
-    .limit(limitNumber).exec().catch(err => mongooseErr = err);
+      .limit(limitNumber).exec().catch(err => mongooseErr = err);
 
     if (mongooseErr) {
       res.status(500).json(`Database Error! - ${JSON.stringify(mongooseErr, null, 2)}`) 

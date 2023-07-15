@@ -30,10 +30,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/meal/mealEdit/[meal].js"
     ],
-    "/meal/updateMeals": [
+    "/meal/updatefoodItems": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/meal/updateMeals.js"
+      "static/chunks/pages/meal/updatefoodItems.js"
     ]
   },
   "ampFirstPages": []

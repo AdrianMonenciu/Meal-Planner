@@ -25,14 +25,14 @@ const connectMongo = async () => {
       console.error(error);
     }
     
-  if(connectionMongo.readyState == 1){
-    console.log('Connected to mongodb.')
-    return 
-  } else {
-    console.log('NOT Connected to mongodb.')
-    return 
+    if(connectionMongo.readyState == 1){
+      console.log('Connected to mongodb.')
+      return 
+    } else {
+      console.log('NOT Connected to mongodb.')
+      return 
+    }
   }
-}
 }
 
 export default connectMongo;

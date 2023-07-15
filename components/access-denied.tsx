@@ -5,10 +5,11 @@ export default function AccessDenied() {
   return (
     <>
       <h1>Access Denied</h1>
-      <Link href={'/user/login'} className='text-blue-700' onClick={(e) => {
-            e.preventDefault()
-            signIn()
-          }}> You must be signed in to view this page</Link>
+      <Link href={'/user/login'} className='text-blue-700'
+        onClick={(e) => {
+          e.preventDefault()
+          signIn()
+        }}> You must be signed in to view this page</Link>
     </>
   )
 }

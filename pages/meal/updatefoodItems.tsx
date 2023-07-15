@@ -146,11 +146,10 @@ export default function ApiExamplePage() {
           onSubmit={formik.handleSubmit}
         >
           <div
-            className={`${styles.input_group} ${
-              formik.errors.foodName && formik.touched.foodName
+            className={`${styles.input_group} ${formik.errors.foodName && formik.touched.foodName
                 ? "border-rose-600"
                 : ""
-            }`}
+              }`}
           >
             <input
               type="text"

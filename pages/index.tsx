@@ -1,7 +1,5 @@
-import Layout from "../components/layout"
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from "react";
+import Layout from '../components/layout';
+import { useEffect, useState } from 'react';
 
 export default function IndexPage() {
   const imagePaths = [
@@ -9,14 +7,14 @@ export default function IndexPage() {
     '/assets/Screenshot_02.png',
     '/assets/Screenshot_03.png',
     '/assets/Screenshot_04.png',
-    '/assets/Screenshot_05.png',
+    '/assets/Screenshot_05.png'
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % imagePaths.length);
+      setCurrentImageIndex(prevIndex => (prevIndex + 1) % imagePaths.length);
     }, 5000);
 
     return () => {
@@ -30,7 +28,7 @@ export default function IndexPage() {
         <h1 className="font-bold">Meal Planner website</h1>
         <p className="mt-3 mb-1 whitespace-pre-line">
           This is a meal planner webiste. <br></br>
-          You can use existing snacks and recipies  or create your own. <br></br>
+          You can use existing snacks and recipies or create your own. <br></br>
           The app will create a shopping list based on your weekly meal plan.
         </p>
       </div>
@@ -40,15 +38,13 @@ export default function IndexPage() {
             key={index}
             src={path}
             alt={`Picture ${index + 1}`}
-            className={`absolute top-0 left-0 opacity-0 ${
-              index === currentImageIndex ? 'opacity-100' : ''
-            }`}
+            className={`absolute top-0 left-0 opacity-0 ${index === currentImageIndex ? 'opacity-100' : ''}`}
             style={{
-              transition: 'opacity 2s',
+              transition: 'opacity 2s'
             }}
           />
         ))}
       </div>
     </Layout>
-  )
+  );
 }

@@ -9,140 +9,140 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ){
-    connectMongo()
+  connectMongo()
     
-    const session = await unstable_getServerSession(req, res, authOptions)
-    //console.log(session)
+  const session = await unstable_getServerSession(req, res, authOptions)
+  //console.log(session)
 
-    // only post method is accepted
-    if(req.method === 'POST'){
+  // only post method is accepted
+  if(req.method === 'POST'){
 
-      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodItems, diet, privateBool, image, privateAllFoods } = req.body;
+    if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+    const { name, foodItems, diet, privateBool, image, privateAllFoods } = req.body;
 
-      const currentUser = await Users.findOne({ email: session.user.email });
+    const currentUser = await Users.findOne({ email: session.user.email });
 
-      // check duplicate meal name
-      const checkExistingMeal = await Meal.findOne({ name });
-      if(checkExistingMeal ) {
-        return res.status(422).json({ message: "Meal Already Exists...!"})
-      }
-
-      const mongoose = require('mongoose')
-      const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
-
-      const newMeal = new Meal({
-        name: name,
-        foodItems: foodItemsWithId,
-        privateBool: privateBool,
-        privateAllFoods: privateAllFoods,
-        image: image,
-        diet: diet,
-        owner: currentUser._id    // assign the _id from the person
-      });
-
-      var errors: boolean = false
-      var mongooseErr
-
-      newMeal.save(function (err) {
-        if (err) {
-          console.log(err)
-          mongooseErr = err
-          errors = true
-        } 
-      });
-
-      if (!errors) {
-        currentUser.Meal.push(newMeal._id)
-        mongooseErr = await currentUser.save().catch(err => {mongooseErr = err, errors = true});
-      } 
-
-      let mealPopulated = await Meal.findOne({name: newMeal.name}).populate("foodItems.foodId");
-
-      if (errors) {
-        console.log(mongooseErr)
-        return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
-      } else {
-        res.status(201).json({ message: `Meal: ${newMeal.name} created successfuly!`, status : true, data: mealPopulated})
-      }
-
-
-    } else if (req.method === 'PUT'){
-
-      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name, foodItems, diet, privateBool, privateAllFoods, image, id } = req.body;
-      //console.log(req.body)
-
-      const currentUser = await Users.findOne({ email: session.user.email });
-
-      // check duplicate meal name
-      const checkExistingMeal = await Meal.findOne({ name });
-      
-      var mongoose = require('mongoose');
-      var idObj = mongoose.mongo.ObjectId(id);
-
-      if(checkExistingMeal && String(checkExistingMeal._id) !== String(idObj)) { 
-        return res.status(422).json({ message: "Meal Already Exists...!"})
-      }
-
-      let errors: boolean = false
-      const filter = { _id: id };
-
-      const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
-
-      const update = {name, foodItems: foodItemsWithId, diet, privateBool, privateAllFoods , image, owner: currentUser._id,  };
-
-      var err = await Meal.findOneAndUpdate(filter, update, {
-        new: true
-      }).catch(err => {err = err, errors = true});
-      
-      let updatedMeal = await Meal.findOne({_id: id})
-
-      let mealPopulated = await Meal.findOne({name: updatedMeal.name}).populate("foodItems.foodId");
-
-      if (!errors) {
-        if (!currentUser.Meal.includes(updatedMeal._id)) {
-          currentUser.Meal.push(updatedMeal._id);
-          await currentUser.save().catch(error => {
-            err = error;
-            errors = true;
-          });
-        }
-      }
-      
-      if (errors) {
-        console.log(err)
-        return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
-      } else {
-        res.status(201).json({ message: `Meal ${updatedMeal.name} updated successfuly!`, status : true, meal: mealPopulated})
-      }
-
-
-    } else if (req.method === 'DELETE') {
-
-      if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-      const { name } = req.body;
-
-      let errors: boolean = false
-      const filter = { name };
-      let mongooseErr
-
-      const deletedMeal = Meal.findOneAndDelete((filter), function (err, docs) {
-        if (err){
-          console.log(err)
-          mongooseErr = err
-          errors = true
-        }
-     })   
-
-      if (errors) {
-        console.log(mongooseErr)
-        return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
-      } else {
-        res.status(201).json({ message: `Food ${name} deleted successfuly!`, status : true,})
-      }
-
-    }else {
-      res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
+    // check duplicate meal name
+    const checkExistingMeal = await Meal.findOne({ name });
+    if(checkExistingMeal ) {
+      return res.status(422).json({ message: "Meal Already Exists...!"})
     }
+
+    const mongoose = require('mongoose')
+    const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
+
+    const newMeal = new Meal({
+      name: name,
+      foodItems: foodItemsWithId,
+      privateBool: privateBool,
+      privateAllFoods: privateAllFoods,
+      image: image,
+      diet: diet,
+      owner: currentUser._id    // assign the _id from the person
+    });
+
+    var errors: boolean = false
+    var mongooseErr
+
+    newMeal.save(function (err) {
+      if (err) {
+        console.log(err)
+        mongooseErr = err
+        errors = true
+      } 
+    });
+
+    if (!errors) {
+      currentUser.Meal.push(newMeal._id)
+      mongooseErr = await currentUser.save().catch(err => {mongooseErr = err, errors = true});
+    } 
+
+    let mealPopulated = await Meal.findOne({name: newMeal.name}).populate("foodItems.foodId");
+
+    if (errors) {
+      console.log(mongooseErr)
+      return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
+    } else {
+      res.status(201).json({ message: `Meal: ${newMeal.name} created successfuly!`, status : true, data: mealPopulated})
+    }
+
+
+  } else if (req.method === 'PUT'){
+
+    if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+    const { name, foodItems, diet, privateBool, privateAllFoods, image, id } = req.body;
+    //console.log(req.body)
+
+    const currentUser = await Users.findOne({ email: session.user.email });
+
+    // check duplicate meal name
+    const checkExistingMeal = await Meal.findOne({ name });
+      
+    var mongoose = require('mongoose');
+    var idObj = mongoose.mongo.ObjectId(id);
+
+    if(checkExistingMeal && String(checkExistingMeal._id) !== String(idObj)) { 
+      return res.status(422).json({ message: "Meal Already Exists...!"})
+    }
+
+    let errors: boolean = false
+    const filter = { _id: id };
+
+    const foodItemsWithId = foodItems.map(({foodId, qty}) => ({foodId: mongoose.mongo.ObjectId(foodId), qty: qty}))
+
+    const update = {name, foodItems: foodItemsWithId, diet, privateBool, privateAllFoods , image, owner: currentUser._id,  };
+
+    var err = await Meal.findOneAndUpdate(filter, update, {
+      new: true
+    }).catch(err => {err = err, errors = true});
+      
+    let updatedMeal = await Meal.findOne({_id: id})
+
+    let mealPopulated = await Meal.findOne({name: updatedMeal.name}).populate("foodItems.foodId");
+
+    if (!errors) {
+      if (!currentUser.Meal.includes(updatedMeal._id)) {
+        currentUser.Meal.push(updatedMeal._id);
+        await currentUser.save().catch(error => {
+          err = error;
+          errors = true;
+        });
+      }
+    }
+      
+    if (errors) {
+      console.log(err)
+      return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
+    } else {
+      res.status(201).json({ message: `Meal ${updatedMeal.name} updated successfuly!`, status : true, meal: mealPopulated})
+    }
+
+
+  } else if (req.method === 'DELETE') {
+
+    if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+    const { name } = req.body;
+
+    let errors: boolean = false
+    const filter = { name };
+    let mongooseErr
+
+    const deletedMeal = Meal.findOneAndDelete((filter), function (err, docs) {
+      if (err){
+        console.log(err)
+        mongooseErr = err
+        errors = true
+      }
+    })   
+
+    if (errors) {
+      console.log(mongooseErr)
+      return res.status(404).json({ message: `Error connecting to the database: ${mongooseErr}`, mongooseErr });
+    } else {
+      res.status(201).json({ message: `Food ${name} deleted successfuly!`, status : true,})
+    }
+
+  }else {
+    res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
+  }
 }

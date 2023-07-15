@@ -106,29 +106,32 @@ export default function Header() {
           >
             {isOpen ? (
             // Show the "X" icon when the menu is open
-            <svg
-              className="h-6 w-6 fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12 10.586L16.95 5.636a1 1 0 0 1 1.414 1.414L13.414 12l4.95 4.95a1 1 0 1 1-1.414 1.414L12 13.414l-4.95 4.95a1 1 0 0 1-1.414-1.414L10.586 12 5.636 7.05A1 1 0 0 1 7.05 5.636L12 10.586z"
-                clipRule="evenodd"
-              />
-            </svg>
-          ) : (
+              <svg
+                className="h-6 w-6 fill-current"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 10.586L16.95 5.636a1 1 0 0 1 1.414 1.414L13.414 12l4.95 4.95a1 1 0 1 1-1.414 1.414L12 13.414l-4.95 4.95a1 1 0 0 1-1.414-1.414L10.586 12 5.636 7.05A1 1 0 0 1 7.05 5.636L12 10.586z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
             // Show the "hamburger" icon when the menu is closed
-            <svg
-              className="h-6 w-6 fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect x="4" y="5" width="16" height="2" />
-              <rect x="4" y="11" width="16" height="2" />
-              <rect x="4" y="17" width="16" height="2" />
-            </svg>
-          )}
+              <svg
+                className="h-6 w-6 fill-current"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect x="4" y="5"
+                  width="16" height="2" />
+                <rect x="4" y="11"
+                  width="16" height="2" />
+                <rect x="4" y="17"
+                  width="16" height="2" />
+              </svg>
+            )}
           </button>
         </div>
         {isOpen && (
@@ -140,8 +143,8 @@ export default function Header() {
               </div>
 
               <div 
-              onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
-              className={`px-3 border-b-4 border-gray-500 `}>
+                onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
+                className={`px-3 border-b-4 border-gray-500 `}>
                 <button
                   className={`${styles.menu_button} py-2`}
                 >
@@ -154,8 +157,8 @@ export default function Header() {
                 />
 
                 <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Ingredients/Snacks" ? "max-h-40" :
-                "max-h-0"} `}
-                  style={{ transformOrigin: "top" }}>
+                  "max-h-0"} `}
+                style={{ transformOrigin: "top" }}>
 
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
@@ -175,8 +178,8 @@ export default function Header() {
               </div>
 
               <div 
-              onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Meals" ? "Meals" : "")}
-              className={`px-3 border-b-4 border-gray-500 `}>
+                onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Meals" ? "Meals" : "")}
+                className={`px-3 border-b-4 border-gray-500 `}>
                 <button
                   className={`${styles.menu_button} py-2`}
                 >
@@ -189,8 +192,8 @@ export default function Header() {
                 />
 
                 <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Meals" ? "max-h-40" :
-                "max-h-0"} `}
-                  style={{ transformOrigin: "top" }}>
+                  "max-h-0"} `}
+                style={{ transformOrigin: "top" }}>
 
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
@@ -205,8 +208,8 @@ export default function Header() {
               </div>
 
               <div 
-              onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Weekly Plan" ? "Weekly Plan" : "")}
-              className={`px-3 border-b-4 border-gray-500 `}>
+                onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Weekly Plan" ? "Weekly Plan" : "")}
+                className={`px-3 border-b-4 border-gray-500 `}>
                 <button
                   className={`${styles.menu_button} py-2`}
                 >
@@ -219,8 +222,8 @@ export default function Header() {
                 />
 
                 <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Weekly Plan" ? "max-h-40" :
-                "max-h-0"} `}
-                  style={{ transformOrigin: "top" }}>
+                  "max-h-0"} `}
+                style={{ transformOrigin: "top" }}>
 
                   <ul className={styles.navItems}>
                     <li className={styles.navItem}>
@@ -278,9 +281,9 @@ export default function Header() {
               </ul>
               
               <div 
-              onMouseEnter={() => setSelectedButton("Ingredients/Snacks")}
-              onMouseLeave={() => setSelectedButton("")} 
-              className={`hidden md:block relative px-3 border-b-4  ${selectedButton === "Ingredients/Snacks" ? 'border-gray-500' : 'border-transparent'}`}>
+                onMouseEnter={() => setSelectedButton("Ingredients/Snacks")}
+                onMouseLeave={() => setSelectedButton("")} 
+                className={`hidden md:block relative px-3 border-b-4  ${selectedButton === "Ingredients/Snacks" ? 'border-gray-500' : 'border-transparent'}`}>
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
@@ -314,9 +317,9 @@ export default function Header() {
 
 
               <div 
-              onMouseEnter={() => setSelectedButton("Meals")}
-              onMouseLeave={() => setSelectedButton("")} 
-              className={`hidden md:block relative px-4 border-b-4 ${selectedButton === "Meals" ? 'border-gray-500' : 'border-transparent'}`}>
+                onMouseEnter={() => setSelectedButton("Meals")}
+                onMouseLeave={() => setSelectedButton("")} 
+                className={`hidden md:block relative px-4 border-b-4 ${selectedButton === "Meals" ? 'border-gray-500' : 'border-transparent'}`}>
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
@@ -344,9 +347,9 @@ export default function Header() {
 
 
               <div 
-              onMouseEnter={() => setSelectedButton("Weekly Plan")}
-              onMouseLeave={() => setSelectedButton("")} 
-              className={`hidden md:block relative px-3 border-b-4 ${selectedButton === "Weekly Plan" ? 'border-gray-500' : 'border-transparent'}`}>
+                onMouseEnter={() => setSelectedButton("Weekly Plan")}
+                onMouseLeave={() => setSelectedButton("")} 
+                className={`hidden md:block relative px-3 border-b-4 ${selectedButton === "Weekly Plan" ? 'border-gray-500' : 'border-transparent'}`}>
                 <button
                   className={`${styles.menu_button} h-14 top-0 `}
                 >
@@ -372,7 +375,7 @@ export default function Header() {
 
 
 
-            {/* HamurgherMenu */}
+              {/* HamurgherMenu */}
               <nav className="md:hidden">
                 <div className="flex justify-end">
                   <button
@@ -381,29 +384,32 @@ export default function Header() {
                   >
                     {isOpen ? (
                     // Show the "X" icon when the menu is open
-                    <svg
-                      className="h-6 w-6 fill-current"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12 10.586L16.95 5.636a1 1 0 0 1 1.414 1.414L13.414 12l4.95 4.95a1 1 0 1 1-1.414 1.414L12 13.414l-4.95 4.95a1 1 0 0 1-1.414-1.414L10.586 12 5.636 7.05A1 1 0 0 1 7.05 5.636L12 10.586z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
+                      <svg
+                        className="h-6 w-6 fill-current"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 10.586L16.95 5.636a1 1 0 0 1 1.414 1.414L13.414 12l4.95 4.95a1 1 0 1 1-1.414 1.414L12 13.414l-4.95 4.95a1 1 0 0 1-1.414-1.414L10.586 12 5.636 7.05A1 1 0 0 1 7.05 5.636L12 10.586z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    ) : (
                     // Show the "hamburger" icon when the menu is closed
-                    <svg
-                      className="h-6 w-6 fill-current"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <rect x="4" y="5" width="16" height="2" />
-                      <rect x="4" y="11" width="16" height="2" />
-                      <rect x="4" y="17" width="16" height="2" />
-                    </svg>
-                  )}
+                      <svg
+                        className="h-6 w-6 fill-current"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect x="4" y="5"
+                          width="16" height="2" />
+                        <rect x="4" y="11"
+                          width="16" height="2" />
+                        <rect x="4" y="17"
+                          width="16" height="2" />
+                      </svg>
+                    )}
                   </button>
                 </div>
                 {isOpen && (
@@ -415,8 +421,8 @@ export default function Header() {
                       </div>
 
                       <div 
-                      onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
-                      className={`px-3 border-b-4 border-gray-500 `}>
+                        onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Ingredients/Snacks" ? "Ingredients/Snacks" : "")}
+                        className={`px-3 border-b-4 border-gray-500 `}>
                         <button
                           className={`${styles.menu_button} py-2`}
                         >
@@ -429,8 +435,8 @@ export default function Header() {
                         />
 
                         <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Ingredients/Snacks" ? "max-h-40" :
-                        "max-h-0"} `}
-                          style={{ transformOrigin: "top" }}>
+                          "max-h-0"} `}
+                        style={{ transformOrigin: "top" }}>
 
                           <ul className={styles.navItems}>
                             <li className={styles.navItem}>
@@ -450,8 +456,8 @@ export default function Header() {
                       </div>
 
                       <div 
-                      onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Meals" ? "Meals" : "")}
-                      className={`px-3 border-b-4 border-gray-500 `}>
+                        onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Meals" ? "Meals" : "")}
+                        className={`px-3 border-b-4 border-gray-500 `}>
                         <button
                           className={`${styles.menu_button} py-2`}
                         >
@@ -464,8 +470,8 @@ export default function Header() {
                         />
 
                         <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Meals" ? "max-h-40" :
-                        "max-h-0"} `}
-                          style={{ transformOrigin: "top" }}>
+                          "max-h-0"} `}
+                        style={{ transformOrigin: "top" }}>
 
                           <ul className={styles.navItems}>
                             <li className={styles.navItem}>
@@ -480,8 +486,8 @@ export default function Header() {
                       </div>
 
                       <div 
-                      onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Weekly Plan" ? "Weekly Plan" : "")}
-                      className={`px-3 border-b-4 border-gray-500 `}>
+                        onClick={() => setSelectedButtonSmall((prevButton) => prevButton !== "Weekly Plan" ? "Weekly Plan" : "")}
+                        className={`px-3 border-b-4 border-gray-500 `}>
                         <button
                           className={`${styles.menu_button} py-2`}
                         >
@@ -494,8 +500,8 @@ export default function Header() {
                         />
 
                         <div className={`text-sm flex overflow-hidden transition-all duration-500 ease-in-out ${selectedButtonSmall === "Weekly Plan" ? "max-h-40" :
-                        "max-h-0"} `}
-                          style={{ transformOrigin: "top" }}>
+                          "max-h-0"} `}
+                        style={{ transformOrigin: "top" }}>
 
                           <ul className={styles.navItems}>
                             <li className={styles.navItem}>
@@ -517,7 +523,8 @@ export default function Header() {
               <div className="flex">
                 {session.user.image && (
                   <div className="flex items-center my-1 md:my-0">
-                    <div className={`${styles.image_container} flex items-center`} onMouseLeave={closePopup} onMouseEnter={cancelClosePopup}>
+                    <div className={`${styles.image_container} flex items-center`} onMouseLeave={closePopup}
+                      onMouseEnter={cancelClosePopup}>
                       <Image
                         className={`${styles.avatar} border-2 hover:cursor-pointer ${showPopup ? 'border-black' : 'border-green-400'}`}
                         cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}

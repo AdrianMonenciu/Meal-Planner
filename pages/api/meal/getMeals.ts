@@ -53,7 +53,7 @@ export default async function handler(
       }
 
       meals = await Meal.find(searchCondition).sort({ createdAt: 'desc' }).limit(limitNumber)
-      .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
+        .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)
     } else {
       let queryArray = [];
@@ -97,7 +97,7 @@ export default async function handler(
       }
 
       meals = await Meal.find(searchCondition)
-      .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
+        .populate({path: 'foodItems.foodId', model: 'FoodItem'}).exec().catch(err => mongooseErr = err);
       //console.log(meals)
     }
 

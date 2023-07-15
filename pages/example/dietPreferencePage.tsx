@@ -3,11 +3,11 @@ import {dietPreferences} from "../../lib/dietPreference"
 
 export default function TestPage() {
 
-let [dietPref, setDietPref] = useState("")
+  let [dietPref, setDietPref] = useState("")
 
-let handleDietChange = (e) => {
-  setDietPref(e.target.value)
-}
+  let handleDietChange = (e) => {
+    setDietPref(e.target.value)
+  }
 
   return (
     <>

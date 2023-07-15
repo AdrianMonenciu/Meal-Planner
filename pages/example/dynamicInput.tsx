@@ -47,8 +47,8 @@ export default function Login(){
     const [show, setShow] = useState(false)
     const router = useRouter()
     const formik = useFormik({
-        initialValues: initialValues,
-        onSubmit
+      initialValues: initialValues,
+      onSubmit
     })
 
     async function onSubmit(values: FormValues){
@@ -59,79 +59,79 @@ export default function Login(){
 
     return (
       <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={validationSchema}
       >
-      {({ values, handleSubmit, handleChange, errors }) => (
-        <Layout>
+        {({ values, handleSubmit, handleChange, errors }) => (
+          <Layout>
 
-          <Head>
+            <Head>
               <title>DynamicInput</title>
-          </Head>
+            </Head>
 
-          <section className='w-3/4 mx-auto flex flex-col gap-3'>
-            <div className="title">
+            <section className='w-3/4 mx-auto flex flex-col gap-3'>
+              <div className="title">
                 <h1 className='text-gray-800 text-4xl font-bold py-4'>Explore</h1>
                 <p className='w-3/4 mx-auto text-gray-400'>Description text goes here.</p>
-            </div>
+              </div>
 
-            <Form className='flex gap-5' onSubmit={handleSubmit}>
-              <FieldArray
-              name="names"
-              render={arrayHelpers => (
-                <div>
-                  {values.names.map((name, index) => (
-                      <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
+              <Form className='flex gap-5' onSubmit={handleSubmit}>
+                <FieldArray
+                  name="names"
+                  render={arrayHelpers => (
+                    <div>
+                      {values.names.map((name, index) => (
+                        <div key={index} className={`${styles.input_group} flex column justify-evenly color to-blue-200 `}>
                       
-                        <Field name={`names[${index}].name`}>
-                        {({ field, form }) => (
-                          <Select
-                            className="select-wrap"
-                            classNamePrefix="select-box"
-                            instanceId={instanceId}
-                            defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
-                            options={mealOptions}
-                            onChange={(selectedOption) =>
-                                form.setFieldValue(
-                                  `names.${index}.name`,
-                                  selectedOption.value,
+                          <Field name={`names[${index}].name`}>
+                            {({ field, form }) => (
+                              <Select
+                                className="select-wrap"
+                                classNamePrefix="select-box"
+                                instanceId={instanceId}
+                                defaultValue={{ value: values.names[index].name, label: values.names[index].name }}
+                                options={mealOptions}
+                                onChange={(selectedOption) =>
+                                  form.setFieldValue(
+                                    `names.${index}.name`,
+                                    selectedOption.value,
                                   )}
-                          />)}
-                        </Field>
-                        <Field  name={`names.${index}.qty`} className={styles.input_group}/>
-                        <ErrorMessage name={`names.${index}.name`} />
-                        <ErrorMessage name={`names.${index}.qty`} />
-                        <div className="input-button m-2">
-                          <button
-                            type="button"
-                            className={styles.button}
-                            onClick={() => arrayHelpers.remove(index)} // remove a name from the list
-                          >
+                              />)}
+                          </Field>
+                          <Field  name={`names.${index}.qty`} className={styles.input_group}/>
+                          <ErrorMessage name={`names.${index}.name`} />
+                          <ErrorMessage name={`names.${index}.qty`} />
+                          <div className="input-button m-2">
+                            <button
+                              type="button"
+                              className={styles.button}
+                              onClick={() => arrayHelpers.remove(index)} // remove a name from the list
+                            >
                             Remove input
-                          </button>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                    <button
-                    type="button"
-                    onClick={() => arrayHelpers.push({name: 'recipy1', qty: 1})} // insert an empty string at a position
-                  >
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => arrayHelpers.push({name: 'recipy1', qty: 1})} // insert an empty string at a position
+                      >
                     Add input
-                  </button>
-                  <div className="input-button">
-                          <button type='submit' className={styles.button}>
+                      </button>
+                      <div className="input-button">
+                        <button type='submit' className={styles.button}>
                             Submit
-                          </button>
+                        </button>
                       </div>
-                </div>
-              )}
-              />
-            </Form>
-          </section>
+                    </div>
+                  )}
+                />
+              </Form>
+            </section>
 
-        </Layout>
-      )}
+          </Layout>
+        )}
       </Formik>
     )
-  }
+}

@@ -3,7 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/meal/mealEdit/[meal]": "pages/meal/mealEdit/[meal].js",
-  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js",
-  "/meal/updateMeals": "pages/meal/updateMeals.js",
-  "/api/meal/getMeals": "pages/api/meal/getMeals.js"
+  "/meal/updatefoodItems": "pages/meal/updatefoodItems.js",
+  "/api/meal/getFoodItemsByDiet": "pages/api/meal/getFoodItemsByDiet.js"
 }

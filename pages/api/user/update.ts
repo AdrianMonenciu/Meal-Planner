@@ -9,54 +9,54 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ){
-    connectMongo()
+  connectMongo()
     
-    const session = await unstable_getServerSession(req, res, authOptions)
-    //console.log(session)
+  const session = await unstable_getServerSession(req, res, authOptions)
+  //console.log(session)
 
-    // only post method is accepted
-    if(req.method === 'PUT'){
+  // only post method is accepted
+  if(req.method === 'PUT'){
 
-        if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
-        const { username, email, password, dietPreference, public_id, updatePassword } = req.body;
+    if(!req.body) return res.status(404).json({message: "Don't have form data...!"});
+    const { username, email, password, dietPreference, public_id, updatePassword } = req.body;
 
-        // check duplicate email
-        const checkExistingEmail = await Users.findOne({ email });
-        if(checkExistingEmail && session.user.email != email) {
-          return res.status(422).json({ message: "Email Already Exists...!"})
-        }
+    // check duplicate email
+    const checkExistingEmail = await Users.findOne({ email });
+    if(checkExistingEmail && session.user.email != email) {
+      return res.status(422).json({ message: "Email Already Exists...!"})
+    }
 
-        // check duplicate usersname
-        const checkExistingUsername = await Users.findOne({ username });
-        if(checkExistingUsername && session.user.username != username) {
-          return res.status(422).json({ message: "Username Already Exists...!"})
-        }
+    // check duplicate usersname
+    const checkExistingUsername = await Users.findOne({ username });
+    if(checkExistingUsername && session.user.username != username) {
+      return res.status(422).json({ message: "Username Already Exists...!"})
+    }
 
-        //hash password
-        let errors: boolean = false, update
-        const filter = { email };
+    //hash password
+    let errors: boolean = false, update
+    const filter = { email };
 
-        if (updatePassword) {
-          update = {username, email, password: await hash(password, 12), dietPreference, image: public_id };
-        } else {
-          update = {username, email, dietPreference, image: public_id };
-        }
+    if (updatePassword) {
+      update = {username, email, password: await hash(password, 12), dietPreference, image: public_id };
+    } else {
+      update = {username, email, dietPreference, image: public_id };
+    }
         
 
-        let err = await Users.findOneAndUpdate(filter, update, {
-          new: true
-        }).catch(err => {err = err, errors = true}); 
+    let err = await Users.findOneAndUpdate(filter, update, {
+      new: true
+    }).catch(err => {err = err, errors = true}); 
 
-        let updatedUser = await Users.findOne({email})
+    let updatedUser = await Users.findOne({email})
 
-        if (errors) {
-          console.log(err)
-          return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
-        } else {
-          console.log(updatedUser)
-          res.status(201).json({ message: `User ${updatedUser.username} updated successfuly!`, status : true, user: updatedUser})
-        }
-    } else{
-      res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
+    if (errors) {
+      console.log(err)
+      return res.status(404).json({ message: `Error connecting to the database: ${err}`, err });
+    } else {
+      console.log(updatedUser)
+      res.status(201).json({ message: `User ${updatedUser.username} updated successfuly!`, status : true, user: updatedUser})
     }
+  } else{
+    res.status(500).json({ message: "HTTP method not valid only PUT Accepted"})
   }
+}
