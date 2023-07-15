@@ -1,9 +1,3 @@
 {
-    "extends": ["next/core-web-vitals"],
-    "rules": {
-      "react/jsx-max-props-per-line": ["error", { "maximum": 2 }],
-      "indent": ["error", 2]
-    }
-  }
-  
- 
+  "extends": "next/core-web-vitals"
+}
