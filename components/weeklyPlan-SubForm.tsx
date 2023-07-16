@@ -104,11 +104,13 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue, f
         borderRadius: '0.375rem',
         '@media (max-width: 767px)': {
           height: '20px',
-          width: '240px'
+          width: '240px',
+          fontSize: '12px'
         },
         '@media (min-width: 768px)': {
           height: '40px',
-          width: '270px'
+          width: '270px',
+          fontSize: '14px'
         }
       })
     };
@@ -279,11 +281,13 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue, f
         borderRadius: '0.375rem',
         '@media (max-width: 767px)': {
           height: '30px',
-          width: '240px'
+          width: '240px',
+          fontSize: '14px'
         },
         '@media (min-width: 768px)': {
           height: '40px',
-          width: '270px'
+          width: '270px',
+          fontSize: '16px'
         }
       })
     };
@@ -313,7 +317,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue, f
 
           <div className="flex flex-col gap-1 md:gap-2 ml-1 mr-1">
             <Select
-              className="mb-0.5 md:mb-0 items-center text-sm md:text-base"
+              className="mb-0.5 md:mb-0 items-center"
               styles={customStyles}
               instanceId={instanceId}
               isSearchable={true}
@@ -438,7 +442,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue, f
                       </div>
 
                       <div className="flex flex-row items-center ml-1 ">
-                        <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                        <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-[11px] md:text-xs border rounded-lg h-8 md:h-10 bg-white">
                           <p className="text-center whitespace-nowrap truncate">
                             {values[fieldNameMealBreakfast][index].name}
                           </p>
@@ -513,7 +517,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue, f
                       </div>
 
                       <div className="flex flex-row items-center ml-1 ">
-                        <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                        <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-[11px] md:text-xs border rounded-lg h-8 md:h-10 bg-white">
                           <p className="text-center whitespace-nowrap truncate">
                             {values[fieldNameMealLunch][index].name}
                           </p>
@@ -588,7 +592,7 @@ export const DailyInputFieldArray = ({ values, weeklyPlanProps, setFieldValue, f
                       </div>
 
                       <div className="flex flex-row items-center ml-1 ">
-                        <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                        <div className="flex items-center overflow-hidden pl-2 w-[215px] mb-0.5 md:mb-0 md:w-[230px] text-[11px] md:text-xs border rounded-lg h-8 md:h-10 bg-white">
                           <p className="text-center whitespace-nowrap truncate">
                             {values[fieldNameMealDinner][index].name}
                           </p>
@@ -758,7 +762,7 @@ export const DailyInputFieldArrayView = ({ values, fieldName }) => {
                   </div>
 
                   <div className="flex flex-row items-center ml-1 ">
-                    <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                    <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-[11px] md:text-xs border rounded-lg h-8 md:h-10 bg-white">
                       <p className="text-center whitespace-nowrap truncate">
                         {values[fieldNameMealBreakfast][index].name}
                       </p>
@@ -803,7 +807,7 @@ export const DailyInputFieldArrayView = ({ values, fieldName }) => {
                   </div>
 
                   <div className="flex flex-row items-center ml-1 ">
-                    <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                    <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-[11px] md:text-xs border rounded-lg h-8 md:h-10 bg-white">
                       <p className="text-center whitespace-nowrap truncate">{values[fieldNameMealLunch][index].name}</p>
                     </div>
                   </div>
@@ -846,7 +850,7 @@ export const DailyInputFieldArrayView = ({ values, fieldName }) => {
                   </div>
 
                   <div className="flex flex-row items-center ml-1 ">
-                    <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-sm md:text-base border rounded-lg h-8 md:h-10 bg-white">
+                    <div className="flex items-center overflow-hidden pl-2 w-[245px] md:w-[275px] mb-0.5 md:mb-0 text-[11px] md:text-xs border rounded-lg h-8 md:h-10 bg-white">
                       <p className="text-center whitespace-nowrap truncate">
                         {values[fieldNameMealDinner][index].name}
                       </p>

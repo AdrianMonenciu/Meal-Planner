@@ -138,7 +138,7 @@ export default function UpdateFood(mealItemProps) {
     name: Yup.string()
       .required('Item name required')
       .min(2, 'The name must have at least 2 characters!')
-      .max(20, 'The name must have maximum 20 characters!')
+      .max(40, 'The name must have maximum 40 characters!')
       .test('Empty space', 'Name can not start with SPACE!', function (value) {
         if (value) return !(value.charAt(0) === ' ');
         else return true;
@@ -780,7 +780,7 @@ export default function UpdateFood(mealItemProps) {
                                       </div>
                                     </div>
 
-                                    <div className="min-w-[10px] ml-3 md:ml-0 mr-1 md:mr-2">
+                                    <div className="min-w-[10px] ml-1 md:ml-0 mr-1 md:mr-2">
                                       <button
                                         type="button"
                                         className={`${styles.button_no_bg} py-1 whitespace-nowrap bg-gradient-to-r from-red-500 to-red-600`}

@@ -1,42 +1,38 @@
-import Head from "next/head";
-import { useFormik } from "formik";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import Layout from "../../components/layout";
-import { IFood } from "../../models/FoodItem";
-import * as Yup from "yup";
-import styles from "../../styles/Form.module.css";
-import { useRouter } from "next/router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Image } from "cloudinary-react";
-import { useSession } from "next-auth/react";
+import Head from 'next/head';
+import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import Layout from '../../components/layout';
+import { IFood } from '../../models/FoodItem';
+import * as Yup from 'yup';
+import styles from '../../styles/Form.module.css';
+import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Image } from 'cloudinary-react';
+import { useSession } from 'next-auth/react';
 
 interface FormValues {
   foodName: string;
 }
 
 interface ServiceInit {
-  status: "init";
+  status: 'init';
 }
 interface ServiceLoading {
-  status: "loading";
+  status: 'loading';
 }
 interface ServiceLoaded<T> {
-  status: "loaded";
+  status: 'loaded';
   payload: T;
 }
 interface ServiceError {
-  status: "error";
+  status: 'error';
   error: string;
 }
-type Service<T> =
-  | ServiceInit
-  | ServiceLoading
-  | ServiceLoaded<T>
-  | ServiceError;
+type Service<T> = ServiceInit | ServiceLoading | ServiceLoaded<T> | ServiceError;
 
 interface IFoodItems {
   results: IFood[];
@@ -48,7 +44,7 @@ interface Idelete {
 
 export default function ApiExamplePage() {
   const [foodItems, setFoodItems] = useState<Service<IFoodItems>>({
-    status: "loading",
+    status: 'loading'
   });
 
   const { data: session, status } = useSession();
@@ -58,20 +54,20 @@ export default function ApiExamplePage() {
   function handleUserDelete(name: string) {
     return async (event: React.MouseEvent) => {
       const user_api_body: Idelete = {
-        name: name,
+        name: name
       };
       const options = {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user_api_body),
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user_api_body)
       };
 
-      await fetch("/api/meal/foodItem", options)
-        .then((res) => res.json())
-        .then((data) => {
+      await fetch('/api/meal/foodItem', options)
+        .then(res => res.json())
+        .then(data => {
           toast(data.message);
           const updatedFoodItems: FormValues = {
-            foodName: formik.values.foodName,
+            foodName: formik.values.foodName
           };
           onSubmit(updatedFoodItems);
         });
@@ -80,14 +76,11 @@ export default function ApiExamplePage() {
 
   async function getInitialData(querryData: FormValues) {
     const options = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
     };
-    await fetch(
-      `/api/meal/getFoodItems?foodName=${querryData.foodName}&limit=20&username=${session.user.username}`,
-      options
-    )
-      .then(async (response) => {
+    await fetch(`/api/meal/getFoodItems?foodName=${querryData.foodName}&limit=20&username=${session.user.username}`, options)
+      .then(async response => {
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error);
@@ -95,14 +88,14 @@ export default function ApiExamplePage() {
           return response.json();
         }
       })
-      .then((data) => setFoodItems({ status: "loaded", payload: data }))
-      .catch((err) => {
-        setFoodItems({ status: "error", error: err.message });
+      .then(data => setFoodItems({ status: 'loaded', payload: data }))
+      .catch(err => {
+        setFoodItems({ status: 'error', error: err.message });
       });
   }
 
   useEffect(() => {
-    getInitialData({ foodName: "" });
+    getInitialData({ foodName: '' });
   }, []);
 
   async function onSubmit(values: FormValues) {
@@ -110,24 +103,24 @@ export default function ApiExamplePage() {
   }
 
   const initialValues: FormValues = {
-    foodName: "",
+    foodName: ''
   };
 
   const validationSchemaYup: Yup.SchemaOf<FormValues> = Yup.object().shape({
     foodName: Yup.string()
-      .required("Food name required")
-      .min(2, "The name must have at least 2 characters!")
-      .max(20, "The name must have maximum 20 characters!")
-      .test("Empty space", "Name can not start with SPACE!", function (value) {
-        if (value) return !(value.charAt(0) === " ");
+      .required('Food name required')
+      .min(2, 'The name must have at least 2 characters!')
+      .max(20, 'The name must have maximum 20 characters!')
+      .test('Empty space', 'Name can not start with SPACE!', function (value) {
+        if (value) return !(value.charAt(0) === ' ');
         else return true;
-      }),
+      })
   });
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchemaYup,
-    onSubmit,
+    onSubmit
   });
 
   return (
@@ -141,45 +134,24 @@ export default function ApiExamplePage() {
           <p className="font-bold md:text-xl">Update Food Items</p>
         </div>
 
-        <form
-          className="flex flex-row items-center gap-3 md:gap-5"
-          onSubmit={formik.handleSubmit}
-        >
-          <div
-            className={`${styles.input_group} ${formik.errors.foodName && formik.touched.foodName
-                ? "border-rose-600"
-                : ""
-              }`}
-          >
-            <input
-              type="text"
-              name="foodName"
-              placeholder="foodName"
-              className={styles.input_text}
-              {...formik.getFieldProps("foodName")}
-            />
+        <form className="flex flex-row items-center gap-3 md:gap-5" onSubmit={formik.handleSubmit}>
+          <div className={`${styles.input_group} ${formik.errors.foodName && formik.touched.foodName ? 'border-rose-600' : ''}`}>
+            <input type="text" name="foodName" placeholder="foodName" className={styles.input_text} {...formik.getFieldProps('foodName')} />
           </div>
           <div className="min-w-[20px] ">
             <button type="submit" className={`${styles.button} `}>
               <span className="hidden md:inline ml-4 mr-4">Search</span>
-              <FontAwesomeIcon
-                icon={faSearch}
-                className="w-5 h-5  ml-2 mr-2 pt-1 md:hidden"
-                aria-hidden="true"
-              />
+              <FontAwesomeIcon icon={faSearch} className="w-5 h-5  ml-2 mr-2 pt-1 md:hidden" aria-hidden="true" />
             </button>
           </div>
         </form>
 
         <div className="flex flex-col">
-          {foodItems.status === "loading" && <div>Loading...</div>}
-          {foodItems.status === "loaded" &&
+          {foodItems.status === 'loading' && <div>Loading...</div>}
+          {foodItems.status === 'loaded' &&
             foodItems.payload.results.map((food, index) => (
-              <div
-                key={index}
-                className={`flex justify-between items-center gap-3 py-1 md:py-2`}
-              >
-                <div className="flex items-center gap-3">
+              <div key={index} className={`flex justify-between items-center gap-1 md:gap-3 py-1 md:py-2`}>
+                <div className="flex items-center gap-2 md:gap-3">
                   <Image
                     className={`avatar_small_global border-2 flex justify-start`}
                     cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
@@ -194,61 +166,47 @@ export default function ApiExamplePage() {
                     gravity="auto"
                   />
 
-                  <div
-                    className={`max-h[350] text-left  max-w-[160px] md:max-w-[300px] leading-tight`}
-                  >
-                    <p className="whitespace-nowrap text-xs md:text-sm font-bold truncate">
-                      {food.privateBool ? "Private" : "Public"}
-                    </p>
-                    <p className="text-left text-sm md:text-lg -mt-1 md:-mt-0 whitespace-nowrap truncate">
-                      {food.name}
-                    </p>
+                  <div className={`max-h[350] text-left  max-w-[200px] md:max-w-[300px] leading-tight`}>
+                    <p className="whitespace-nowrap text-xs md:text-sm font-bold truncate">{food.privateBool ? 'Private' : 'Public'}</p>
+                    <p className="text-left text-sm md:text-lg -mt-1 md:-mt-0 whitespace-nowrap truncate">{food.name}</p>
                   </div>
                 </div>
 
                 <span className="h-[24px] md:h-full flex justify-end">
                   <div className="px-1 md:px-2">
                     <button
-                      onClick={() =>
-                        router.push(`/meal/foodItemNewFrom/${food.name}`)
-                      }
-                      className={`${styles.button_no_bg} whitespace-nowrap bg-gradient-to-r from-cyan-400 to-cyan-500 `}
-                    >
-                      <span className="ml-2 md:ml-4 mr-2 md:mr-4">New</span>
+                      onClick={() => router.push(`/meal/foodItemNewFrom/${food.name}`)}
+                      className={`${styles.button_no_bg} whitespace-nowrap bg-gradient-to-r from-cyan-400 to-cyan-500 `}>
+                      <span className="hidden md:inline ml-2 md:ml-4 mr-2 md:mr-4">New</span>
+                      <FontAwesomeIcon
+                        icon={faPlus}
+                        className="w-3 h-3 ml-1 mr-1 pb-[1px] md:hidden"
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
 
                   <div className="min-w-[20px] h-full px-1 md:px-2">
                     <button
                       onClick={() => router.push(`/meal/${food.name}`)}
-                      className={`${styles.button_no_bg} bg-gradient-to-r from-blue-500 to-blue-600`}
-                    >
+                      className={`${styles.button_no_bg} bg-gradient-to-r from-blue-500 to-blue-600`}>
                       <span className="hidden md:inline ml-4 mr-4">Edit</span>
-                      <FontAwesomeIcon
-                        icon={faEdit}
-                        className="w-3 h-full  ml-1 mr-1 pb-[2px] md:hidden"
-                        aria-hidden="true"
-                      />
+                      <FontAwesomeIcon icon={faEdit} className="w-3 h-full  ml-1 mr-1 pb-[2px] md:hidden" aria-hidden="true" />
                     </button>
                   </div>
 
                   <div className="min-w-[20px] px-1 md:px-2">
                     <button
                       onClick={handleUserDelete(food.name)}
-                      className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}
-                    >
+                      className={`${styles.button_no_bg} bg-gradient-to-r from-red-500 to-red-600`}>
                       <span className="hidden md:inline ml-4 mr-4">Delete</span>
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        className="w-3 h-3  ml-1 mr-1 md:hidden"
-                        aria-hidden="true"
-                      />
+                      <FontAwesomeIcon icon={faTrash} className="w-3 h-3  ml-1 mr-1 md:hidden" aria-hidden="true" />
                     </button>
                   </div>
                 </span>
               </div>
             ))}
-          {foodItems.status === "error" && <div>{foodItems.error}</div>}
+          {foodItems.status === 'error' && <div>{foodItems.error}</div>}
         </div>
       </section>
     </Layout>

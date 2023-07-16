@@ -140,7 +140,7 @@ export default function UpdateFood(mealItemProps) {
     name: Yup.string()
       .required('Item name required')
       .min(2, 'The name must have at least 2 characters!')
-      .max(20, 'The name must have maximum 20 characters!')
+      .max(40, 'The name must have maximum 40 characters!')
       .test('Empty space', 'Name can not start with SPACE!', function (value) {
         if (value) return !(value.charAt(0) === ' ');
         else return true;
